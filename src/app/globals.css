@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #050505;
+  --color-foreground: #F5F5F5;
+  --color-brand-red: #C10E1D;
+  --color-brand-graphite: #1A1A1A;
+  --color-brand-silver: #CCCCCC;
+  --color-brand-titanium: #E5E5E5;
+  
+  --font-logo: var(--font-syne), sans-serif;
+  --font-hero: var(--font-unbounded), sans-serif;
+  --font-heading: var(--font-plus-jakarta), sans-serif;
+  --font-caption: var(--font-space-grotesk), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+}
+
+:root {
+  --background: #050505;
+  --foreground: #F5F5F5;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Hide default cursor on desktop when using custom cursor */
+@media (min-width: 1024px) {
+  body, a, button, select, input, textarea {
+    cursor: none !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A1A1A;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C10E1D;
+}
+
+/* Premium Glassmorphism */
+.premium-glass {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Lenis Smooth Scroll Configuration */
+html.lenis {
+  height: auto;
+}
+
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Layout Utilities */
+.text-stroke-white {
+  -webkit-text-stroke: 1px rgba(245, 245, 245, 0.4);
+  color: transparent;
+}
+
+.text-stroke-red {
+  -webkit-text-stroke: 1px #C10E1D;
+  color: transparent;
+}
+
+/* Custom Cursor styles */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(245, 245, 245, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor.hovered {
+  width: 64px;
+  height: 64px;
+  border-color: #C10E1D;
+  background-color: rgba(193, 14, 29, 0.15);
+}
+
+.custom-cursor.click {
+  width: 24px;
+  height: 24px;
+  border-color: #C10E1D;
+  background-color: #C10E1D;
+}
+
+.custom-cursor-inner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background-color: #C10E1D;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s;
+}
+
+/* Utility Animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.pulse-glow {
+  animation: pulse-subtle 4s infinite ease-in-out;
+}
+
+/* Material Architecture Section Background Mockup */
+.material-architecture-section {
+  position: relative;
+  background-color: #050505;
+  background-image: url('/material_architecture_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background 0.5s ease;
+}
+
+/* Linear gradient to cover the baked-in text and carousel box in the center, leaving the sides transparent */
+.material-architecture-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent 0%, #050505 28%, #050505 72%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Design Philosophy Section Background & Button Enhancements */
+.design-philosophy-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.philosophy-bg-gradient {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(193, 14, 29, 0.012) 0%, rgba(255, 255, 255, 0.006) 30%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+  animation: philosophy-gradient-drift 25s infinite linear;
+}
+
+@keyframes philosophy-gradient-drift {
+  0% {
+    transform: translate(0%, 0%) rotate(0deg);
+  }
+  50% {
+    transform: translate(8%, 12%) rotate(180deg);
+  }
+  100% {
+    transform: translate(0%, 0%) rotate(360deg);
+  }
+}
+
+.story-cta-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease !important;
+}
+
+.story-cta-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #C10E1D;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+
+.story-cta-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.story-cta-btn:hover {
+  border-color: #C10E1D !important;
+  color: #fff !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+}
+
+.story-cta-arrow {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-cta-btn:hover .story-cta-arrow {
+  transform: translateX(6px);
+}
+

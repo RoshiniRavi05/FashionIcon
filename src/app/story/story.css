@@ -1,0 +1,216 @@
+/* Cinematic Story Page Stylesheet */
+
+.story-outer-container {
+  position: relative;
+  background-color: #050505;
+  color: #F5F5F5;
+}
+
+.story-sticky-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Background blueprint grids */
+.blueprint-background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Blueprint Grid Layer */
+.blueprint-grid-mesh {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: center center;
+}
+
+/* Subtle blueprint dot grid */
+.blueprint-dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+}
+
+/* Chapter containers */
+.story-chapter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 5vw;
+}
+
+/* Progress Indicator on the Right Side */
+.story-vertical-progress {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 250px;
+  width: 2px;
+  background-color: rgba(255, 255, 255, 0.08);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.story-progress-line-filled {
+  width: 100%;
+  background-color: #F5F5F5;
+  transition: height 0.1s linear;
+  position: relative;
+}
+
+.story-progress-indicator-dot {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background-color: #C10E1D;
+  border: 2px solid #F5F5F5;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(193, 14, 29, 0.6);
+  transition: transform 0.2s ease;
+}
+
+/* Blueprint card styling */
+.blueprint-card {
+  background: rgba(10, 10, 10, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 24px;
+  width: 260px;
+  position: absolute;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.blueprint-card-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(255, 255, 255, 0.35);
+  border-style: solid;
+}
+
+.blueprint-card-corner-tl {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+
+.blueprint-card-corner-tr {
+  top: -1px;
+  right: -1px;
+  border-width: 1px 1px 0 0;
+}
+
+.blueprint-card-corner-bl {
+  bottom: -1px;
+  left: -1px;
+  border-width: 0 0 1px 1px;
+}
+
+.blueprint-card-corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1px 1px 0;
+}
+
+/* Typography glowing layers */
+.text-manifesto-glow {
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.08);
+}
+
+.word-glow-red {
+  color: #C10E1D;
+  text-shadow: 0 0 25px rgba(193, 14, 29, 0.35);
+}
+
+/* Compass dial animation layer */
+.blueprint-compass-rotation {
+  transform-origin: center center;
+  animation: compass-slow-spin 60s infinite linear;
+}
+
+@keyframes compass-slow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Scroll indicator */
+.story-scroll-down-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--font-caption);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.story-scroll-hint-bar {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.35), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.story-scroll-hint-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background-color: #C10E1D;
+  animation: scroll-hint-bounce 2s infinite ease-in-out;
+}
+
+@keyframes scroll-hint-bounce {
+  0% { transform: translateY(-100%); }
+  80% { transform: translateY(200%); }
+  100% { transform: translateY(200%); }
+}
+
+/* Screen size adaptive content */
+@media (max-width: 768px) {
+  .blueprint-card {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 320px;
+    margin: 8px auto;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+  }
+  
+  .story-vertical-progress {
+    display: none !important;
+  }
+}

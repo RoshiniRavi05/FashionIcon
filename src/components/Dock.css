@@ -1,0 +1,73 @@
+.dock-outer {
+  margin: 0 0.5rem;
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.dock-panel {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  width: fit-content;
+  gap: 0.75rem;
+  border-radius: 9999px; /* Fully rounded capsule */
+  background-color: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.25rem 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+}
+
+.dock-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px; /* Rounded pill dock buttons */
+  background-color: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.dock-item:hover {
+  background-color: rgba(193, 14, 29, 0.1);
+  border-color: rgba(193, 14, 29, 0.3);
+}
+
+.dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F5F5F5;
+  transition: color 0.3s;
+}
+
+.dock-item:hover .dock-icon {
+  color: #C10E1D; /* Crimson Red icons on hover */
+}
+
+.dock-label {
+  position: absolute;
+  bottom: -2.3rem; /* Position tooltips below dock items */
+  left: 50%;
+  width: fit-content;
+  white-space: pre;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #0c0c0e;
+  padding: 0.25rem 0.6rem;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 0.65rem;
+  font-weight: bold;
+  letter-spacing: 0.15em;
+  color: #F5F5F5;
+  transform: translateX(-50%);
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
