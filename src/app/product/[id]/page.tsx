@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Heart, ShoppingBag, Sparkles, Ruler } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { DEFAULT_PRODUCTS } from '@/data/products';
+import ProductGallery from '@/components/ProductGallery';
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -54,28 +55,11 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
         {/* Left Column: Image Gallery */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="relative h-[500px] sm:h-[650px] bg-[#0c0c0e] border border-white/5 overflow-hidden flex items-center justify-center">
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-          {/* Detailed Zoom thumbnails (simulated close ups) */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="relative h-32 bg-[#0c0c0e] border border-white/5 overflow-hidden brightness-75">
-              <Image src={product.image} alt="Detail view" fill className="object-cover scale-150 object-center" />
-            </div>
-            <div className="relative h-32 bg-[#0c0c0e] border border-white/5 overflow-hidden brightness-75">
-              <Image src={product.image} alt="Fabric texture close up" fill className="object-cover scale-200" />
-            </div>
-            <div className="relative h-32 bg-[#0c0c0e] border border-white/5 overflow-hidden brightness-75 flex items-center justify-center font-caption text-[8px] tracking-[0.2em] text-white/40 uppercase p-4 text-center">
-              PBR DIGITAL TWIN AVAILABLE
-            </div>
-          </div>
+        <div className="lg:col-span-7">
+          <ProductGallery 
+            images={[product.image, product.hoverImage || product.image, product.image]} 
+            productName={product.name} 
+          />
         </div>
 
         {/* Right Column: Purchasing Panel */}
