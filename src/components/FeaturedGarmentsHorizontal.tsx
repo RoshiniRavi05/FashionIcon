@@ -11,8 +11,6 @@ import {
   AnimatePresence,
   useSpring,
   useMotionValue,
-  motionValue,
-  MotionValue,
 } from 'framer-motion';
 import { Heart, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -39,31 +37,12 @@ const PriceCounter = ({ priceStr, active }: { priceStr: string; active: boolean 
   return <span>${displayValue}</span>;
 };
 
-// ─── DOF MotionValues bundle per card ────────────────────────────────────────
-interface CardDOF {
-  blur: MotionValue<number>;
-  opacity: MotionValue<number>;
-  scale: MotionValue<number>;
-  brightness: MotionValue<number>;
-  glowOpacity: MotionValue<number>;
-}
-
-// Create outside component so motionValue() (non-hook) is not inside render
-function createCardDOF(isFirst: boolean): CardDOF {
-  return {
-    blur:        motionValue(isFirst ? 0  : 11),
-    opacity:     motionValue(isFirst ? 1  : 0.42),
-    scale:       motionValue(isFirst ? 1  : 0.91),
-    brightness:  motionValue(isFirst ? 1  : 0.70),
-    glowOpacity: motionValue(isFirst ? 1  : 0),
-  };
-}
-
 // ─── Editorial Product Card ───────────────────────────────────────────────────
 interface EditorialCardProps {
   product: Product;
   isActive: boolean;
-  dof: CardDOF;
+  // rAF targets this DOM ref directly — no Framer Motion intermediary for DOF
+  dofLayerRefCallback: (el: HTMLDivElement | null) => void;
   wrapperRefCallback: (el: HTMLDivElement | null) => void;
   addToCart: (product: Product, size: string) => void;
   toggleWishlist: (product: Product) => void;
@@ -75,7 +54,7 @@ interface EditorialCardProps {
 const EditorialProductCard = ({
   product,
   isActive,
-  dof,
+  dofLayerRefCallback,
   wrapperRefCallback,
   addToCart,
   toggleWishlist,
@@ -87,15 +66,15 @@ const EditorialProductCard = ({
   const sizes = product.category === 'shoes' ? ['8', '9', '10', '11'] : ['S', 'M', 'L', 'XL'];
   const [selectedSize, setSelectedSize] = useState(sizes[1]);
 
-  // 3D tilt on mouse
+  // Only Framer Motion handles 3D tilt — DOF (filter/opacity/scale) handled by rAF on dofLayerRef
   const rotateX = useSpring(0, { stiffness: 120, damping: 25 });
   const rotateY = useSpring(0, { stiffness: 120, damping: 25 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    rotateX.set(((e.clientY - rect.top) / rect.height - 0.5) * -10);
-    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 10);
+    rotateX.set(((e.clientY - rect.top) / rect.height - 0.5) * -8);
+    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 8);
     cardRef.current.style.setProperty('--mouse-x', `${((e.clientX - rect.left) / rect.width) * 100}%`);
     cardRef.current.style.setProperty('--mouse-y', `${((e.clientY - rect.top) / rect.height) * 100}%`);
   };
@@ -106,139 +85,122 @@ const EditorialProductCard = ({
     onHoverCard(false);
   };
 
-  // Compose filter string from live DOF MotionValues every frame
-  const filterStr = useTransform(
-    () => `blur(${dof.blur.get().toFixed(1)}px) brightness(${dof.brightness.get().toFixed(3)})`
-  );
-
   return (
-    // Outer wrapper: rAF loop measures this element's bounding rect
-    <div
-      ref={wrapperRefCallback}
-      className="card-perspective-wrapper"
-      style={{ willChange: 'transform' }}
-    >
-      {/* Cinematic spotlight halo — fades in only when card is centered */}
-      <motion.div
-        className="card-dof-spotlight"
-        style={{ opacity: dof.glowOpacity }}
-        aria-hidden
-      />
+    // Outer wrapper: rAF reads its getBoundingClientRect() every frame
+    <div ref={wrapperRefCallback} className="card-perspective-wrapper">
 
-      <motion.div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => onHoverCard(true)}
-        onMouseLeave={handleMouseLeave}
-        className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
-        style={{
-          rotateX,
-          rotateY,
-          scale: dof.scale,
-          opacity: dof.opacity,
-          filter: filterStr,
-          willChange: 'transform, filter, opacity',
-          boxShadow: isActive
-            ? '0 20px 80px rgba(255,255,255,0.06), 0 0 40px rgba(255,255,255,0.03)'
-            : 'none',
-        }}
-      >
-        <div className="card-spotlight-overlay" />
+      {/* Cinematic spotlight halo — rAF writes to spotlight.style.opacity */}
+      <div className="card-dof-spotlight" aria-hidden />
 
-        {product.tag && <div className="card-tag">{product.tag}</div>}
+      {/* DOF layer: rAF writes filter/opacity/transform here — completely separate from Framer Motion */}
+      <div ref={dofLayerRefCallback} className="card-dof-layer">
 
-        <button
-          onClick={() => toggleWishlist(product)}
-          onMouseEnter={() => onHoverAction(true)}
-          onMouseLeave={() => onHoverAction(false)}
-          className="wishlist-btn-overlay rounded-sm"
-          title="Add to Wishlist"
+        {/* Framer Motion only owns rotateX + rotateY (hover tilt) */}
+        <motion.div
+          ref={cardRef}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => onHoverCard(true)}
+          onMouseLeave={handleMouseLeave}
+          className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
+          style={{ rotateX, rotateY }}
         >
-          <Heart className={`w-3.5 h-3.5 transition-transform active:scale-90 ${
-            isInWishlist ? 'fill-[#C10E1D] text-[#C10E1D]' : 'text-white/60'
-          }`} />
-        </button>
+          <div className="card-spotlight-overlay" />
 
-        <div className="card-image-frame rounded-sm">
-          <motion.div
-            className="w-full h-full relative"
-            animate={{ scale: isActive ? 1.04 : 1 }}
-            transition={{ duration: 0.8, ease: [0.22, 0.61, 0.36, 1] }}
+          {product.tag && <div className="card-tag">{product.tag}</div>}
+
+          <button
+            onClick={() => toggleWishlist(product)}
+            onMouseEnter={() => onHoverAction(true)}
+            onMouseLeave={() => onHoverAction(false)}
+            className="wishlist-btn-overlay rounded-sm"
+            title="Add to Wishlist"
           >
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 25vw"
-              className="card-image-element"
-              priority={product.id === 1}
-            />
-            {product.hoverImage && (
-              <motion.div
-                className="absolute inset-0 w-full h-full"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Image
-                  src={product.hoverImage}
-                  alt={`${product.name} alternate view`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  className="card-image-hover"
-                />
-              </motion.div>
-            )}
-          </motion.div>
-          <div className="reflection-sweep" />
-          <div className="card-sizing-panel">
-            <span className="sizing-title">Select Size</span>
-            <div className="sizing-options-grid">
-              {sizes.map((sz) => (
-                <button
-                  key={sz}
-                  onClick={(e) => { e.stopPropagation(); setSelectedSize(sz); }}
+            <Heart className={`w-3.5 h-3.5 transition-transform active:scale-90 ${
+              isInWishlist ? 'fill-[#C10E1D] text-[#C10E1D]' : 'text-white/60'
+            }`} />
+          </button>
+
+          <div className="card-image-frame rounded-sm">
+            <motion.div
+              className="w-full h-full relative"
+              animate={{ scale: isActive ? 1.04 : 1 }}
+              transition={{ duration: 0.8, ease: [0.22, 0.61, 0.36, 1] }}
+            >
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 25vw"
+                className="card-image-element"
+                priority={product.id === 1}
+              />
+              {product.hoverImage && (
+                <motion.div
+                  className="absolute inset-0 w-full h-full"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Image
+                    src={product.hoverImage}
+                    alt={`${product.name} alternate view`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    className="card-image-hover"
+                  />
+                </motion.div>
+              )}
+            </motion.div>
+            <div className="reflection-sweep" />
+            <div className="card-sizing-panel">
+              <span className="sizing-title">Select Size</span>
+              <div className="sizing-options-grid">
+                {sizes.map((sz) => (
+                  <button
+                    key={sz}
+                    onClick={(e) => { e.stopPropagation(); setSelectedSize(sz); }}
+                    onMouseEnter={() => onHoverAction(true)}
+                    onMouseLeave={() => onHoverAction(false)}
+                    className={`size-chip-btn rounded-sm ${selectedSize === sz ? 'is-active' : ''}`}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="card-details-info">
+            <div className="card-title-price-row">
+              <div className="flex-grow">
+                <Link
+                  href={`/product/${product.id}`}
                   onMouseEnter={() => onHoverAction(true)}
                   onMouseLeave={() => onHoverAction(false)}
-                  className={`size-chip-btn rounded-sm ${selectedSize === sz ? 'is-active' : ''}`}
+                  className="card-product-title hover:text-[#C10E1D] transition-colors line-clamp-2 block"
                 >
-                  {sz}
-                </button>
-              ))}
+                  {product.name}
+                </Link>
+                <div className="card-product-category">{product.subcat}</div>
+              </div>
+              <div className="card-product-price">
+                <PriceCounter priceStr={product.price} active={isActive} />
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="card-details-info">
-          <div className="card-title-price-row">
-            <div className="flex-grow">
-              <Link
-                href={`/product/${product.id}`}
+            <div className="card-action-btn-container">
+              <div className="card-action-btn-line" />
+              <button
+                onClick={() => addToCart(product, selectedSize)}
                 onMouseEnter={() => onHoverAction(true)}
                 onMouseLeave={() => onHoverAction(false)}
-                className="card-product-title hover:text-[#C10E1D] transition-colors line-clamp-2 block"
+                className="card-add-to-bag-btn"
               >
-                {product.name}
-              </Link>
-              <div className="card-product-category">{product.subcat}</div>
-            </div>
-            <div className="card-product-price">
-              <PriceCounter priceStr={product.price} active={isActive} />
+                Add to Bag ({selectedSize})
+              </button>
             </div>
           </div>
-          <div className="card-action-btn-container">
-            <div className="card-action-btn-line" />
-            <button
-              onClick={() => addToCart(product, selectedSize)}
-              onMouseEnter={() => onHoverAction(true)}
-              onMouseLeave={() => onHoverAction(false)}
-              className="card-add-to-bag-btn"
-            >
-              Add to Bag ({selectedSize})
-            </button>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };
@@ -252,19 +214,11 @@ export default function FeaturedGarmentsHorizontal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  // Per-card rAF-driven DOF MotionValues (created once, never recreated)
-  const dofValues = useRef<CardDOF[]>([]);
-  if (dofValues.current.length === 0) {
-    for (let i = 0; i < totalCards; i++) {
-      dofValues.current.push(createCardDOF(i === 0));
-    }
-  }
+  // DOM refs for rAF loop — one per card
+  const cardWrapperRefs = useRef<(HTMLDivElement | null)[]>(Array(totalCards).fill(null));
+  const dofLayerRefs = useRef<(HTMLDivElement | null)[]>(Array(totalCards).fill(null));
 
-  // Card wrapper DOM refs — rAF loop reads their getBoundingClientRect()
-  const cardWrapperRefs = useRef<(HTMLDivElement | null)[]>(
-    Array(totalCards).fill(null)
-  );
-
+  const [initialX, setInitialX] = useState(0);
   const [scrollRange, setScrollRange] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [cursorVisible, setCursorVisible] = useState(false);
@@ -275,17 +229,28 @@ export default function FeaturedGarmentsHorizontal() {
   const cursorSpringX = useSpring(mouseX, { stiffness: 350, damping: 30 });
   const cursorSpringY = useSpring(mouseY, { stiffness: 350, damping: 30 });
 
-  // ── Measure horizontal scroll range ──
+  // ── Measure scroll range and compute initial X offset to center card 0 ──
   useEffect(() => {
-    const calc = () => {
-      if (trackRef.current) {
-        setScrollRange(trackRef.current.scrollWidth - window.innerWidth);
-      }
+    const calculateLayout = () => {
+      if (!trackRef.current) return;
+
+      // Compute card width from CSS constraints: width=25vw, min=320, max=440
+      const vw = window.innerWidth;
+      const cssCardWidth = Math.min(Math.max(vw * 0.25, 320), 440);
+      // padding-left in CSS is 20vw
+      const cssPaddingLeft = vw * 0.20;
+      // Offset needed to center card 0
+      const offset = vw * 0.5 - cssPaddingLeft - cssCardWidth * 0.5;
+      setInitialX(offset);
+
+      // Total track scroll range (unchanged — track still travels same distance)
+      setScrollRange(trackRef.current.scrollWidth - vw);
     };
-    calc();
-    const t = setTimeout(calc, 200);
-    window.addEventListener('resize', calc);
-    return () => { window.removeEventListener('resize', calc); clearTimeout(t); };
+
+    calculateLayout();
+    const timer = setTimeout(calculateLayout, 300);
+    window.addEventListener('resize', calculateLayout);
+    return () => { window.removeEventListener('resize', calculateLayout); clearTimeout(timer); };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -293,7 +258,8 @@ export default function FeaturedGarmentsHorizontal() {
     offset: ['start start', 'end end'],
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  // x now starts at initialX so card 0 is centered at scroll=0
+  const x = useTransform(scrollYProgress, [0, 1], [initialX, -(scrollRange - initialX)]);
   const bgX = useTransform(scrollYProgress, [0, 1], ['0vw', '-45vw']);
 
   // Discrete active index for counter / price roll-up
@@ -303,42 +269,69 @@ export default function FeaturedGarmentsHorizontal() {
     setActiveIndex(idx);
   });
 
-  // ── rAF DOF loop — measures actual card positions every frame ──
+  // ── rAF DOF loop ──────────────────────────────────────────────────────────
+  // Reads each card's actual DOM position every frame.
+  // Writes filter/opacity/transform directly to the .card-dof-layer div
+  // (completely separate from Framer Motion's motion.div).
   useEffect(() => {
     let rafId: number;
 
-    const update = () => {
+    const applyDOF = () => {
       const vCenter = window.innerWidth / 2;
 
-      cardWrapperRefs.current.forEach((wrapper, i) => {
-        if (!wrapper) return;
-        const dof = dofValues.current[i];
-        if (!dof) return;
+      // Batch reads (avoids layout thrashing)
+      const rects = cardWrapperRefs.current.map(w =>
+        w ? w.getBoundingClientRect() : null
+      );
 
-        const rect = wrapper.getBoundingClientRect();
-        const cardCenter = rect.left + rect.width / 2;
-        const distance = Math.abs(cardCenter - vCenter);
-
-        // Normalize: 0 = card perfectly centered, 1 = one card-width away
-        // Using 1.1× card width as the full-blur distance feels natural
-        const t = Math.min(distance / (rect.width * 1.1), 1);
-
-        // Ease the transition: smooth cubic so center snaps sharp cleanly
-        const eased = t * t * (3 - 2 * t); // smoothstep
-
-        dof.blur.set(eased * 11);             // 0 → 11px
-        dof.opacity.set(1 - eased * 0.58);   // 1 → 0.42
-        dof.scale.set(1 - eased * 0.09);     // 1 → 0.91
-        dof.brightness.set(1 - eased * 0.30);// 1 → 0.70
-        dof.glowOpacity.set(Math.max(0, 1 - eased * 2.5)); // sharp drop-off
+      // Find which card is closest to center (for spotlight glow)
+      let minDist = Infinity;
+      rects.forEach(rect => {
+        if (!rect) return;
+        const d = Math.abs(rect.left + rect.width / 2 - vCenter);
+        if (d < minDist) minDist = d;
       });
 
-      rafId = requestAnimationFrame(update);
+      // Batch writes
+      rects.forEach((rect, i) => {
+        const dofLayer = dofLayerRefs.current[i];
+        const wrapper = cardWrapperRefs.current[i];
+        if (!rect || !dofLayer || !wrapper) return;
+
+        const cardCenter = rect.left + rect.width / 2;
+        const dist = Math.abs(cardCenter - vCenter);
+
+        // Tight focus window: full blur kicks in at 40% of card width from center
+        // This ensures only the truly-centered card is sharp
+        const focusRadius = rect.width * 0.40;
+        const t = Math.min(dist / focusRadius, 1);
+
+        // Smoothstep — fast near 0, sharp snap at center
+        const eased = t * t * (3 - 2 * t);
+
+        const blur = (eased * 11).toFixed(1);       // 0 → 11px
+        const opacity = (1 - eased * 0.58).toFixed(3);  // 1 → 0.42
+        const scale = (1 - eased * 0.09).toFixed(4);    // 1 → 0.91
+        const brightness = (1 - eased * 0.28).toFixed(3); // 1 → 0.72
+
+        // Write to DOF layer (not the motion.div — no Framer Motion conflict)
+        dofLayer.style.filter = `blur(${blur}px) brightness(${brightness})`;
+        dofLayer.style.opacity = opacity;
+        dofLayer.style.transform = `scale(${scale})`;
+
+        // Spotlight glow (separate element in wrapper)
+        const spotlight = wrapper.querySelector<HTMLElement>('.card-dof-spotlight');
+        if (spotlight) {
+          const glowT = Math.min(dist / (rect.width * 0.6), 1);
+          spotlight.style.opacity = (Math.max(0, 1 - glowT * glowT * 3)).toFixed(3);
+        }
+      });
+
+      rafId = requestAnimationFrame(applyDOF);
     };
 
-    rafId = requestAnimationFrame(update);
+    rafId = requestAnimationFrame(applyDOF);
     return () => cancelAnimationFrame(rafId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -406,8 +399,10 @@ export default function FeaturedGarmentsHorizontal() {
                   key={prod.id}
                   product={prod}
                   isActive={idx === activeIndex}
-                  dof={dofValues.current[idx]}
-                  wrapperRefCallback={(el) => { cardWrapperRefs.current[idx] = el; }}
+                  dofLayerRefCallback={(el) => { dofLayerRefs.current[idx] = el; }}
+                  wrapperRefCallback={(el) => {
+                    cardWrapperRefs.current[idx] = el;
+                  }}
                   addToCart={addToCart}
                   toggleWishlist={toggleWishlist}
                   isInWishlist={isInWish}
@@ -417,7 +412,7 @@ export default function FeaturedGarmentsHorizontal() {
               );
             })}
 
-            {/* Billboard */}
+            {/* Discovery Billboard */}
             <div className="discover-billboard-wrapper">
               <div className={`discover-billboard-card rounded-sm ${activeIndex === 4 ? 'is-active' : ''}`}>
                 <div className="discover-text-content">
@@ -449,6 +444,7 @@ export default function FeaturedGarmentsHorizontal() {
           </motion.div>
         </div>
 
+        {/* Bottom controls */}
         <div className="bottom-editorial-controls select-none">
           <div className="progress-indicator-track rounded-full">
             <motion.div
@@ -475,6 +471,7 @@ export default function FeaturedGarmentsHorizontal() {
         </div>
       </div>
 
+      {/* Luxury tracking cursor */}
       {cursorVisible && (
         <motion.div
           className={`horizontal-luxury-cursor ${
