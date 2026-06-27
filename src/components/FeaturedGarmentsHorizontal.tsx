@@ -3,41 +3,36 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence, useSpring, useMotionValue } from 'framer-motion';
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  AnimatePresence,
+  useSpring,
+  useMotionValue,
+  MotionValue,
+} from 'framer-motion';
 import { Heart, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { DEFAULT_PRODUCTS, Product } from '@/data/products';
 import './FeaturedGarmentsHorizontal.css';
 
-// Exponential Ease Out Helper for price rolling
+// ─── Price Roll-Up Counter ────────────────────────────────────────────────────
 const PriceCounter = ({ priceStr, active }: { priceStr: string; active: boolean }) => {
   const numericValue = parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    if (!active) {
-      setDisplayValue(0);
-      return;
-    }
-
-    let start = 0;
-    const end = numericValue;
-    const duration = 800; // ms
-    const startTime = performance.now();
+    if (!active) { setDisplayValue(0); return; }
     let animationFrameId: number;
-
+    const startTime = performance.now();
     const update = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const current = Math.floor(start + (end - start) * easeProgress);
-      setDisplayValue(current);
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(update);
-      }
+      const progress = Math.min((now - startTime) / 800, 1);
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setDisplayValue(Math.floor(numericValue * eased));
+      if (progress < 1) animationFrameId = requestAnimationFrame(update);
     };
-
     animationFrameId = requestAnimationFrame(update);
     return () => cancelAnimationFrame(animationFrameId);
   }, [active, numericValue]);
@@ -45,10 +40,69 @@ const PriceCounter = ({ priceStr, active }: { priceStr: string; active: boolean 
   return <span>${displayValue}</span>;
 };
 
-// Subcomponent: Individual Editorial Product Card
+// ─── Per-Card Cinematic DOF Hook ──────────────────────────────────────────────
+// Returns live MotionValues for blur, scale, opacity, brightness based on
+// how close this card's center is to viewport center during horizontal scroll.
+function useCardDOF(
+  scrollYProgress: MotionValue<number>,
+  cardIndex: number,    // 0-based among product cards
+  totalCards: number,   // total product cards (not counting billboard)
+) {
+  // Each card owns 1/totalCards fraction of [0, 1] scroll range.
+  // We add a tiny offset so the first card is active right at scroll=0.
+  const sliceSize = 1 / (totalCards + 1); // +1 for the billboard panel
+  const cardCenter = cardIndex * sliceSize + sliceSize * 0.5;
+
+  // How far is the current scroll from this card's ideal center (0 = perfect focus)
+  // We map a ±sliceSize window around the center to visual values.
+  const half = sliceSize * 0.85;
+
+  const blurRaw = useTransform(
+    scrollYProgress,
+    [cardCenter - half, cardCenter - half * 0.3, cardCenter, cardCenter + half * 0.3, cardCenter + half],
+    [16, 8, 0, 8, 16]
+  );
+  const opacityRaw = useTransform(
+    scrollYProgress,
+    [cardCenter - half, cardCenter - half * 0.4, cardCenter, cardCenter + half * 0.4, cardCenter + half],
+    [0.18, 0.45, 1, 0.45, 0.18]
+  );
+  const scaleRaw = useTransform(
+    scrollYProgress,
+    [cardCenter - half, cardCenter - half * 0.4, cardCenter, cardCenter + half * 0.4, cardCenter + half],
+    [0.84, 0.92, 1.0, 0.92, 0.84]
+  );
+  const brightnessRaw = useTransform(
+    scrollYProgress,
+    [cardCenter - half, cardCenter - half * 0.4, cardCenter, cardCenter + half * 0.4, cardCenter + half],
+    [0.55, 0.75, 1.0, 0.75, 0.55]
+  );
+  const glowOpacityRaw = useTransform(
+    scrollYProgress,
+    [cardCenter - half * 0.5, cardCenter, cardCenter + half * 0.5],
+    [0, 1, 0]
+  );
+
+  // Spring-smooth all values for silky interpolation
+  const blur = useSpring(blurRaw, { stiffness: 90, damping: 22 });
+  const opacity = useSpring(opacityRaw, { stiffness: 90, damping: 22 });
+  const scale = useSpring(scaleRaw, { stiffness: 90, damping: 22 });
+  const brightness = useSpring(brightnessRaw, { stiffness: 90, damping: 22 });
+  const glowOpacity = useSpring(glowOpacityRaw, { stiffness: 80, damping: 24 });
+
+  // isActive threshold for discrete UI changes (price counter, etc.)
+  const isActive = cardIndex === Math.round(scrollYProgress.get() / sliceSize - 0.5);
+
+  return { blur, opacity, scale, brightness, glowOpacity };
+}
+
+// ─── Editorial Product Card ───────────────────────────────────────────────────
 interface EditorialCardProps {
   product: Product;
-  isActive: boolean;
+  cardIndex: number;
+  totalCards: number;
+  scrollYProgress: MotionValue<number>;
+  activeIndex: number;
   addToCart: (product: Product, size: string) => void;
   toggleWishlist: (product: Product) => void;
   isInWishlist: boolean;
@@ -58,45 +112,38 @@ interface EditorialCardProps {
 
 const EditorialProductCard = ({
   product,
-  isActive,
+  cardIndex,
+  totalCards,
+  scrollYProgress,
+  activeIndex,
   addToCart,
   toggleWishlist,
   isInWishlist,
   onHoverCard,
-  onHoverAction
+  onHoverAction,
 }: EditorialCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  
-  // Sizing State
-  const sizes = product.category === 'shoes' ? ['8', '9', '10', '11'] : ['S', 'M', 'L', 'XL'];
-  const [selectedSize, setSelectedSize] = useState(sizes[1]); // Default to 'M' or '9'
+  const isActive = cardIndex === activeIndex;
 
-  // Framer Motion values for 3D cursor-tracking card tilt
+  const sizes = product.category === 'shoes' ? ['8', '9', '10', '11'] : ['S', 'M', 'L', 'XL'];
+  const [selectedSize, setSelectedSize] = useState(sizes[1]);
+
+  // ── Continuous DOF values from scroll ──
+  const { blur, opacity, scale, brightness, glowOpacity } = useCardDOF(
+    scrollYProgress, cardIndex, totalCards
+  );
+
+  // ── 3D tilt on mouse move ──
   const rotateX = useSpring(0, { stiffness: 120, damping: 25 });
   const rotateY = useSpring(0, { stiffness: 120, damping: 25 });
-  const cardScale = useSpring(isActive ? 1.08 : 0.94, { stiffness: 120, damping: 25 });
 
-  // Update card scale when active state shifts
-  useEffect(() => {
-    cardScale.set(isActive ? 1.08 : 0.94);
-  }, [isActive, cardScale]);
-
-  // Handle Card Mouse Move for 3D Tilt
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
-    
     const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left; // x position inside element
-    const y = e.clientY - rect.top;  // y position inside element
-    
-    const rotateAmplitude = 10;
-    const rX = ((y / rect.height) - 0.5) * -rotateAmplitude;
-    const rY = ((x / rect.width) - 0.5) * rotateAmplitude;
-    
-    rotateX.set(rX);
-    rotateY.set(rY);
-
-    // Set custom CSS variables for pointer spotlight on card faces
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    rotateX.set(((y / rect.height) - 0.5) * -10);
+    rotateY.set(((x / rect.width) - 0.5) * 10);
     cardRef.current.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
     cardRef.current.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
   };
@@ -107,162 +154,167 @@ const EditorialProductCard = ({
     onHoverCard(false);
   };
 
+  // Compose filter string from live motion values
+  const filterStr = useTransform(
+    [blur, brightness],
+    ([b, br]: number[]) => `blur(${b.toFixed(2)}px) brightness(${br.toFixed(3)})`
+  );
+
   return (
-    <motion.div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => onHoverCard(true)}
-      onMouseLeave={handleMouseLeave}
-      className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
-      style={{
-        rotateX,
-        rotateY,
-        scale: cardScale,
-        opacity: isActive ? 1 : 0.45,
-        filter: isActive ? 'blur(0px)' : 'blur(3px)',
-      }}
-      transition={{ duration: 0.6 }}
-    >
-      {/* 3D Spotlight Reflect Overlay */}
-      <div className="card-spotlight-overlay" />
+    <div className="card-perspective-wrapper" style={{ willChange: 'transform' }}>
+      {/* Cinematic spotlight glow behind active card */}
+      <motion.div
+        className="card-dof-spotlight"
+        style={{ opacity: glowOpacity }}
+        aria-hidden
+      />
 
-      {/* Product Tag Overlay */}
-      {product.tag && (
-        <div className="card-tag">
-          {product.tag}
-        </div>
-      )}
-
-      {/* Wishlist Button Overlay */}
-      <button
-        onClick={() => toggleWishlist(product)}
-        onMouseEnter={() => onHoverAction(true)}
-        onMouseLeave={() => onHoverAction(false)}
-        className="wishlist-btn-overlay rounded-sm"
-        title="Add to Wishlist"
+      <motion.div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => onHoverCard(true)}
+        onMouseLeave={handleMouseLeave}
+        className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
+        style={{
+          rotateX,
+          rotateY,
+          scale,
+          opacity,
+          filter: filterStr,
+          willChange: 'transform, filter, opacity',
+          boxShadow: isActive
+            ? '0 20px 80px rgba(255,255,255,0.06), 0 0 40px rgba(255,255,255,0.03)'
+            : 'none',
+        }}
       >
-        <Heart className={`w-3.5 h-3.5 transition-transform active:scale-90 ${
-          isInWishlist ? 'fill-[#C10E1D] text-[#C10E1D]' : 'text-white/60'
-        }`} />
-      </button>
+        {/* Spotlight shimmer overlay */}
+        <div className="card-spotlight-overlay" />
 
-      {/* Image Container with 3D perspective */}
-      <div className="card-image-frame rounded-sm">
-        {/* Main Image */}
-        <motion.div 
-          className="w-full h-full relative"
-          animate={{ scale: isActive ? 1.04 : 1 }}
-          transition={{ duration: 0.8 }}
+        {/* Badge */}
+        {product.tag && <div className="card-tag">{product.tag}</div>}
+
+        {/* Wishlist */}
+        <button
+          onClick={() => toggleWishlist(product)}
+          onMouseEnter={() => onHoverAction(true)}
+          onMouseLeave={() => onHoverAction(false)}
+          className="wishlist-btn-overlay rounded-sm"
+          title="Add to Wishlist"
         >
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 25vw"
-            className="card-image-element"
-            priority={product.id === 1}
-          />
-          {/* Secondary Hover Image (Crossfades on hover) */}
-          {product.hoverImage && (
-            <motion.div
-              className="absolute inset-0 w-full h-full"
-              initial={{ opacity: 0 }}
-              whileHover={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Image
-                src={product.hoverImage}
-                alt={`${product.name} alternate view`}
-                fill
-                sizes="(max-width: 768px) 100vw, 25vw"
-                className="card-image-hover"
-              />
-            </motion.div>
-          )}
-        </motion.div>
+          <Heart className={`w-3.5 h-3.5 transition-transform active:scale-90 ${
+            isInWishlist ? 'fill-[#C10E1D] text-[#C10E1D]' : 'text-white/60'
+          }`} />
+        </button>
 
-        {/* Reflection sweep */}
-        <div className="reflection-sweep" />
+        {/* Image */}
+        <div className="card-image-frame rounded-sm">
+          <motion.div
+            className="w-full h-full relative"
+            animate={{ scale: isActive ? 1.04 : 1 }}
+            transition={{ duration: 0.8, ease: [0.22, 0.61, 0.36, 1] }}
+          >
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 25vw"
+              className="card-image-element"
+              priority={product.id === 1}
+            />
+            {product.hoverImage && (
+              <motion.div
+                className="absolute inset-0 w-full h-full"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Image
+                  src={product.hoverImage}
+                  alt={`${product.name} alternate view`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  className="card-image-hover"
+                />
+              </motion.div>
+            )}
+          </motion.div>
 
-        {/* Sizing slide up panel */}
-        <div className="card-sizing-panel">
-          <span className="sizing-title">Select Size</span>
-          <div className="sizing-options-grid">
-            {sizes.map((sz) => (
-              <button
-                key={sz}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedSize(sz);
-                }}
+          <div className="reflection-sweep" />
+
+          {/* Size panel */}
+          <div className="card-sizing-panel">
+            <span className="sizing-title">Select Size</span>
+            <div className="sizing-options-grid">
+              {sizes.map((sz) => (
+                <button
+                  key={sz}
+                  onClick={(e) => { e.stopPropagation(); setSelectedSize(sz); }}
+                  onMouseEnter={() => onHoverAction(true)}
+                  onMouseLeave={() => onHoverAction(false)}
+                  className={`size-chip-btn rounded-sm ${selectedSize === sz ? 'is-active' : ''}`}
+                >
+                  {sz}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Card info */}
+        <div className="card-details-info">
+          <div className="card-title-price-row">
+            <div className="flex-grow">
+              <Link
+                href={`/product/${product.id}`}
                 onMouseEnter={() => onHoverAction(true)}
                 onMouseLeave={() => onHoverAction(false)}
-                className={`size-chip-btn rounded-sm ${selectedSize === sz ? 'is-active' : ''}`}
+                className="card-product-title hover:text-[#C10E1D] transition-colors line-clamp-2 block"
               >
-                {sz}
-              </button>
-            ))}
+                {product.name}
+              </Link>
+              <div className="card-product-category">{product.subcat}</div>
+            </div>
+            <div className="card-product-price">
+              <PriceCounter priceStr={product.price} active={isActive} />
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Card Info Section */}
-      <div className="card-details-info">
-        <div className="card-title-price-row">
-          <div className="flex-grow">
-            <Link 
-              href={`/product/${product.id}`}
+          <div className="card-action-btn-container">
+            <div className="card-action-btn-line" />
+            <button
+              onClick={() => addToCart(product, selectedSize)}
               onMouseEnter={() => onHoverAction(true)}
               onMouseLeave={() => onHoverAction(false)}
-              className="card-product-title hover:text-[#C10E1D] transition-colors line-clamp-2 block"
+              className="card-add-to-bag-btn"
             >
-              {product.name}
-            </Link>
-            <div className="card-product-category">{product.subcat}</div>
-          </div>
-          <div className="card-product-price">
-            <PriceCounter priceStr={product.price} active={isActive} />
+              Add to Bag ({selectedSize})
+            </button>
           </div>
         </div>
-
-        {/* Action Button Container */}
-        <div className="card-action-btn-container">
-          <div className="card-action-btn-line" />
-          <button
-            onClick={() => addToCart(product, selectedSize)}
-            onMouseEnter={() => onHoverAction(true)}
-            onMouseLeave={() => onHoverAction(false)}
-            className="card-add-to-bag-btn"
-          >
-            Add to Bag ({selectedSize})
-          </button>
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 
+// ─── Main Section ─────────────────────────────────────────────────────────────
 export default function FeaturedGarmentsHorizontal() {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const products = DEFAULT_PRODUCTS.slice(0, 4);
+  const totalCards = products.length;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   const [scrollRange, setScrollRange] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  // Custom Cursor coordinates
   const [cursorVisible, setCursorVisible] = useState(false);
   const [cursorType, setLocalCursorType] = useState<'default' | 'explore' | 'action'>('default');
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-
   const cursorSpringX = useSpring(mouseX, { stiffness: 350, damping: 30 });
   const cursorSpringY = useSpring(mouseY, { stiffness: 350, damping: 30 });
 
-  // Calculate horizontal bounds dynamically on resize
   useEffect(() => {
     const calculateRange = () => {
       if (trackRef.current) {
@@ -270,41 +322,26 @@ export default function FeaturedGarmentsHorizontal() {
       }
     };
     calculateRange();
-    
-    // Add brief timeout to catch finished layouts
     const timer = setTimeout(calculateRange, 200);
-
     window.addEventListener('resize', calculateRange);
-    return () => {
-      window.removeEventListener('resize', calculateRange);
-      clearTimeout(timer);
-    };
+    return () => { window.removeEventListener('resize', calculateRange); clearTimeout(timer); };
   }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    offset: ['start start', 'end end'],
   });
 
-  // Smooth transform for the track positioning
   const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  const bgX = useTransform(scrollYProgress, [0, 1], ['0vw', '-45vw']);
 
-  // Parallax background typography transforms (moves at ~30% track speed)
-  const bgX = useTransform(scrollYProgress, [0, 1], ["0vw", "-45vw"]);
-
-  // Listen to progress updates to update the active focused product index
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    let index = 0;
-    if (latest < 0.22) index = 0;
-    else if (latest < 0.44) index = 1;
-    else if (latest < 0.66) index = 2;
-    else if (latest < 0.88) index = 3;
-    else index = 4; // Discover Panel
-    
-    setActiveIndex(index);
+  // Update discrete activeIndex for counter / price roll-up
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const sliceSize = 1 / (totalCards + 1);
+    const idx = Math.min(Math.floor(latest / sliceSize), totalCards);
+    setActiveIndex(idx);
   });
 
-  // Track cursor position inside section
   const handleMouseMove = (e: React.MouseEvent) => {
     mouseX.set(e.clientX);
     mouseY.set(e.clientY);
@@ -320,11 +357,8 @@ export default function FeaturedGarmentsHorizontal() {
     document.body.classList.remove('featured-horizontal-active');
   };
 
-  // Clean up global class on unmount
   useEffect(() => {
-    return () => {
-      document.body.classList.remove('featured-horizontal-active');
-    };
+    return () => { document.body.classList.remove('featured-horizontal-active'); };
   }, []);
 
   return (
@@ -334,15 +368,15 @@ export default function FeaturedGarmentsHorizontal() {
       onMouseEnter={handleMouseEnterSection}
       onMouseLeave={handleMouseLeaveSection}
       className={`featured-horizontal-section ${cursorVisible ? 'featured-horizontal-section-active' : ''}`}
-      style={{ height: '350vh' }} // Pinned scroll track height
+      style={{ height: '350vh' }}
     >
       <div className="sticky-wrapper">
-        {/* Subtle Background Lighting spotlights */}
+        {/* Animated spotlight */}
         <motion.div
           className="bg-spotlight-active"
           animate={{
             x: `${activeIndex * 20}vw`,
-            y: activeIndex % 2 === 0 ? '-10vh' : '10vh'
+            y: activeIndex % 2 === 0 ? '-10vh' : '10vh',
           }}
           transition={{ type: 'spring', stiffness: 40, damping: 20 }}
           style={{ left: '15vw', top: '20vh' }}
@@ -350,12 +384,15 @@ export default function FeaturedGarmentsHorizontal() {
         <div className="bg-radial-soft" />
         <div className="noise-overlay" />
 
-        {/* Oversized Background Parallax Typography */}
+        {/* Background parallax text */}
         <div className="bg-parallax-typography select-none">
           <motion.div className="parallax-text-line" style={{ x: bgX }}>
             featured featured featured
           </motion.div>
-          <motion.div className="parallax-text-line text-right" style={{ x: useTransform(scrollYProgress, [0, 1], ["0vw", "30vw"]) }}>
+          <motion.div
+            className="parallax-text-line text-right"
+            style={{ x: useTransform(scrollYProgress, [0, 1], ['0vw', '30vw']) }}
+          >
             garments garments garments
           </motion.div>
           <motion.div className="parallax-text-line text-[#C10E1D]/10" style={{ x: bgX }}>
@@ -363,36 +400,30 @@ export default function FeaturedGarmentsHorizontal() {
           </motion.div>
         </div>
 
-        {/* Scroll Viewport Track */}
+        {/* Scroll track */}
         <div className="horizontal-scroll-viewport">
-          <motion.div 
-            ref={trackRef}
-            className="horizontal-track" 
-            style={{ x }}
-          >
-            {/* Products cards */}
+          <motion.div ref={trackRef} className="horizontal-track" style={{ x }}>
+            {/* Product cards — each gets its own DOF stream */}
             {products.map((prod, idx) => {
               const isInWish = wishlist.some((w) => w.id === prod.id);
               return (
-                <div key={prod.id} className="card-perspective-wrapper">
-                  <EditorialProductCard
-                    product={prod}
-                    isActive={idx === activeIndex}
-                    addToCart={addToCart}
-                    toggleWishlist={toggleWishlist}
-                    isInWishlist={isInWish}
-                    onHoverCard={(hovered) => {
-                      setLocalCursorType(hovered ? 'explore' : 'default');
-                    }}
-                    onHoverAction={(action) => {
-                      setLocalCursorType(action ? 'action' : 'explore');
-                    }}
-                  />
-                </div>
+                <EditorialProductCard
+                  key={prod.id}
+                  product={prod}
+                  cardIndex={idx}
+                  totalCards={totalCards}
+                  scrollYProgress={scrollYProgress}
+                  activeIndex={activeIndex}
+                  addToCart={addToCart}
+                  toggleWishlist={toggleWishlist}
+                  isInWishlist={isInWish}
+                  onHoverCard={(hovered) => setLocalCursorType(hovered ? 'explore' : 'default')}
+                  onHoverAction={(action) => setLocalCursorType(action ? 'action' : 'explore')}
+                />
               );
             })}
 
-            {/* Discover Full Collection Billboard panel */}
+            {/* Discover billboard */}
             <div className="discover-billboard-wrapper">
               <div className={`discover-billboard-card rounded-sm ${activeIndex === 4 ? 'is-active' : ''}`}>
                 <div className="discover-text-content">
@@ -410,7 +441,6 @@ export default function FeaturedGarmentsHorizontal() {
                     </Link>
                   </div>
                 </div>
-                
                 <div className="discover-image-frame rounded-sm">
                   <Image
                     src="/denim_jacket_hero.jpg"
@@ -425,20 +455,17 @@ export default function FeaturedGarmentsHorizontal() {
           </motion.div>
         </div>
 
-        {/* Floating Bottom Editorial Control indicators */}
+        {/* Bottom editorial controls */}
         <div className="bottom-editorial-controls select-none">
-          {/* Progress Indicator line */}
           <div className="progress-indicator-track rounded-full">
-            <motion.div 
+            <motion.div
               className="progress-indicator-glow"
               style={{ scaleX: scrollYProgress, originX: 0 }}
             />
           </div>
-
-          {/* Page Counter numbers */}
           <div className="editorial-product-counter">
             <AnimatePresence mode="wait">
-              <motion.span 
+              <motion.span
                 key={activeIndex}
                 initial={{ y: 15, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -446,7 +473,7 @@ export default function FeaturedGarmentsHorizontal() {
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="counter-active-num"
               >
-                {activeIndex < 4 ? `0${activeIndex + 1}` : "04"}
+                {activeIndex < 4 ? `0${activeIndex + 1}` : '04'}
               </motion.span>
             </AnimatePresence>
             <span className="counter-separator">/</span>
@@ -455,18 +482,15 @@ export default function FeaturedGarmentsHorizontal() {
         </div>
       </div>
 
-      {/* Circular Luxury Tracking Cursor */}
+      {/* Luxury tracking cursor */}
       {cursorVisible && (
         <motion.div
           className={`horizontal-luxury-cursor ${
             cursorType === 'explore' ? 'is-hovered' : cursorType === 'action' ? 'is-clickable' : ''
           }`}
-          style={{
-            left: cursorSpringX,
-            top: cursorSpringY
-          }}
+          style={{ left: cursorSpringX, top: cursorSpringY }}
         >
-          {cursorType === 'explore' && "Explore"}
+          {cursorType === 'explore' && 'Explore'}
           <div className="horizontal-luxury-cursor-dot" />
         </motion.div>
       )}
