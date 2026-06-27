@@ -57,7 +57,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
         {/* Left Column: Image Gallery */}
         <div className="lg:col-span-7">
           <ProductGallery 
-            images={[product.image, product.hoverImage || product.image, product.image]} 
+            images={[product.image]} 
             productName={product.name} 
           />
         </div>

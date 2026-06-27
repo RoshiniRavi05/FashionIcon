@@ -75,29 +75,31 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
       </div>
 
       {/* Thumbnails */}
-      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-        {images.map((img, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentIndex(idx)}
-            className={`relative flex-none w-24 h-32 sm:w-28 sm:h-36 bg-[#0c0c0e] overflow-hidden snap-center transition-all duration-300 rounded-sm group flex items-end justify-center pb-2 ${
-              currentIndex === idx 
-                ? 'border border-[#C10E1D] brightness-100' 
-                : 'border border-white/5 brightness-50 hover:brightness-90'
-            }`}
-          >
-            <Image
-              src={img}
-              alt={`${productName} thumbnail ${idx + 1}`}
-              fill
-              className="object-cover object-center absolute inset-0 z-0"
-            />
-            <span className="relative z-10 text-[9px] font-heading tracking-widest uppercase text-white/80 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
-              {labels[idx] || `View ${idx + 1}`}
-            </span>
-          </button>
-        ))}
-      </div>
+      {images.length > 1 && (
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+          {images.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
+              className={`relative flex-none w-24 h-32 sm:w-28 sm:h-36 bg-[#0c0c0e] overflow-hidden snap-center transition-all duration-300 rounded-sm group flex items-end justify-center pb-2 ${
+                currentIndex === idx 
+                  ? 'border border-[#C10E1D] brightness-100' 
+                  : 'border border-white/5 brightness-50 hover:brightness-90'
+              }`}
+            >
+              <Image
+                src={img}
+                alt={`${productName} thumbnail ${idx + 1}`}
+                fill
+                className="object-contain object-center absolute inset-0 z-0"
+              />
+              <span className="relative z-10 text-[9px] font-heading tracking-widest uppercase text-white/80 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
+                {labels[idx] || `View ${idx + 1}`}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
