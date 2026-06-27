@@ -48,50 +48,60 @@ function useCardDOF(
   cardIndex: number,    // 0-based among product cards
   totalCards: number,   // total product cards (not counting billboard)
 ) {
-  // Each card owns 1/totalCards fraction of [0, 1] scroll range.
-  // We add a tiny offset so the first card is active right at scroll=0.
-  const sliceSize = 1 / (totalCards + 1); // +1 for the billboard panel
-  const cardCenter = cardIndex * sliceSize + sliceSize * 0.5;
+  // Card 0 is perfectly sharp at scroll=0.
+  // Cards are spaced evenly across 80% of the scroll range [0, 0.8],
+  // leaving the last 20% for the billboard panel.
+  // cardCenter for card i = i * (0.8 / (totalCards - 1))
+  const scrollBand = 0.80; // product cards occupy 0–80% of scroll
+  const cardCenter = totalCards === 1
+    ? 0
+    : cardIndex * (scrollBand / (totalCards - 1));
 
-  // How far is the current scroll from this card's ideal center (0 = perfect focus)
-  // We map a ±sliceSize window around the center to visual values.
-  const half = sliceSize * 0.85;
+  // Transition window: each card fades in/out across ±half of its spacing
+  const spacing = scrollBand / Math.max(totalCards - 1, 1);
+  const half = spacing * 1.1; // slightly wider than spacing so adjacent card is softly blurred
+
+  // Clamp input range so values before/after window stay at the edge output
+  const lo = Math.max(cardCenter - half, 0);
+  const hi = Math.min(cardCenter + half, 1);
+  const loSoft = cardCenter - half * 0.35;
+  const hiSoft = cardCenter + half * 0.35;
 
   const blurRaw = useTransform(
     scrollYProgress,
-    [cardCenter - half, cardCenter - half * 0.3, cardCenter, cardCenter + half * 0.3, cardCenter + half],
-    [16, 8, 0, 8, 16]
+    [lo, loSoft, cardCenter, hiSoft, hi],
+    [12, 6, 0, 6, 12]
   );
   const opacityRaw = useTransform(
     scrollYProgress,
-    [cardCenter - half, cardCenter - half * 0.4, cardCenter, cardCenter + half * 0.4, cardCenter + half],
-    [0.18, 0.45, 1, 0.45, 0.18]
+    [lo, loSoft, cardCenter, hiSoft, hi],
+    [0.35, 0.55, 1, 0.55, 0.35]
   );
   const scaleRaw = useTransform(
     scrollYProgress,
-    [cardCenter - half, cardCenter - half * 0.4, cardCenter, cardCenter + half * 0.4, cardCenter + half],
-    [0.84, 0.92, 1.0, 0.92, 0.84]
+    [lo, loSoft, cardCenter, hiSoft, hi],
+    [0.88, 0.94, 1.0, 0.94, 0.88]
   );
   const brightnessRaw = useTransform(
     scrollYProgress,
-    [cardCenter - half, cardCenter - half * 0.4, cardCenter, cardCenter + half * 0.4, cardCenter + half],
-    [0.55, 0.75, 1.0, 0.75, 0.55]
+    [lo, loSoft, cardCenter, hiSoft, hi],
+    [0.65, 0.80, 1.0, 0.80, 0.65]
   );
   const glowOpacityRaw = useTransform(
     scrollYProgress,
-    [cardCenter - half * 0.5, cardCenter, cardCenter + half * 0.5],
+    [Math.max(cardCenter - half * 0.6, 0), cardCenter, Math.min(cardCenter + half * 0.6, 1)],
     [0, 1, 0]
   );
 
   // Spring-smooth all values for silky interpolation
-  const blur = useSpring(blurRaw, { stiffness: 90, damping: 22 });
-  const opacity = useSpring(opacityRaw, { stiffness: 90, damping: 22 });
-  const scale = useSpring(scaleRaw, { stiffness: 90, damping: 22 });
-  const brightness = useSpring(brightnessRaw, { stiffness: 90, damping: 22 });
-  const glowOpacity = useSpring(glowOpacityRaw, { stiffness: 80, damping: 24 });
+  const blur = useSpring(blurRaw, { stiffness: 80, damping: 20 });
+  const opacity = useSpring(opacityRaw, { stiffness: 80, damping: 20 });
+  const scale = useSpring(scaleRaw, { stiffness: 80, damping: 20 });
+  const brightness = useSpring(brightnessRaw, { stiffness: 80, damping: 20 });
+  const glowOpacity = useSpring(glowOpacityRaw, { stiffness: 70, damping: 22 });
 
   // isActive threshold for discrete UI changes (price counter, etc.)
-  const isActive = cardIndex === Math.round(scrollYProgress.get() / sliceSize - 0.5);
+  const isActive = cardIndex === Math.round(scrollYProgress.get() / (scrollBand / Math.max(totalCards - 1, 1)));
 
   return { blur, opacity, scale, brightness, glowOpacity };
 }
@@ -337,8 +347,11 @@ export default function FeaturedGarmentsHorizontal() {
 
   // Update discrete activeIndex for counter / price roll-up
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    const sliceSize = 1 / (totalCards + 1);
-    const idx = Math.min(Math.floor(latest / sliceSize), totalCards);
+    const scrollBand = 0.80;
+    const spacing = scrollBand / Math.max(totalCards - 1, 1);
+    const idx = latest >= 0.88
+      ? totalCards // billboard
+      : Math.min(Math.round(latest / spacing), totalCards - 1);
     setActiveIndex(idx);
   });
 
