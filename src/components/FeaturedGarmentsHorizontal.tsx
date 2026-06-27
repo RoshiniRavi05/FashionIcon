@@ -11,6 +11,7 @@ import {
   AnimatePresence,
   useSpring,
   useMotionValue,
+  motionValue,
   MotionValue,
 } from 'framer-motion';
 import { Heart, ArrowRight } from 'lucide-react';
@@ -22,97 +23,48 @@ import './FeaturedGarmentsHorizontal.css';
 const PriceCounter = ({ priceStr, active }: { priceStr: string; active: boolean }) => {
   const numericValue = parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
   const [displayValue, setDisplayValue] = useState(0);
-
   useEffect(() => {
     if (!active) { setDisplayValue(0); return; }
-    let animationFrameId: number;
+    let rafId: number;
     const startTime = performance.now();
     const update = (now: number) => {
       const progress = Math.min((now - startTime) / 800, 1);
       const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       setDisplayValue(Math.floor(numericValue * eased));
-      if (progress < 1) animationFrameId = requestAnimationFrame(update);
+      if (progress < 1) rafId = requestAnimationFrame(update);
     };
-    animationFrameId = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(animationFrameId);
+    rafId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(rafId);
   }, [active, numericValue]);
-
   return <span>${displayValue}</span>;
 };
 
-// ─── Per-Card Cinematic DOF Hook ──────────────────────────────────────────────
-// Returns live MotionValues for blur, scale, opacity, brightness based on
-// how close this card's center is to viewport center during horizontal scroll.
-function useCardDOF(
-  scrollYProgress: MotionValue<number>,
-  cardIndex: number,    // 0-based among product cards
-  totalCards: number,   // total product cards (not counting billboard)
-) {
-  // Card 0 is perfectly sharp at scroll=0.
-  // Cards are spaced evenly across 80% of the scroll range [0, 0.8],
-  // leaving the last 20% for the billboard panel.
-  // cardCenter for card i = i * (0.8 / (totalCards - 1))
-  const scrollBand = 0.80; // product cards occupy 0–80% of scroll
-  const cardCenter = totalCards === 1
-    ? 0
-    : cardIndex * (scrollBand / (totalCards - 1));
+// ─── DOF MotionValues bundle per card ────────────────────────────────────────
+interface CardDOF {
+  blur: MotionValue<number>;
+  opacity: MotionValue<number>;
+  scale: MotionValue<number>;
+  brightness: MotionValue<number>;
+  glowOpacity: MotionValue<number>;
+}
 
-  // Transition window: each card fades in/out across ±half of its spacing
-  const spacing = scrollBand / Math.max(totalCards - 1, 1);
-  const half = spacing * 1.1; // slightly wider than spacing so adjacent card is softly blurred
-
-  // Clamp input range so values before/after window stay at the edge output
-  const lo = Math.max(cardCenter - half, 0);
-  const hi = Math.min(cardCenter + half, 1);
-  const loSoft = cardCenter - half * 0.35;
-  const hiSoft = cardCenter + half * 0.35;
-
-  const blurRaw = useTransform(
-    scrollYProgress,
-    [lo, loSoft, cardCenter, hiSoft, hi],
-    [12, 6, 0, 6, 12]
-  );
-  const opacityRaw = useTransform(
-    scrollYProgress,
-    [lo, loSoft, cardCenter, hiSoft, hi],
-    [0.35, 0.55, 1, 0.55, 0.35]
-  );
-  const scaleRaw = useTransform(
-    scrollYProgress,
-    [lo, loSoft, cardCenter, hiSoft, hi],
-    [0.88, 0.94, 1.0, 0.94, 0.88]
-  );
-  const brightnessRaw = useTransform(
-    scrollYProgress,
-    [lo, loSoft, cardCenter, hiSoft, hi],
-    [0.65, 0.80, 1.0, 0.80, 0.65]
-  );
-  const glowOpacityRaw = useTransform(
-    scrollYProgress,
-    [Math.max(cardCenter - half * 0.6, 0), cardCenter, Math.min(cardCenter + half * 0.6, 1)],
-    [0, 1, 0]
-  );
-
-  // Spring-smooth all values for silky interpolation
-  const blur = useSpring(blurRaw, { stiffness: 80, damping: 20 });
-  const opacity = useSpring(opacityRaw, { stiffness: 80, damping: 20 });
-  const scale = useSpring(scaleRaw, { stiffness: 80, damping: 20 });
-  const brightness = useSpring(brightnessRaw, { stiffness: 80, damping: 20 });
-  const glowOpacity = useSpring(glowOpacityRaw, { stiffness: 70, damping: 22 });
-
-  // isActive threshold for discrete UI changes (price counter, etc.)
-  const isActive = cardIndex === Math.round(scrollYProgress.get() / (scrollBand / Math.max(totalCards - 1, 1)));
-
-  return { blur, opacity, scale, brightness, glowOpacity };
+// Create outside component so motionValue() (non-hook) is not inside render
+function createCardDOF(isFirst: boolean): CardDOF {
+  return {
+    blur:        motionValue(isFirst ? 0  : 11),
+    opacity:     motionValue(isFirst ? 1  : 0.42),
+    scale:       motionValue(isFirst ? 1  : 0.91),
+    brightness:  motionValue(isFirst ? 1  : 0.70),
+    glowOpacity: motionValue(isFirst ? 1  : 0),
+  };
 }
 
 // ─── Editorial Product Card ───────────────────────────────────────────────────
 interface EditorialCardProps {
   product: Product;
-  cardIndex: number;
-  totalCards: number;
-  scrollYProgress: MotionValue<number>;
-  activeIndex: number;
+  isActive: boolean;
+  dof: CardDOF;
+  wrapperRefCallback: (el: HTMLDivElement | null) => void;
   addToCart: (product: Product, size: string) => void;
   toggleWishlist: (product: Product) => void;
   isInWishlist: boolean;
@@ -122,10 +74,9 @@ interface EditorialCardProps {
 
 const EditorialProductCard = ({
   product,
-  cardIndex,
-  totalCards,
-  scrollYProgress,
-  activeIndex,
+  isActive,
+  dof,
+  wrapperRefCallback,
   addToCart,
   toggleWishlist,
   isInWishlist,
@@ -133,29 +84,20 @@ const EditorialProductCard = ({
   onHoverAction,
 }: EditorialCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isActive = cardIndex === activeIndex;
-
   const sizes = product.category === 'shoes' ? ['8', '9', '10', '11'] : ['S', 'M', 'L', 'XL'];
   const [selectedSize, setSelectedSize] = useState(sizes[1]);
 
-  // ── Continuous DOF values from scroll ──
-  const { blur, opacity, scale, brightness, glowOpacity } = useCardDOF(
-    scrollYProgress, cardIndex, totalCards
-  );
-
-  // ── 3D tilt on mouse move ──
+  // 3D tilt on mouse
   const rotateX = useSpring(0, { stiffness: 120, damping: 25 });
   const rotateY = useSpring(0, { stiffness: 120, damping: 25 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    rotateX.set(((y / rect.height) - 0.5) * -10);
-    rotateY.set(((x / rect.width) - 0.5) * 10);
-    cardRef.current.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
-    cardRef.current.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+    rotateX.set(((e.clientY - rect.top) / rect.height - 0.5) * -10);
+    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 10);
+    cardRef.current.style.setProperty('--mouse-x', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    cardRef.current.style.setProperty('--mouse-y', `${((e.clientY - rect.top) / rect.height) * 100}%`);
   };
 
   const handleMouseLeave = () => {
@@ -164,18 +106,22 @@ const EditorialProductCard = ({
     onHoverCard(false);
   };
 
-  // Compose filter string from live motion values
+  // Compose filter string from live DOF MotionValues every frame
   const filterStr = useTransform(
-    [blur, brightness],
-    ([b, br]: number[]) => `blur(${b.toFixed(2)}px) brightness(${br.toFixed(3)})`
+    () => `blur(${dof.blur.get().toFixed(1)}px) brightness(${dof.brightness.get().toFixed(3)})`
   );
 
   return (
-    <div className="card-perspective-wrapper" style={{ willChange: 'transform' }}>
-      {/* Cinematic spotlight glow behind active card */}
+    // Outer wrapper: rAF loop measures this element's bounding rect
+    <div
+      ref={wrapperRefCallback}
+      className="card-perspective-wrapper"
+      style={{ willChange: 'transform' }}
+    >
+      {/* Cinematic spotlight halo — fades in only when card is centered */}
       <motion.div
         className="card-dof-spotlight"
-        style={{ opacity: glowOpacity }}
+        style={{ opacity: dof.glowOpacity }}
         aria-hidden
       />
 
@@ -188,8 +134,8 @@ const EditorialProductCard = ({
         style={{
           rotateX,
           rotateY,
-          scale,
-          opacity,
+          scale: dof.scale,
+          opacity: dof.opacity,
           filter: filterStr,
           willChange: 'transform, filter, opacity',
           boxShadow: isActive
@@ -197,13 +143,10 @@ const EditorialProductCard = ({
             : 'none',
         }}
       >
-        {/* Spotlight shimmer overlay */}
         <div className="card-spotlight-overlay" />
 
-        {/* Badge */}
         {product.tag && <div className="card-tag">{product.tag}</div>}
 
-        {/* Wishlist */}
         <button
           onClick={() => toggleWishlist(product)}
           onMouseEnter={() => onHoverAction(true)}
@@ -216,7 +159,6 @@ const EditorialProductCard = ({
           }`} />
         </button>
 
-        {/* Image */}
         <div className="card-image-frame rounded-sm">
           <motion.div
             className="w-full h-full relative"
@@ -248,10 +190,7 @@ const EditorialProductCard = ({
               </motion.div>
             )}
           </motion.div>
-
           <div className="reflection-sweep" />
-
-          {/* Size panel */}
           <div className="card-sizing-panel">
             <span className="sizing-title">Select Size</span>
             <div className="sizing-options-grid">
@@ -270,7 +209,6 @@ const EditorialProductCard = ({
           </div>
         </div>
 
-        {/* Card info */}
         <div className="card-details-info">
           <div className="card-title-price-row">
             <div className="flex-grow">
@@ -288,7 +226,6 @@ const EditorialProductCard = ({
               <PriceCounter priceStr={product.price} active={isActive} />
             </div>
           </div>
-
           <div className="card-action-btn-container">
             <div className="card-action-btn-line" />
             <button
@@ -315,6 +252,19 @@ export default function FeaturedGarmentsHorizontal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
+  // Per-card rAF-driven DOF MotionValues (created once, never recreated)
+  const dofValues = useRef<CardDOF[]>([]);
+  if (dofValues.current.length === 0) {
+    for (let i = 0; i < totalCards; i++) {
+      dofValues.current.push(createCardDOF(i === 0));
+    }
+  }
+
+  // Card wrapper DOM refs — rAF loop reads their getBoundingClientRect()
+  const cardWrapperRefs = useRef<(HTMLDivElement | null)[]>(
+    Array(totalCards).fill(null)
+  );
+
   const [scrollRange, setScrollRange] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [cursorVisible, setCursorVisible] = useState(false);
@@ -325,16 +275,17 @@ export default function FeaturedGarmentsHorizontal() {
   const cursorSpringX = useSpring(mouseX, { stiffness: 350, damping: 30 });
   const cursorSpringY = useSpring(mouseY, { stiffness: 350, damping: 30 });
 
+  // ── Measure horizontal scroll range ──
   useEffect(() => {
-    const calculateRange = () => {
+    const calc = () => {
       if (trackRef.current) {
         setScrollRange(trackRef.current.scrollWidth - window.innerWidth);
       }
     };
-    calculateRange();
-    const timer = setTimeout(calculateRange, 200);
-    window.addEventListener('resize', calculateRange);
-    return () => { window.removeEventListener('resize', calculateRange); clearTimeout(timer); };
+    calc();
+    const t = setTimeout(calc, 200);
+    window.addEventListener('resize', calc);
+    return () => { window.removeEventListener('resize', calc); clearTimeout(t); };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -345,15 +296,50 @@ export default function FeaturedGarmentsHorizontal() {
   const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
   const bgX = useTransform(scrollYProgress, [0, 1], ['0vw', '-45vw']);
 
-  // Update discrete activeIndex for counter / price roll-up
+  // Discrete active index for counter / price roll-up
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    const scrollBand = 0.80;
-    const spacing = scrollBand / Math.max(totalCards - 1, 1);
-    const idx = latest >= 0.88
-      ? totalCards // billboard
-      : Math.min(Math.round(latest / spacing), totalCards - 1);
+    const sliceSize = 1 / (totalCards + 1);
+    const idx = Math.min(Math.floor(latest / sliceSize), totalCards);
     setActiveIndex(idx);
   });
+
+  // ── rAF DOF loop — measures actual card positions every frame ──
+  useEffect(() => {
+    let rafId: number;
+
+    const update = () => {
+      const vCenter = window.innerWidth / 2;
+
+      cardWrapperRefs.current.forEach((wrapper, i) => {
+        if (!wrapper) return;
+        const dof = dofValues.current[i];
+        if (!dof) return;
+
+        const rect = wrapper.getBoundingClientRect();
+        const cardCenter = rect.left + rect.width / 2;
+        const distance = Math.abs(cardCenter - vCenter);
+
+        // Normalize: 0 = card perfectly centered, 1 = one card-width away
+        // Using 1.1× card width as the full-blur distance feels natural
+        const t = Math.min(distance / (rect.width * 1.1), 1);
+
+        // Ease the transition: smooth cubic so center snaps sharp cleanly
+        const eased = t * t * (3 - 2 * t); // smoothstep
+
+        dof.blur.set(eased * 11);             // 0 → 11px
+        dof.opacity.set(1 - eased * 0.58);   // 1 → 0.42
+        dof.scale.set(1 - eased * 0.09);     // 1 → 0.91
+        dof.brightness.set(1 - eased * 0.30);// 1 → 0.70
+        dof.glowOpacity.set(Math.max(0, 1 - eased * 2.5)); // sharp drop-off
+      });
+
+      rafId = requestAnimationFrame(update);
+    };
+
+    rafId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(rafId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     mouseX.set(e.clientX);
@@ -384,7 +370,6 @@ export default function FeaturedGarmentsHorizontal() {
       style={{ height: '350vh' }}
     >
       <div className="sticky-wrapper">
-        {/* Animated spotlight */}
         <motion.div
           className="bg-spotlight-active"
           animate={{
@@ -397,7 +382,6 @@ export default function FeaturedGarmentsHorizontal() {
         <div className="bg-radial-soft" />
         <div className="noise-overlay" />
 
-        {/* Background parallax text */}
         <div className="bg-parallax-typography select-none">
           <motion.div className="parallax-text-line" style={{ x: bgX }}>
             featured featured featured
@@ -413,20 +397,17 @@ export default function FeaturedGarmentsHorizontal() {
           </motion.div>
         </div>
 
-        {/* Scroll track */}
         <div className="horizontal-scroll-viewport">
           <motion.div ref={trackRef} className="horizontal-track" style={{ x }}>
-            {/* Product cards — each gets its own DOF stream */}
             {products.map((prod, idx) => {
               const isInWish = wishlist.some((w) => w.id === prod.id);
               return (
                 <EditorialProductCard
                   key={prod.id}
                   product={prod}
-                  cardIndex={idx}
-                  totalCards={totalCards}
-                  scrollYProgress={scrollYProgress}
-                  activeIndex={activeIndex}
+                  isActive={idx === activeIndex}
+                  dof={dofValues.current[idx]}
+                  wrapperRefCallback={(el) => { cardWrapperRefs.current[idx] = el; }}
                   addToCart={addToCart}
                   toggleWishlist={toggleWishlist}
                   isInWishlist={isInWish}
@@ -436,7 +417,7 @@ export default function FeaturedGarmentsHorizontal() {
               );
             })}
 
-            {/* Discover billboard */}
+            {/* Billboard */}
             <div className="discover-billboard-wrapper">
               <div className={`discover-billboard-card rounded-sm ${activeIndex === 4 ? 'is-active' : ''}`}>
                 <div className="discover-text-content">
@@ -468,7 +449,6 @@ export default function FeaturedGarmentsHorizontal() {
           </motion.div>
         </div>
 
-        {/* Bottom editorial controls */}
         <div className="bottom-editorial-controls select-none">
           <div className="progress-indicator-track rounded-full">
             <motion.div
@@ -495,7 +475,6 @@ export default function FeaturedGarmentsHorizontal() {
         </div>
       </div>
 
-      {/* Luxury tracking cursor */}
       {cursorVisible && (
         <motion.div
           className={`horizontal-luxury-cursor ${
