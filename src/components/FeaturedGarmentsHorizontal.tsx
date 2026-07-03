@@ -103,13 +103,15 @@ const EditorialProductCard = ({
           onMouseMove={handleMouseMove}
           onMouseEnter={() => onHoverCard(true)}
           onMouseLeave={handleMouseLeave}
-          onClick={() => router.push(`/product/${product.id}`)}
           className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
           style={{ rotateX, rotateY }}
         >
+          {/* Native link overlay for reliable navigation */}
+          <Link href={`/product/${product.id}`} className="absolute inset-0 z-[5]" />
+
           <div className="card-spotlight-overlay" />
 
-          {product.tag && <div className="card-tag">{product.tag}</div>}
+          {product.tag && <div className="card-tag z-10 relative">{product.tag}</div>}
 
           <button
             onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
@@ -155,7 +157,7 @@ const EditorialProductCard = ({
               )}
             </motion.div>
             <div className="reflection-sweep" />
-            <div className="card-sizing-panel">
+            <div className="card-sizing-panel z-10 relative">
               <span className="sizing-title">Select Size</span>
               <div className="sizing-options-grid">
                 {sizes.map((sz) => (
