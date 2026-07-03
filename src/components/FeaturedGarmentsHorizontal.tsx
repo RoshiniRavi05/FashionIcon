@@ -299,30 +299,27 @@ export default function FeaturedGarmentsHorizontal() {
         if (!rect || !dofLayer || !wrapper) return;
 
         const cardCenter = rect.left + rect.width / 2;
-        const dist = Math.abs(cardCenter - vCenter);
+        const signedDist = cardCenter - vCenter;
+        
+        // Normalize distance: 1 unit = 1.2x card width
+        const t = Math.max(-1.5, Math.min(1.5, signedDist / (rect.width * 1.2)));
 
-        // Tight focus window: full blur kicks in at 40% of card width from center
-        // This ensures only the truly-centered card is sharp
-        const focusRadius = rect.width * 0.40;
-        const t = Math.min(dist / focusRadius, 1);
-
-        // Smoothstep — fast near 0, sharp snap at center
-        const eased = t * t * (3 - 2 * t);
-
-        // Ethereal / Liquid Glass style (no blur)
-        const opacity = (1 - eased * 0.65).toFixed(3);  // 1 → 0.35
-        const scale = (1.05 - eased * 0.15).toFixed(4);    // 1.05 (center) → 0.90
-        const brightness = (1 - eased * 0.15).toFixed(3); // 1 → 0.85
+        // 3D Spatial / Cover Flow style
+        const rotateY = (t * -45).toFixed(2); // Cards angle towards the center
+        const translateZ = (Math.abs(t) * -150).toFixed(2); // Push inactive cards back in 3D space
+        const scale = (1 - Math.abs(t) * 0.1).toFixed(3);
+        const opacity = (1 - Math.abs(t) * 0.35).toFixed(3);
+        const brightness = (1 - Math.abs(t) * 0.3).toFixed(3);
 
         // Write to DOF layer (bypasses Framer Motion)
         dofLayer.style.filter = `brightness(${brightness})`;
         dofLayer.style.opacity = opacity;
-        dofLayer.style.transform = `scale(${scale})`;
+        dofLayer.style.transform = `perspective(1200px) rotateY(${rotateY}deg) translateZ(${translateZ}px) scale(${scale})`;
 
         // Spotlight glow (separate element in wrapper)
         const spotlight = wrapper.querySelector<HTMLElement>('.card-dof-spotlight');
         if (spotlight) {
-          const glowT = Math.min(dist / (rect.width * 0.6), 1);
+          const glowT = Math.min(Math.abs(signedDist) / (rect.width * 0.6), 1);
           spotlight.style.opacity = (Math.max(0, 1 - glowT * glowT * 3)).toFixed(3);
         }
       });
