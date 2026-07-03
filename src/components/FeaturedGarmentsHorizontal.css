@@ -116,11 +116,12 @@
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.055) 0%,
-    rgba(255, 255, 255, 0.015) 40%,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(144, 204, 255, 0.03) 30%,
+    rgba(255, 144, 204, 0.01) 50%,
     transparent 70%
   );
-  filter: blur(30px);
+  filter: blur(40px);
   pointer-events: none;
   z-index: 0;
   will-change: opacity;
@@ -135,9 +136,9 @@
   z-index: 1;
   will-change: filter, opacity, transform;
   /* Initial state for non-first cards (overridden immediately by rAF) */
-  filter: blur(11px) brightness(0.72);
-  opacity: 0.42;
-  transform: scale(0.91);
+  filter: brightness(0.85);
+  opacity: 0.35;
+  transform: scale(0.9);
   transform-style: preserve-3d;
 }
 

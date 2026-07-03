@@ -309,13 +309,13 @@ export default function FeaturedGarmentsHorizontal() {
         // Smoothstep — fast near 0, sharp snap at center
         const eased = t * t * (3 - 2 * t);
 
-        const blur = (eased * 11).toFixed(1);       // 0 → 11px
-        const opacity = (1 - eased * 0.58).toFixed(3);  // 1 → 0.42
-        const scale = (1 - eased * 0.09).toFixed(4);    // 1 → 0.91
-        const brightness = (1 - eased * 0.28).toFixed(3); // 1 → 0.72
+        // Ethereal / Liquid Glass style (no blur)
+        const opacity = (1 - eased * 0.65).toFixed(3);  // 1 → 0.35
+        const scale = (1.05 - eased * 0.15).toFixed(4);    // 1.05 (center) → 0.90
+        const brightness = (1 - eased * 0.15).toFixed(3); // 1 → 0.85
 
-        // Write to DOF layer (not the motion.div — no Framer Motion conflict)
-        dofLayer.style.filter = `blur(${blur}px) brightness(${brightness})`;
+        // Write to DOF layer (bypasses Framer Motion)
+        dofLayer.style.filter = `brightness(${brightness})`;
         dofLayer.style.opacity = opacity;
         dofLayer.style.transform = `scale(${scale})`;
 
