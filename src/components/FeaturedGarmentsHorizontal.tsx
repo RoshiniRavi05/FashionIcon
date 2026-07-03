@@ -106,9 +106,6 @@ const EditorialProductCard = ({
           className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
           style={{ rotateX, rotateY }}
         >
-          {/* Native link overlay for reliable navigation */}
-          <Link href={`/product/${product.id}`} className="absolute inset-0 z-[5]" />
-
           <div className="card-spotlight-overlay" />
 
           {product.tag && <div className="card-tag z-10 relative">{product.tag}</div>}
@@ -157,7 +154,11 @@ const EditorialProductCard = ({
               )}
             </motion.div>
             <div className="reflection-sweep" />
-            <div className="card-sizing-panel z-10 relative">
+            
+            {/* Native Link to handle image clicks directly */}
+            <Link href={`/product/${product.id}`} className="absolute inset-0 z-10 block" />
+
+            <div className="card-sizing-panel z-20 relative">
               <span className="sizing-title">Select Size</span>
               <div className="sizing-options-grid">
                 {sizes.map((sz) => (
