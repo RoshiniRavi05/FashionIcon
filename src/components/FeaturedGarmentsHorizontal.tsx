@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   motion,
   useScroll,
@@ -62,6 +63,7 @@ const EditorialProductCard = ({
   onHoverCard,
   onHoverAction,
 }: EditorialCardProps) => {
+  const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const sizes = product.category === 'shoes' ? ['8', '9', '10', '11'] : ['S', 'M', 'L', 'XL'];
   const [selectedSize, setSelectedSize] = useState(sizes[1]);
@@ -101,6 +103,7 @@ const EditorialProductCard = ({
           onMouseMove={handleMouseMove}
           onMouseEnter={() => onHoverCard(true)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => router.push(`/product/${product.id}`)}
           className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
           style={{ rotateX, rotateY }}
         >
@@ -109,7 +112,7 @@ const EditorialProductCard = ({
           {product.tag && <div className="card-tag">{product.tag}</div>}
 
           <button
-            onClick={() => toggleWishlist(product)}
+            onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }}
             onMouseEnter={() => onHoverAction(true)}
             onMouseLeave={() => onHoverAction(false)}
             className="wishlist-btn-overlay rounded-sm"
@@ -175,6 +178,7 @@ const EditorialProductCard = ({
               <div className="flex-grow">
                 <Link
                   href={`/product/${product.id}`}
+                  onClick={(e) => e.stopPropagation()}
                   onMouseEnter={() => onHoverAction(true)}
                   onMouseLeave={() => onHoverAction(false)}
                   className="card-product-title hover:text-[#C10E1D] transition-colors line-clamp-2 block"
