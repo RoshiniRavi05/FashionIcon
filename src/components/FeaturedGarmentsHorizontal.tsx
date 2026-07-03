@@ -304,17 +304,17 @@ export default function FeaturedGarmentsHorizontal() {
         // Normalize distance: 1 unit = 1.2x card width
         const t = Math.max(-1.5, Math.min(1.5, signedDist / (rect.width * 1.2)));
 
-        // 3D Spatial / Cover Flow style
-        const rotateY = (t * -45).toFixed(2); // Cards angle towards the center
-        const translateZ = (Math.abs(t) * -150).toFixed(2); // Push inactive cards back in 3D space
+        // Dramatic Arch / Wheel style
+        const translateY = (Math.pow(Math.abs(t), 2) * 120).toFixed(2); // Cards drop in a smooth arc
+        const rotateZ = (t * 12).toFixed(2); // Cards fan out like a deck
         const scale = (1 - Math.abs(t) * 0.1).toFixed(3);
-        const opacity = (1 - Math.abs(t) * 0.35).toFixed(3);
-        const brightness = (1 - Math.abs(t) * 0.3).toFixed(3);
+        const opacity = (1 - Math.abs(t) * 0.4).toFixed(3);
+        const brightness = (1 - Math.abs(t) * 0.2).toFixed(3);
 
         // Write to DOF layer (bypasses Framer Motion)
         dofLayer.style.filter = `brightness(${brightness})`;
         dofLayer.style.opacity = opacity;
-        dofLayer.style.transform = `perspective(1200px) rotateY(${rotateY}deg) translateZ(${translateZ}px) scale(${scale})`;
+        dofLayer.style.transform = `translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
 
         // Spotlight glow (separate element in wrapper)
         const spotlight = wrapper.querySelector<HTMLElement>('.card-dof-spotlight');
