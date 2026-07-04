@@ -112,22 +112,21 @@ export default function ShopPage() {
           </button>
         </div>
       ) : (
-        <div className="products-grid w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start w-full">
           <AnimatePresence>
             {filtered.map((prod) => {
               const inWishlist = wishlist.some(w => w.id === prod.id);
               return (
                 <motion.div 
-                  layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
                   key={prod.id}
-                  className="product-card group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-colors duration-500"
+                  className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-colors duration-500 w-full"
                 >
                   {/* Product Image */}
-                  <div className="relative product-image-container w-full bg-[#121212] overflow-hidden">
+                  <div className="relative h-[340px] w-full bg-[#121212] overflow-hidden">
                     <Link href={`/product/${prod.id}`}>
                       <Image
                         src={prod.image}
