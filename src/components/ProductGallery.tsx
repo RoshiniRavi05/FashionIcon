@@ -23,7 +23,16 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     setMousePos({ x, y });
   };
 
-  const labels = ["Front", "Back", "Side"];
+  const labels = ["Front", "Back", "Detail"];
+  // Smart Mockup: Duplicate the primary image 3 times to guarantee the exact same person and product
+  const mockGallery = [images[0], images[0], images[0]];
+  
+  // Apply CSS transforms to fake the different angles
+  const transforms = [
+    "", // Front: Normal
+    "scale-x-[-1]", // Back: Flipped horizontally for a different pose aesthetic
+    "scale-[1.4] object-top" // Detail: Zoomed in on the garment
+  ];
 
   return (
     <div className="space-y-6">
@@ -52,19 +61,19 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               className="absolute inset-0 w-full h-full"
             >
               <Image
-                src={images[currentIndex]}
+                src={mockGallery[currentIndex]}
                 alt={`${productName} view ${currentIndex + 1}`}
                 fill
-                className={`object-contain object-center transition-opacity duration-300 ${isZooming ? 'opacity-0' : 'opacity-100'}`}
+                className={`object-contain object-center transition-opacity duration-300 ${isZooming ? 'opacity-0' : 'opacity-100'} ${transforms[currentIndex]}`}
                 priority
               />
             </motion.div>
 
             {/* The zoomed image layer */}
             <div 
-              className={`absolute inset-0 w-full h-full transition-opacity duration-300 pointer-events-none ${isZooming ? 'opacity-100' : 'opacity-0'}`}
+              className={`absolute inset-0 w-full h-full transition-opacity duration-300 pointer-events-none ${isZooming ? 'opacity-100' : 'opacity-0'} ${transforms[currentIndex]}`}
               style={{
-                backgroundImage: `url(${images[currentIndex]})`,
+                backgroundImage: `url(${mockGallery[currentIndex]})`,
                 backgroundPosition: `${mousePos.x}% ${mousePos.y}%`,
                 backgroundSize: '130%',
                 backgroundRepeat: 'no-repeat',
@@ -75,10 +84,9 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
-          {images.map((img, idx) => (
-            <button
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-2">
+        {mockGallery.map((img, idx) => (
+          <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               className={`relative flex-none w-24 h-32 sm:w-28 sm:h-36 bg-[#0c0c0e] overflow-hidden snap-center transition-all duration-300 rounded-sm group flex items-end justify-center pb-2 ${
@@ -91,7 +99,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
                 src={img}
                 alt={`${productName} thumbnail ${idx + 1}`}
                 fill
-                className="object-contain object-center absolute inset-0 z-0"
+                className={`object-contain object-center absolute inset-0 z-0 ${transforms[idx]}`}
               />
               <span className="relative z-10 text-[9px] font-heading tracking-widest uppercase text-white/80 bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
                 {labels[idx] || `View ${idx + 1}`}
@@ -99,7 +107,6 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
             </button>
           ))}
         </div>
-      )}
     </div>
   );
 }
