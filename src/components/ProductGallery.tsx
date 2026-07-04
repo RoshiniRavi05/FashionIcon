@@ -66,7 +66,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               style={{
                 backgroundImage: `url(${images[currentIndex]})`,
                 backgroundPosition: `${mousePos.x}% ${mousePos.y}%`,
-                backgroundSize: '200%',
+                backgroundSize: '130%',
                 backgroundRepeat: 'no-repeat',
               }}
             />
