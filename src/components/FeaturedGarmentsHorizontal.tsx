@@ -68,22 +68,7 @@ const EditorialProductCard = ({
   const sizes = product.category === 'shoes' ? ['8', '9', '10', '11'] : ['S', 'M', 'L', 'XL'];
   const [selectedSize, setSelectedSize] = useState(sizes[1]);
 
-  // Only Framer Motion handles 3D tilt — DOF (filter/opacity/scale) handled by rAF on dofLayerRef
-  const rotateX = useSpring(0, { stiffness: 120, damping: 25 });
-  const rotateY = useSpring(0, { stiffness: 120, damping: 25 });
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    rotateX.set(((e.clientY - rect.top) / rect.height - 0.5) * -8);
-    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 8);
-    cardRef.current.style.setProperty('--mouse-x', `${((e.clientX - rect.left) / rect.width) * 100}%`);
-    cardRef.current.style.setProperty('--mouse-y', `${((e.clientY - rect.top) / rect.height) * 100}%`);
-  };
-
   const handleMouseLeave = () => {
-    rotateX.set(0);
-    rotateY.set(0);
     onHoverCard(false);
   };
 
@@ -97,14 +82,14 @@ const EditorialProductCard = ({
       {/* DOF layer: rAF writes filter/opacity/transform here — completely separate from Framer Motion */}
       <div ref={dofLayerRefCallback} className="card-dof-layer">
 
-        {/* Framer Motion only owns rotateX + rotateY (hover tilt) */}
+        {/* Clean Premium Hover: No 3D rotation, just a sleek upward lift */}
         <motion.div
           ref={cardRef}
-          onMouseMove={handleMouseMove}
           onMouseEnter={() => onHoverCard(true)}
           onMouseLeave={handleMouseLeave}
+          whileHover={{ y: -10 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className={`editorial-product-card ${isActive ? 'is-active' : ''}`}
-          style={{ rotateX, rotateY }}
         >
           <div className="card-spotlight-overlay" />
 
