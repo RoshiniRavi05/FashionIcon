@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Heart, Sparkles } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { DEFAULT_PRODUCTS, Product } from '@/data/products';
@@ -111,24 +112,30 @@ export default function ShopPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filtered.map((prod) => {
-            const inWishlist = wishlist.some(w => w.id === prod.id);
-            return (
-              <div 
-                key={prod.id}
-                className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-all duration-500"
-              >
-                {/* Product Image */}
-                <div className="relative h-[340px] bg-[#121212] overflow-hidden">
-                  <Link href={`/product/${prod.id}`}>
-                    <Image
-                      src={prod.image}
-                      alt={prod.name}
-                      fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    />
-                  </Link>
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start w-full">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((prod) => {
+              const inWishlist = wishlist.some(w => w.id === prod.id);
+              return (
+                <motion.div 
+                  layout
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                  key={prod.id}
+                  className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-colors duration-500 w-full min-w-0"
+                >
+                  {/* Product Image */}
+                  <div className="relative aspect-[3/4] w-full bg-[#121212] overflow-hidden">
+                    <Link href={`/product/${prod.id}`}>
+                      <Image
+                        src={prod.image}
+                        alt={prod.name}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    </Link>
 
                   {/* Top tags overlay */}
                   <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10 pointer-events-none">
@@ -167,11 +174,12 @@ export default function ShopPage() {
                   >
                     ADD TO BAG
                   </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
       )}
     </div>
   );
