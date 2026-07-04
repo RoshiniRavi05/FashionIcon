@@ -138,7 +138,7 @@
   /* Initial state for non-first cards (overridden immediately by rAF) */
   filter: brightness(0.85);
   opacity: 0.35;
-  transform: translateY(120px) rotateZ(12deg) scale(0.9);
+  transform: none;
   transform-style: preserve-3d;
 }
 

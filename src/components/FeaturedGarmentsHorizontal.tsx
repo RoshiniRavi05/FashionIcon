@@ -311,17 +311,25 @@ export default function FeaturedGarmentsHorizontal() {
         // Normalize distance: 1 unit = 1.2x card width
         const t = Math.max(-1.5, Math.min(1.5, signedDist / (rect.width * 1.2)));
 
-        // Dramatic Arch / Wheel style
-        const translateY = (Math.pow(Math.abs(t), 2) * 120).toFixed(2); // Cards drop in a smooth arc
-        const rotateZ = (t * 12).toFixed(2); // Cards fan out like a deck
-        const scale = (1 - Math.abs(t) * 0.1).toFixed(3);
-        const opacity = (1 - Math.abs(t) * 0.4).toFixed(3);
-        const brightness = (1 - Math.abs(t) * 0.2).toFixed(3);
+        // Minimalist Premium Parallax style
+        const opacity = (1 - Math.abs(t) * 0.7).toFixed(3); // Inactive cards fade out more
+        const brightness = (1 - Math.abs(t) * 0.4).toFixed(3); // Dimming
 
         // Write to DOF layer (bypasses Framer Motion)
         dofLayer.style.filter = `brightness(${brightness})`;
         dofLayer.style.opacity = opacity;
-        dofLayer.style.transform = `translateY(${translateY}px) rotateZ(${rotateZ}deg) scale(${scale})`;
+        dofLayer.style.transform = `none`; // Perfectly flat and clean
+
+        // Parallax image panning
+        const imageElement = wrapper.querySelector<HTMLElement>('.card-image-element');
+        const hoverImageElement = wrapper.querySelector<HTMLElement>('.card-image-hover');
+        if (imageElement) {
+          const parallaxX = (signedDist * 0.15).toFixed(2); // Image pans opposite to scroll
+          imageElement.style.transform = `translateX(${parallaxX}px)`;
+          if (hoverImageElement) {
+             hoverImageElement.style.transform = `translateX(${parallaxX}px)`;
+          }
+        }
 
         // Spotlight glow (separate element in wrapper)
         const spotlight = wrapper.querySelector<HTMLElement>('.card-dof-spotlight');
