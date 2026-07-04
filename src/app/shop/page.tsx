@@ -21,7 +21,7 @@ function ShopProductCard({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const mockGallery = [prod.image, prod.image, prod.image];
-  const transforms = ["", "scale-x-[-1]", "scale-[1.4] object-top"];
+  const transforms = ["", "scale-x-[-1]", "scale-[1.25] object-center"];
 
   return (
     <motion.div 

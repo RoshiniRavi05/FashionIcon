@@ -31,7 +31,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
   const transforms = [
     "", // Front: Normal
     "scale-x-[-1]", // Back: Flipped horizontally for a different pose aesthetic
-    "scale-[1.4] object-top" // Detail: Zoomed in on the garment
+    "scale-[1.25] object-center" // Detail: Zoomed in on the garment
   ];
 
   return (
