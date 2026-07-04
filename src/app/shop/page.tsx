@@ -112,22 +112,22 @@ export default function ShopPage() {
           </button>
         </div>
       ) : (
-        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start w-full">
-          <AnimatePresence mode="popLayout">
+        <div className="products-grid w-full">
+          <AnimatePresence>
             {filtered.map((prod) => {
               const inWishlist = wishlist.some(w => w.id === prod.id);
               return (
                 <motion.div 
                   layout
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
                   key={prod.id}
-                  className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-colors duration-500 w-full min-w-0"
+                  className="product-card group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-colors duration-500"
                 >
                   {/* Product Image */}
-                  <div className="relative aspect-[3/4] w-full bg-[#121212] overflow-hidden">
+                  <div className="relative product-image-container w-full bg-[#121212] overflow-hidden">
                     <Link href={`/product/${prod.id}`}>
                       <Image
                         src={prod.image}
@@ -179,7 +179,7 @@ export default function ShopPage() {
               );
             })}
           </AnimatePresence>
-        </motion.div>
+        </div>
       )}
     </div>
   );
