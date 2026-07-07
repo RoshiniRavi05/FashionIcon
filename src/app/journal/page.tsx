@@ -1,22 +1,17 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { ArrowRight, ArrowDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { journals } from '@/data/journals';
+import { ArrowDown, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { journals, JournalArticle } from '@/data/journals';
 
+// ─── FAQ COMPONENT ───
 const faqs = [
-  { q: 'How do I choose the right size?', a: 'Our garments are designed with deliberate, architectural proportions. We recommend selecting your true size for our signature oversized, boxy fit. Detailed measurements are provided on each product page for precise tailoring insights.' },
-  { q: 'What materials are used in your garments?', a: 'We exclusively source premium 360gsm double-yarn combed cottons, selvedge denim from heritage mills in Japan, and technical performance blends. Every fabric is chosen for structural integrity and long-term durability.' },
-  { q: 'How long does shipping take?', a: 'Each piece undergoes a final quality inspection before dispatch. Domestic orders are typically delivered within 3-5 business days. International shipping requires 7-10 business days. Expedited options are available at checkout.' },
-  { q: 'Can I exchange or return my order?', a: 'Yes. We accept returns and exchanges on unworn, unwashed items with original tags attached within 14 days of delivery. Custom configurator pieces are final sale due to their personalized nature.' },
-  { q: 'How should I care for my clothing?', a: 'To preserve the premium fabrics and garment structure, we recommend machine washing cold on a gentle cycle and laying flat to dry. Avoid high heat and harsh chemical detergents.' },
-  { q: 'Do you restock sold-out collections?', a: 'Our capsule collections are strictly limited to prevent mass-production excess. However, core architectural silhouettes in standard colorways are occasionally replenished based on studio capacity.' },
-  { q: 'Are your garments ethically produced?', a: 'Absolutely. We maintain a transparent supply chain, partnering exclusively with family-owned mills and production facilities in Portugal and Japan that ensure fair wages, safe conditions, and minimal environmental impact.' },
-  { q: 'How can I contact customer support?', a: 'Our studio team is available via email at support@arcopus.studio. We aim to respond to all inquiries within 24 hours regarding sizing, orders, or styling guidance.' }
+  { q: 'How do I choose the right size?', a: 'Our garments are designed with deliberate, architectural proportions. We recommend selecting your true size for our signature oversized, boxy fit.' },
+  { q: 'What materials are used in your garments?', a: 'We exclusively source premium 360gsm double-yarn combed cottons, selvedge denim from heritage mills in Japan, and technical performance blends.' },
+  { q: 'How long does shipping take?', a: 'Domestic orders are typically delivered within 3-5 business days. International shipping requires 7-10 business days.' },
+  { q: 'Can I exchange or return my order?', a: 'Yes. We accept returns and exchanges on unworn, unwashed items with original tags attached within 14 days of delivery.' }
 ];
 
 const springConfig = { type: "spring" as const, stiffness: 400, damping: 30 };
@@ -32,15 +27,8 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
       whileHover={{ y: -2 }}
       className={`border border-white/5 hover:border-white/20 transition-all duration-300 px-8 rounded-sm mb-4 cursor-pointer group ${isOpen ? 'bg-[#0a0a0a] shadow-[0_10px_40px_rgba(0,0,0,0.6)] border-white/20' : 'bg-[#121212]'}`}
       onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
-      aria-expanded={isOpen}
     >
-      <motion.div 
-        layout="position"
-        className="w-full py-6 flex justify-between items-center text-left outline-none"
-      >
+      <motion.div layout="position" className="w-full py-6 flex justify-between items-center text-left">
         <motion.span 
           layout="position"
           animate={{ letterSpacing: isOpen ? "0.06em" : "0.03em" }}
@@ -53,7 +41,7 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
           layout="position"
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={springConfig}
-          className="relative w-4 h-4 ml-4 flex-shrink-0 text-white/50 group-hover:text-brand-red transition-colors duration-300"
+          className="relative w-4 h-4 ml-4 flex-shrink-0 text-white/50 group-hover:text-brand-red transition-colors"
         >
           <div className="w-full h-full group-hover:translate-x-[2px] transition-transform duration-300">
              <ArrowDown className="w-full h-full stroke-[1.5]" />
@@ -63,30 +51,9 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
       
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
-            layout
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={springConfig}
-            className="overflow-hidden"
-          >
-            {/* Editorial Divider */}
-            <motion.div 
-              initial={{ width: "0%" }}
-              animate={{ width: "100%" }}
-              exit={{ width: "0%" }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="h-[1px] bg-white/10 mb-6"
-            />
-            {/* Answer */}
-            <motion.p 
-              initial={{ y: 15, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 10, opacity: 0 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-              className="font-sans text-xs sm:text-sm text-white/70 leading-relaxed pb-8 max-w-[800px]"
-            >
+          <motion.div layout initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={springConfig} className="overflow-hidden">
+            <motion.div initial={{ width: "0%" }} animate={{ width: "100%" }} exit={{ width: "0%" }} transition={{ duration: 0.4 }} className="h-[1px] bg-white/10 mb-6" />
+            <motion.p initial={{ y: 15, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 10, opacity: 0 }} transition={{ duration: 0.4, delay: 0.05 }} className="font-sans text-xs sm:text-sm text-white/70 leading-relaxed pb-8 max-w-[800px]">
               {faq.a}
             </motion.p>
           </motion.div>
@@ -96,35 +63,181 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
   );
 };
 
-export default function JournalPage() {
-  const router = useRouter();
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  
-  // Custom Page Transition State
-  const [transitioningId, setTransitioningId] = useState<string | null>(null);
-  const [overlayPos, setOverlayPos] = useState({ top: 0, left: 0, width: 0, height: 0 });
-
-  const handleArticleClick = (e: React.MouseEvent<HTMLElement>, id: string) => {
-    e.preventDefault();
-    if (transitioningId) return;
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    setOverlayPos({
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height
-    });
-    setTransitioningId(id);
-
-    // Wait 250ms for card animation, then 500ms for overlay expansion, then route
-    setTimeout(() => {
-      router.push(`/journal/${id}`);
-    }, 850); 
-  };
+// ─── ARTICLE OVERLAY COMPONENT ───
+const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose: () => void }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ container: containerRef });
 
   return (
-    <div className="bg-[#050505] min-h-screen py-20 px-6 md:px-12 max-w-[1600px] mx-auto space-y-20">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="fixed inset-0 z-[100] bg-[#050505] overflow-y-auto overflow-x-hidden selection:bg-brand-red selection:text-white"
+      ref={containerRef}
+    >
+      {/* Progress Bar */}
+      <motion.div 
+        className="fixed top-0 left-0 h-[2px] bg-brand-red z-[110] origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      {/* Back Button */}
+      <div className="fixed top-8 left-6 md:left-12 z-[110] mix-blend-difference text-white">
+        <button 
+          onClick={onClose}
+          className="group flex items-center space-x-3 font-heading text-[10px] tracking-[0.2em] uppercase transition-opacity hover:opacity-70 focus:outline-none"
+        >
+          <motion.div className="group-hover:-translate-x-1 transition-transform duration-300">
+            <ArrowLeft className="w-4 h-4" />
+          </motion.div>
+          <span>Close</span>
+        </button>
+      </div>
+
+      {/* Morphing Hero */}
+      <section className="relative w-full h-[70vh] md:h-[80vh] flex items-end justify-center overflow-hidden">
+        <motion.div 
+          layoutId={`journal-image-${article.id}`}
+          className="absolute inset-0 z-0"
+        >
+          <Image src={article.image} alt={article.title} fill className="object-cover brightness-50" priority sizes="100vw" />
+        </motion.div>
+        
+        <div className="relative z-10 w-full px-6 md:px-12 pb-20 max-w-[1200px] mx-auto text-center flex flex-col items-center">
+          <motion.h1 
+            layoutId={`journal-title-${article.id}`}
+            className="font-hero text-4xl sm:text-6xl md:text-7xl tracking-wide uppercase text-white leading-[0.9]"
+          >
+            {article.title}
+          </motion.h1>
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="mt-8 flex flex-wrap justify-center gap-6 font-caption text-[10px] tracking-[0.2em] text-white/60 uppercase"
+          >
+            <span>ARC OPUS EDITORIAL</span>
+            <span>{article.date}</span>
+            <span className="text-brand-red">{article.category}</span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Editorial Content */}
+      <article className="pb-32 bg-[#050505] relative z-10">
+        
+        {/* Intro */}
+        <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
+            className="font-sans text-lg md:text-xl text-white/90 leading-[2] tracking-wide"
+          >
+            {article.content.intro}
+          </motion.p>
+        </div>
+
+        {/* Campaign Bleed Image */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1.2, ease: "easeOut" }}
+          className="w-full h-[60vh] md:h-[85vh] relative my-12"
+        >
+          <Image src={article.images.campaignBleed} alt="Campaign Bleed" fill className="object-cover" sizes="100vw" />
+        </motion.div>
+
+        {/* Story */}
+        <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
+            className="font-sans text-sm md:text-base text-white/70 leading-[2.2] tracking-wide"
+          >
+            {article.content.story}
+          </motion.p>
+        </div>
+
+        {/* Animated Pull Quote */}
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.2 }}
+          className="py-16 md:py-24 px-6 max-w-[1000px] mx-auto"
+        >
+          <motion.p
+            initial={{ letterSpacing: "0.1em" }}
+            whileInView={{ letterSpacing: "normal" }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2 }}
+            className="font-hero text-2xl sm:text-4xl md:text-5xl text-center leading-[1.4] uppercase tracking-wide text-brand-red"
+          >
+            {article.pullQuote}
+          </motion.p>
+        </motion.div>
+
+        {/* Gallery */}
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-6 my-12 md:my-24">
+          {article.images.gallery.map((src, idx) => (
+            <motion.div 
+              key={idx}
+              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: idx * 0.1 }}
+              className="w-full h-[50vh] md:h-[70vh] relative"
+            >
+              <Image src={src} alt={`Editorial Gallery ${idx}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Closing Notes */}
+        <div className="max-w-[700px] mx-auto px-6 py-12 md:py-24 space-y-20">
+          <div>
+            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-6 text-center">Materials</h3>
+            <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.materialNotes}</p>
+          </div>
+          <div>
+            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-6 text-center">Behind the Collection</h3>
+            <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.behindTheCollection}</p>
+          </div>
+        </div>
+      </article>
+    </motion.div>
+  );
+};
+
+// ─── MAIN JOURNAL PAGE ───
+export default function JournalPage() {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  // Sync state with URL without triggering Next.js router reload
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/journal/')) {
+        setSelectedId(path.replace('/journal/', ''));
+      } else {
+        setSelectedId(null);
+      }
+    };
+    handlePopState();
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const openArticle = (id: string) => {
+    setSelectedId(id);
+    window.history.pushState({}, '', `/journal/${id}`);
+  };
+
+  const closeArticle = () => {
+    setSelectedId(null);
+    window.history.pushState({}, '', `/journal`);
+  };
+
+  const selectedArticle = journals.find(j => j.id === selectedId);
+
+  return (
+    <div className="bg-[#050505] min-h-screen py-20 px-6 md:px-12 max-w-[1600px] mx-auto space-y-20 relative selection:bg-brand-red selection:text-white">
       
       {/* Title */}
       <div className="space-y-4 pt-10">
@@ -140,157 +253,110 @@ export default function JournalPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-        {journals.map((art, idx) => {
-          const isTransitioning = transitioningId === art.id;
-          return (
-            <motion.article 
-              key={art.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              onClick={(e) => handleArticleClick(e, art.id)}
-              className="group flex flex-col space-y-6 cursor-pointer"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
+        {journals.map((art, idx) => (
+          <motion.article 
+            key={art.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: idx * 0.1 }}
+            onClick={() => openArticle(art.id)}
+            whileHover="hover"
+            className="group flex flex-col cursor-pointer"
+          >
+            {/* Card Lift Wrapper */}
+            <motion.div 
+              variants={{ hover: { y: -3 } }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex flex-col h-full"
             >
-              <motion.div 
-                animate={{ y: isTransitioning ? -10 : 0 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="w-full flex flex-col space-y-6"
-              >
-                {/* Image Box */}
-                <div className="relative h-[360px] bg-[#121212] overflow-hidden border border-white/5">
-                  <motion.div
-                    className="w-full h-full relative"
-                    animate={{ scale: isTransitioning ? 1.05 : 1 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                  >
-                    <Image
-                      src={art.image}
-                      alt={art.title}
-                      fill
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-75 group-hover:brightness-50"
-                    />
-                  </motion.div>
-                  <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/80 bg-[#050505] border border-white/10 px-3 py-1.5 uppercase font-bold">
-                    {art.category}
-                  </span>
-                </div>
+              {/* Image Box */}
+              <div className="relative h-[400px] bg-[#121212] overflow-hidden">
+                <motion.div 
+                  layoutId={`journal-image-${art.id}`}
+                  className="w-full h-full relative"
+                >
+                  <Image
+                    src={art.image}
+                    alt={art.title}
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-90 group-hover:brightness-100"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </motion.div>
+                <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/90 bg-[#050505] px-3 py-1.5 uppercase font-bold z-10">
+                  {art.category}
+                </span>
+              </div>
 
-                {/* Content Details */}
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center font-caption text-[9px] tracking-widest text-white/40 uppercase">
-                    <span>POSTED BY ARC OPUS EDITORIAL</span>
-                    <span>{art.date}</span>
-                  </div>
+              {/* Content Details aligned to grid */}
+              <div className="pt-8 flex flex-col flex-grow">
+                <motion.div 
+                  variants={{ hover: { opacity: 0.5 } }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-between items-center font-caption text-[9px] tracking-[0.2em] text-white/50 uppercase mb-4"
+                >
+                  <span>{art.date}</span>
+                  <span>{art.readTime}</span>
+                </motion.div>
+                
+                <div className="mb-4 relative inline-block self-start">
                   <motion.h2 
-                    animate={{ color: isTransitioning ? "#C10E1D" : "#FFFFFF" }}
-                    transition={{ duration: 0.25 }}
-                    className="font-heading text-lg tracking-wider uppercase group-hover:text-brand-red transition-colors duration-300"
+                    layoutId={`journal-title-${art.id}`}
+                    className="font-heading text-lg sm:text-xl tracking-wider uppercase text-white group-hover:text-brand-red transition-colors duration-300"
                   >
                     {art.title}
                   </motion.h2>
-                  <p className="font-sans text-xs text-white/50 leading-relaxed">
-                    {art.excerpt}
-                  </p>
-
-                  <div className="pt-2">
-                    <span className="font-heading text-[10px] tracking-[0.2em] uppercase text-white/70 flex items-center space-x-2 w-fit">
-                      <motion.span 
-                        animate={{ color: isTransitioning ? "#C10E1D" : "rgba(255,255,255,0.7)" }}
-                        transition={{ duration: 0.25 }}
-                        className="group-hover:text-brand-red transition-colors duration-300"
-                      >
-                        Read Article
-                      </motion.span>
-                      <motion.div
-                        animate={{ x: isTransitioning ? 10 : 0, color: isTransitioning ? "#C10E1D" : "rgba(255,255,255,0.7)" }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                        className="group-hover:text-brand-red transition-colors duration-300"
-                      >
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </motion.div>
-                    </span>
-                  </div>
+                  {/* Animated Underline */}
+                  <motion.div 
+                    variants={{
+                      rest: { scaleX: 0, originX: 0 },
+                      hover: { scaleX: 1, originX: 0 }
+                    }}
+                    initial="rest"
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute -bottom-2 left-0 w-full h-[1px] bg-brand-red"
+                  />
                 </div>
-              </motion.div>
-            </motion.article>
-          );
-        })}
+                
+                <p className="font-sans text-xs sm:text-sm text-white/50 leading-relaxed max-w-[450px] mt-2">
+                  {art.excerpt}
+                </p>
+              </div>
+            </motion.div>
+          </motion.article>
+        ))}
       </div>
 
-      {/* ═══════════════════ FAQ SECTION ═══════════════════ */}
+      {/* FAQ SECTION */}
       <section className="pt-32 pb-16">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8 }}
           className="max-w-[800px] mx-auto space-y-16"
         >
-          {/* Header */}
           <div className="text-center space-y-4">
             <h2 className="font-hero text-2xl sm:text-4xl tracking-wide uppercase text-white">
               FREQUENTLY ASKED QUESTIONS
             </h2>
             <div className="w-12 h-[1px] bg-brand-red mx-auto" />
-            <p className="font-sans text-xs sm:text-sm text-white/50 leading-relaxed">
-              Everything you need to know before choosing your next wardrobe essential.
-            </p>
           </div>
-
-          {/* Accordion Cards */}
-          <motion.div 
-            layout
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={{
-              visible: {
-                transition: { staggerChildren: 0.1 }
-              }
-            }}
-            className="flex flex-col"
-          >
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={{ visible: { transition: { staggerChildren: 0.1 } } }} className="flex flex-col">
             {faqs.map((faq, idx) => (
-              <FAQItem 
-                key={idx} 
-                faq={faq} 
-                isOpen={openFaqIndex === idx} 
-                onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} 
-              />
+              <FAQItem key={idx} faq={faq} isOpen={openFaqIndex === idx} onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} />
             ))}
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ═══════════════════ BLACKOUT TRANSITION OVERLAY ═══════════════════ */}
-      {transitioningId && (
-        <motion.div
-          initial={{
-            position: 'fixed',
-            top: overlayPos.top,
-            left: overlayPos.left,
-            width: overlayPos.width,
-            height: overlayPos.height,
-            backgroundColor: '#000000',
-            opacity: 0,
-            zIndex: 9999
-          }}
-          animate={{
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            opacity: 1
-          }}
-          transition={{
-            delay: 0.25, // Wait for the 250ms card animation to finish
-            duration: 0.5,
-            ease: [0.65, 0, 0.35, 1] // Elegant easeInOut
-          }}
-          className="pointer-events-none"
-        />
-      )}
+      {/* ARTICLE OVERLAY RENDERING */}
+      <AnimatePresence>
+        {selectedArticle && (
+          <ArticleOverlay key="overlay" article={selectedArticle} onClose={closeArticle} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
