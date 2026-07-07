@@ -42,35 +42,35 @@ export default function StoryPage() {
   const ch1Y = useTransform(smoothProgress, [0, 0.14, 0.20], [0, 0, -80]);
   const ch1LineLength = useTransform(smoothProgress, [0.02, 0.12], [0, 1]);
 
-  // ─── CHAPTER 2 (0.20 → 0.40) ───
+  // ─── CHAPTER 2: MALE STORY (0.20 → 0.40) ───
   const ch2Opacity = useTransform(smoothProgress, [0.16, 0.22, 0.34, 0.40], [0, 1, 1, 0]);
   const ch2Y = useTransform(smoothProgress, [0.16, 0.22, 0.34, 0.40], [80, 0, 0, -80]);
   const ch2ImageScale = useTransform(smoothProgress, [0.22, 0.34], [1.0, 1.08]);
   const ch2LineLength = useTransform(smoothProgress, [0.22, 0.32], [0, 1]);
 
-  // ─── CHAPTER 3 (0.40 → 0.60) ───
+  // ─── CHAPTER 3: FEMALE STORY (0.40 → 0.60) ───
   const ch3Opacity = useTransform(smoothProgress, [0.36, 0.42, 0.54, 0.60], [0, 1, 1, 0]);
   const ch3Y = useTransform(smoothProgress, [0.36, 0.42, 0.54, 0.60], [80, 0, 0, -80]);
-  const ch3LineLength = useTransform(smoothProgress, [0.42, 0.54], [0, 1]);
-  const cardOpacities = [
-    useTransform(smoothProgress, [0.42, 0.44], [0, 1]),
-    useTransform(smoothProgress, [0.44, 0.46], [0, 1]),
-    useTransform(smoothProgress, [0.46, 0.48], [0, 1]),
-    useTransform(smoothProgress, [0.48, 0.50], [0, 1]),
-    useTransform(smoothProgress, [0.50, 0.52], [0, 1]),
-  ];
+  const ch3ImageScale = useTransform(smoothProgress, [0.42, 0.54], [1.0, 1.08]);
 
-  // ─── CHAPTER 4 (0.60 → 0.80) ───
+  // ─── CHAPTER 4: STATS BLUEPRINT (0.60 → 0.80) ───
   const ch4Opacity = useTransform(smoothProgress, [0.56, 0.62, 0.74, 0.80], [0, 1, 1, 0]);
   const ch4Y = useTransform(smoothProgress, [0.56, 0.62, 0.74, 0.80], [80, 0, 0, -80]);
-  const ch4LetterSpacing = useTransform(smoothProgress, [0.62, 0.74], ["0.02em", "0.16em"]);
-  const ch4GlowOpacity = useTransform(smoothProgress, [0.62, 0.74], [0, 0.6]);
-  const ch4Bg = useTransform(smoothProgress, [0.58, 0.68], ["#050505", "#020202"]);
+  const ch4LineLength = useTransform(smoothProgress, [0.62, 0.74], [0, 1]);
+  const cardOpacities = [
+    useTransform(smoothProgress, [0.62, 0.64], [0, 1]),
+    useTransform(smoothProgress, [0.64, 0.66], [0, 1]),
+    useTransform(smoothProgress, [0.66, 0.68], [0, 1]),
+    useTransform(smoothProgress, [0.68, 0.70], [0, 1]),
+    useTransform(smoothProgress, [0.70, 0.72], [0, 1]),
+  ];
 
-  // ─── CHAPTER 5 (0.80 → 1.0) ───
+  // ─── CHAPTER 5: MANIFESTO (0.80 → 1.0) ───
   const ch5Opacity = useTransform(smoothProgress, [0.76, 0.82, 1.0], [0, 1, 1]);
   const ch5Y = useTransform(smoothProgress, [0.76, 0.82, 1.0], [80, 0, 0]);
-  const ch5ImageScale = useTransform(smoothProgress, [0.82, 0.98], [1.0, 1.08]);
+  const ch5Scale = useTransform(smoothProgress, [0.82, 1.0], [1.0, 1.15]); // Uniform scale, no distortion
+  const ch5GlowOpacity = useTransform(smoothProgress, [0.82, 0.94], [0, 0.6]);
+  const ch5Bg = useTransform(smoothProgress, [0.78, 0.88], ["#050505", "#020202"]);
 
   // Blueprint background
   const blueprintOpacity = useTransform(smoothProgress, [0, 1], [0.03, 0.05]);
@@ -110,11 +110,11 @@ export default function StoryPage() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="story-outer-container"
-      style={{ height: '500vh' }}
+      style={{ height: '800vh' }}
     >
       <motion.div
         className="story-sticky-viewport"
-        style={{ backgroundColor: ch4Bg }}
+        style={{ backgroundColor: ch5Bg }}
       >
         {/* ── Progress Indicator ── */}
         <div className="story-vertical-progress select-none hidden md:flex">
@@ -196,7 +196,7 @@ export default function StoryPage() {
           </motion.div>
         </motion.div>
 
-        {/* ═══════════════════ CHAPTER 2: EVERY STITCH ═══════════════════ */}
+        {/* ═══════════════════ CHAPTER 2: MALE STORY ═══════════════════ */}
         <motion.div
           className="story-chapter z-10"
           style={{ opacity: ch2Opacity, y: ch2Y }}
@@ -247,97 +247,10 @@ export default function StoryPage() {
           </div>
         </motion.div>
 
-        {/* ═══════════════════ CHAPTER 3: STATS BLUEPRINT ═══════════════════ */}
-        <motion.div
-          className="story-chapter flex-col z-10"
-          style={{ opacity: ch3Opacity, y: ch3Y }}
-        >
-          {/* Title */}
-          <div className="text-center space-y-2 mb-8 select-none relative z-10">
-            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
-              TECHNICAL SPECIFICATIONS
-            </span>
-            <h3 className="font-hero text-xl sm:text-2xl text-white uppercase">
-              MATERIAL CORE &amp; VALUES
-            </h3>
-          </div>
-
-          {/* Blueprint connector SVG */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" xmlns="http://www.w3.org/2000/svg">
-            <motion.path
-              d="M 250 180 L 520 130 L 780 180 L 780 450 L 250 480 Z"
-              fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" strokeDasharray="4 6"
-              style={{ pathLength: ch3LineLength }}
-            />
-            <motion.path
-              d="M 250 180 L 520 130 L 780 180 L 780 450 L 250 480 Z"
-              fill="none" stroke="#C10E1D" strokeWidth="1"
-              style={{ pathLength: ch3LineLength }}
-            />
-          </svg>
-
-          {/* Cards */}
-          <div className="relative w-full h-[55vh] flex flex-col md:block items-center">
-            {statsCards.map((card, i) => (
-              <motion.div
-                key={card.id}
-                className="blueprint-card rounded-sm"
-                style={{
-                  left: card.x,
-                  top: card.y,
-                  rotate: card.rot,
-                  opacity: cardOpacities[i],
-                }}
-              >
-                <div className="blueprint-card-corner blueprint-card-corner-tl" />
-                <div className="blueprint-card-corner blueprint-card-corner-tr" />
-                <div className="blueprint-card-corner blueprint-card-corner-bl" />
-                <div className="blueprint-card-corner blueprint-card-corner-br" />
-                <div className="space-y-2 relative select-none">
-                  <span className="font-caption text-[8px] tracking-[0.2em] text-brand-red uppercase font-black">{card.label}</span>
-                  <h4 className="font-hero text-sm tracking-wide text-[#F5F5F5] uppercase">{card.value}</h4>
-                  <p className="font-sans text-[10px] text-white/50">{card.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ═══════════════════ CHAPTER 4: MANIFESTO ═══════════════════ */}
-        <motion.div
-          className="story-chapter flex-col text-center z-10"
-          style={{ opacity: ch4Opacity, y: ch4Y }}
-        >
-          {/* Glow overlay */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              opacity: ch4GlowOpacity,
-              background: 'radial-gradient(ellipse at center, rgba(193, 14, 29, 0.06) 0%, transparent 70%)'
-            }}
-          />
-
-          <div className="space-y-6 max-w-[1000px] mx-auto px-6 relative z-10 text-manifesto-glow">
-            <motion.p
-              className="font-hero text-2xl sm:text-4xl md:text-5xl text-white tracking-wide uppercase leading-normal"
-              style={{ letterSpacing: ch4LetterSpacing }}
-            >
-              WE DON&apos;T <span className="word-glow-red font-black">FOLLOW</span> TRENDS.<br />
-              WE ENGINEER <span className="font-black text-[#F5F5F5]">GARMENTS</span>.
-            </motion.p>
-
-            <div className="w-12 h-[1px] bg-brand-red mx-auto" />
-
-            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
-              ARC OPUS MANIFESTO
-            </span>
-          </div>
-        </motion.div>
-
-        {/* ═══════════════════ CHAPTER 5: FUTURE REVEAL ═══════════════════ */}
+        {/* ═══════════════════ CHAPTER 3: FEMALE STORY (Moved Here) ═══════════════════ */}
         <motion.div
           className="story-chapter z-10"
-          style={{ opacity: ch5Opacity, y: ch5Y }}
+          style={{ opacity: ch3Opacity, y: ch3Y }}
         >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center w-full max-w-[1400px] mx-auto">
             {/* Image */}
@@ -345,7 +258,7 @@ export default function StoryPage() {
               className="md:col-span-5 relative h-[300px] sm:h-[420px] md:h-[520px] w-full bg-[#121212] overflow-hidden border border-white/5 rounded-sm"
               style={{ x: parallaxX, y: parallaxY }}
             >
-              <motion.div className="w-full h-full relative" style={{ scale: ch5ImageScale }}>
+              <motion.div className="w-full h-full relative" style={{ scale: ch3ImageScale }}>
                 <Image
                   src="/denim_jacket_2.jpg"
                   alt="ARC OPUS Craftsmanship jacket detail"
@@ -399,6 +312,93 @@ export default function StoryPage() {
                 </Link>
               </motion.div>
             </div>
+          </div>
+        </motion.div>
+
+        {/* ═══════════════════ CHAPTER 4: STATS BLUEPRINT ═══════════════════ */}
+        <motion.div
+          className="story-chapter flex-col z-10"
+          style={{ opacity: ch4Opacity, y: ch4Y }}
+        >
+          {/* Title */}
+          <div className="text-center space-y-2 mb-8 select-none relative z-10">
+            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
+              TECHNICAL SPECIFICATIONS
+            </span>
+            <h3 className="font-hero text-xl sm:text-2xl text-white uppercase">
+              MATERIAL CORE &amp; VALUES
+            </h3>
+          </div>
+
+          {/* Blueprint connector SVG */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" xmlns="http://www.w3.org/2000/svg">
+            <motion.path
+              d="M 250 180 L 520 130 L 780 180 L 780 450 L 250 480 Z"
+              fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" strokeDasharray="4 6"
+              style={{ pathLength: ch4LineLength }}
+            />
+            <motion.path
+              d="M 250 180 L 520 130 L 780 180 L 780 450 L 250 480 Z"
+              fill="none" stroke="#C10E1D" strokeWidth="1"
+              style={{ pathLength: ch4LineLength }}
+            />
+          </svg>
+
+          {/* Cards */}
+          <div className="relative w-full h-[55vh] flex flex-col md:block items-center">
+            {statsCards.map((card, i) => (
+              <motion.div
+                key={card.id}
+                className="blueprint-card rounded-sm"
+                style={{
+                  left: card.x,
+                  top: card.y,
+                  rotate: card.rot,
+                  opacity: cardOpacities[i],
+                }}
+              >
+                <div className="blueprint-card-corner blueprint-card-corner-tl" />
+                <div className="blueprint-card-corner blueprint-card-corner-tr" />
+                <div className="blueprint-card-corner blueprint-card-corner-bl" />
+                <div className="blueprint-card-corner blueprint-card-corner-br" />
+                <div className="space-y-2 relative select-none">
+                  <span className="font-caption text-[8px] tracking-[0.2em] text-brand-red uppercase font-black">{card.label}</span>
+                  <h4 className="font-hero text-sm tracking-wide text-[#F5F5F5] uppercase">{card.value}</h4>
+                  <p className="font-sans text-[10px] text-white/50">{card.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* ═══════════════════ CHAPTER 5: MANIFESTO ═══════════════════ */}
+        <motion.div
+          className="story-chapter flex-col text-center z-10"
+          style={{ opacity: ch5Opacity, y: ch5Y }}
+        >
+          {/* Glow overlay */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              opacity: ch5GlowOpacity,
+              background: 'radial-gradient(ellipse at center, rgba(193, 14, 29, 0.06) 0%, transparent 70%)'
+            }}
+          />
+
+          <div className="space-y-6 max-w-[1000px] mx-auto px-6 relative z-10 text-manifesto-glow">
+            <motion.p
+              className="font-hero text-2xl sm:text-4xl md:text-5xl text-white tracking-wide uppercase leading-normal"
+              style={{ scale: ch5Scale }}
+            >
+              WE DON&apos;T <span className="word-glow-red font-black">FOLLOW</span> TRENDS.<br />
+              WE ENGINEER <span className="font-black text-[#F5F5F5]">GARMENTS</span>.
+            </motion.p>
+
+            <div className="w-12 h-[1px] bg-brand-red mx-auto" />
+
+            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
+              ARC OPUS MANIFESTO
+            </span>
           </div>
         </motion.div>
       </motion.div>
