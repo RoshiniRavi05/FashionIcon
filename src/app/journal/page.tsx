@@ -1,12 +1,76 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const faqs = [
+  { q: 'How do I choose the right size?', a: 'Our garments are designed with deliberate, architectural proportions. We recommend selecting your true size for our signature oversized, boxy fit. Detailed measurements are provided on each product page for precise tailoring insights.' },
+  { q: 'What materials are used in your garments?', a: 'We exclusively source premium 360gsm double-yarn combed cottons, selvedge denim from heritage mills in Japan, and technical performance blends. Every fabric is chosen for structural integrity and long-term durability.' },
+  { q: 'How long does shipping take?', a: 'Each piece undergoes a final quality inspection before dispatch. Domestic orders are typically delivered within 3-5 business days. International shipping requires 7-10 business days. Expedited options are available at checkout.' },
+  { q: 'Can I exchange or return my order?', a: 'Yes. We accept returns and exchanges on unworn, unwashed items with original tags attached within 14 days of delivery. Custom configurator pieces are final sale due to their personalized nature.' },
+  { q: 'How should I care for my clothing?', a: 'To preserve the premium fabrics and garment structure, we recommend machine washing cold on a gentle cycle and laying flat to dry. Avoid high heat and harsh chemical detergents.' },
+  { q: 'Do you restock sold-out collections?', a: 'Our capsule collections are strictly limited to prevent mass-production excess. However, core architectural silhouettes in standard colorways are occasionally replenished based on studio capacity.' },
+  { q: 'Are your garments ethically produced?', a: 'Absolutely. We maintain a transparent supply chain, partnering exclusively with family-owned mills and production facilities in Portugal and Japan that ensure fair wages, safe conditions, and minimal environmental impact.' },
+  { q: 'How can I contact customer support?', a: 'Our studio team is available via email at support@arcopus.studio. We aim to respond to all inquiries within 24 hours regarding sizing, orders, or styling guidance.' }
+];
+
+const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOpen: boolean, onClick: () => void }) => {
+  return (
+    <motion.div 
+      variants={{
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 }
+      }}
+      className="border-b border-white/10 last:border-b-0 hover:border-white/30 transition-colors duration-500 bg-[#121212] px-6 rounded-sm mb-4"
+    >
+      <button 
+        className="w-full py-6 flex justify-between items-center text-left focus:outline-none group"
+        onClick={onClick}
+        aria-expanded={isOpen}
+      >
+        <span className="font-heading text-sm sm:text-base tracking-wider text-white uppercase group-hover:text-brand-red transition-colors duration-300">
+          {faq.q}
+        </span>
+        <div className="relative w-3.5 h-3.5 ml-4 flex-shrink-0 text-white/50 group-hover:text-brand-red transition-colors duration-300">
+          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-current -translate-y-1/2" />
+          <motion.div 
+            className="absolute top-0 left-1/2 w-[1px] h-full bg-current -translate-x-1/2 origin-center" 
+            animate={{ rotate: isOpen ? 90 : 0, opacity: isOpen ? 0 : 1 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <motion.p 
+              initial={{ y: 10 }}
+              animate={{ y: 0 }}
+              exit={{ y: 10 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed pb-8 max-w-[800px]"
+            >
+              {faq.a}
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 export default function JournalPage() {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
   const articles = [
     {
       id: 1,
@@ -104,6 +168,51 @@ export default function JournalPage() {
           </motion.article>
         ))}
       </div>
+
+      {/* ═══════════════════ FAQ SECTION ═══════════════════ */}
+      <section className="pt-32 pb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-[800px] mx-auto space-y-16"
+        >
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <h2 className="font-hero text-2xl sm:text-4xl tracking-wide uppercase text-white">
+              FREQUENTLY ASKED QUESTIONS
+            </h2>
+            <div className="w-12 h-[1px] bg-brand-red mx-auto" />
+            <p className="font-sans text-xs sm:text-sm text-white/50 leading-relaxed">
+              Everything you need to know before choosing your next wardrobe essential.
+            </p>
+          </div>
+
+          {/* Accordion Cards */}
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              visible: {
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="flex flex-col"
+          >
+            {faqs.map((faq, idx) => (
+              <FAQItem 
+                key={idx} 
+                faq={faq} 
+                isOpen={openFaqIndex === idx} 
+                onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} 
+              />
+            ))}
+          </motion.div>
+        </motion.div>
+      </section>
+
     </div>
   );
 }
