@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ArrowDown, ArrowLeft } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import { journals, JournalArticle } from '@/data/journals';
 
 // ─── FAQ COMPONENT ───
@@ -63,6 +63,34 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
   );
 };
 
+// ─── IMAGE PRESENTATION COMPONENTS ───
+
+// Shared Reveal Wrapper
+const ImageReveal = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 40, scale: 1.05 }}
+    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
+const EditorialImage = ({ src, alt, className = "", objectPosition = "center center" }: { src: string, alt: string, className?: string, objectPosition?: string }) => (
+  <div className={`relative overflow-hidden rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.5)] group ${className}`}>
+    <Image 
+      src={src} 
+      alt={alt} 
+      fill 
+      className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105" 
+      style={{ objectPosition }}
+      sizes="(max-width: 768px) 100vw, 80vw"
+    />
+  </div>
+);
+
 // ─── ARTICLE OVERLAY COMPONENT ───
 const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose: () => void }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,12 +125,13 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
       </div>
 
       {/* Morphing Hero */}
-      <section className="relative w-full h-[70vh] md:h-[80vh] flex items-end justify-center overflow-hidden">
+      <section className="relative w-full h-[70vh] flex items-end justify-center overflow-hidden">
         <motion.div 
           layoutId={`journal-image-${article.id}`}
           className="absolute inset-0 z-0"
         >
-          <Image src={article.image} alt={article.title} fill className="object-cover brightness-50" priority sizes="100vw" />
+          {/* Using object-position center top for hero to avoid cropping faces */}
+          <Image src={article.images.hero} alt={article.title} fill className="object-cover brightness-50" style={{ objectPosition: "center top" }} priority sizes="100vw" />
         </motion.div>
         
         <div className="relative z-10 w-full px-6 md:px-12 pb-20 max-w-[1200px] mx-auto text-center flex flex-col items-center">
@@ -129,7 +158,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
       <article className="pb-32 bg-[#050505] relative z-10">
         
         {/* Intro */}
-        <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
+        <div className="max-w-[700px] mx-auto px-6 py-32 text-center">
           <motion.p 
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
             className="font-sans text-lg md:text-xl text-white/90 leading-[2] tracking-wide"
@@ -138,16 +167,13 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           </motion.p>
         </div>
 
-        {/* Campaign Bleed Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1.2, ease: "easeOut" }}
-          className="w-full h-[60vh] md:h-[85vh] relative my-12"
-        >
-          <Image src={article.images.campaignBleed} alt="Campaign Bleed" fill className="object-cover" sizes="100vw" />
-        </motion.div>
+        {/* Mid-Shot Landscape */}
+        <ImageReveal className="w-full max-w-[1400px] mx-auto px-6 mb-32">
+          <EditorialImage src={article.images.midShot} alt="Mid Shot" className="w-full h-[50vh] md:h-[700px]" />
+        </ImageReveal>
 
         {/* Story */}
-        <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
+        <div className="max-w-[700px] mx-auto px-6 py-16 text-center">
           <motion.p 
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
             className="font-sans text-sm md:text-base text-white/70 leading-[2.2] tracking-wide"
@@ -162,7 +188,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           whileInView={{ opacity: 1, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2 }}
-          className="py-16 md:py-24 px-6 max-w-[1000px] mx-auto"
+          className="py-32 px-6 max-w-[1000px] mx-auto"
         >
           <motion.p
             initial={{ letterSpacing: "0.1em" }}
@@ -175,30 +201,45 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           </motion.p>
         </motion.div>
 
-        {/* Gallery */}
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-6 my-12 md:my-24">
-          {article.images.gallery.map((src, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: idx * 0.1 }}
-              className="w-full h-[50vh] md:h-[70vh] relative"
-            >
-              <Image src={src} alt={`Editorial Gallery ${idx}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
-            </motion.div>
-          ))}
+        {/* Asymmetric Close-Ups Gallery */}
+        <div className="max-w-[1400px] mx-auto px-6 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12">
+            <div className="md:col-span-5 pt-0 md:pt-24">
+              <ImageReveal>
+                <EditorialImage src={article.images.closeUps[0]} alt="Close Up 1" className="w-full h-[60vh] md:h-[600px]" />
+              </ImageReveal>
+            </div>
+            <div className="md:col-span-7">
+              <ImageReveal>
+                <EditorialImage src={article.images.closeUps[1]} alt="Close Up 2" className="w-full h-[50vh] md:h-[800px]" />
+              </ImageReveal>
+            </div>
+          </div>
         </div>
 
+        {/* Lifestyle Portrait */}
+        <ImageReveal className="w-full max-w-[800px] mx-auto px-6 mb-32 flex justify-center">
+          <EditorialImage src={article.images.lifestyle} alt="Lifestyle Portrait" className="w-full md:w-[600px] h-[60vh] md:h-[750px]" objectPosition="center top" />
+        </ImageReveal>
+
         {/* Closing Notes */}
-        <div className="max-w-[700px] mx-auto px-6 py-12 md:py-24 space-y-20">
+        <div className="max-w-[700px] mx-auto px-6 py-16 space-y-32">
           <div>
-            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-6 text-center">Materials</h3>
+            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-10 text-center">Fabric & Construction</h3>
             <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.materialNotes}</p>
           </div>
           <div>
-            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-6 text-center">Behind the Collection</h3>
+            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-10 text-center">Behind the Collection</h3>
             <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.behindTheCollection}</p>
           </div>
         </div>
+
+        {/* Final Wide Campaign Bleed (No borders, true bleed) */}
+        <ImageReveal className="w-full mt-32">
+           <div className="relative w-full h-[60vh] md:h-[800px]">
+             <Image src={article.images.wideCampaign} alt="Wide Campaign" fill className="object-cover" sizes="100vw" style={{ objectPosition: "center center" }} />
+           </div>
+        </ImageReveal>
       </article>
     </motion.div>
   );
@@ -271,7 +312,7 @@ export default function JournalPage() {
               className="flex flex-col h-full"
             >
               {/* Image Box */}
-              <div className="relative h-[400px] bg-[#121212] overflow-hidden">
+              <div className="relative h-[400px] md:h-[500px] bg-[#121212] overflow-hidden rounded-sm">
                 <motion.div 
                   layoutId={`journal-image-${art.id}`}
                   className="w-full h-full relative"
@@ -280,8 +321,9 @@ export default function JournalPage() {
                     src={art.image}
                     alt={art.title}
                     fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-90 group-hover:brightness-100"
+                    className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 brightness-90 group-hover:brightness-100"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    style={{ objectPosition: "center top" }}
                   />
                 </motion.div>
                 <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/90 bg-[#050505] px-3 py-1.5 uppercase font-bold z-10">

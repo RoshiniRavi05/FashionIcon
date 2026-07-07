@@ -4,7 +4,7 @@ export interface JournalArticle {
   category: string;
   date: string;
   readTime: string;
-  image: string;
+  image: string; // Card image, corresponds to images.hero
   excerpt: string;
   content: {
     intro: string;
@@ -14,8 +14,11 @@ export interface JournalArticle {
   };
   pullQuote: string;
   images: {
-    campaignBleed: string;
-    gallery: [string, string];
+    hero: string;
+    midShot: string;
+    closeUps: [string, string];
+    lifestyle: string;
+    wideCampaign: string;
   };
 }
 
@@ -36,8 +39,11 @@ export const journals: JournalArticle[] = [
     },
     pullQuote: "We don't chase trends.\nWe engineer timeless garments.",
     images: {
-      campaignBleed: "/denim_jacket_2.jpg",
-      gallery: ["/oversized_tee_hero.png", "/acid_wash_sneakers.png"]
+      hero: "/oversized_tee_hero.png",
+      midShot: "/denim_jacket_2.jpg",
+      closeUps: ["/acid_wash_sneakers.png", "/denim_jacket_hero.jpg"],
+      lifestyle: "/denim_jacket_2.jpg",
+      wideCampaign: "/oversized_tee_hero.png"
     }
   },
   {
@@ -56,8 +62,11 @@ export const journals: JournalArticle[] = [
     },
     pullQuote: "Layering is not adding bulk.\nIt's assembling architecture.",
     images: {
-      campaignBleed: "/acid_wash_sneakers.png",
-      gallery: ["/denim_jacket_hero.jpg", "/denim_jacket_2.jpg"]
+      hero: "/denim_jacket_hero.jpg",
+      midShot: "/oversized_tee_hero.png",
+      closeUps: ["/denim_jacket_2.jpg", "/acid_wash_sneakers.png"],
+      lifestyle: "/denim_jacket_hero.jpg",
+      wideCampaign: "/denim_jacket_2.jpg"
     }
   },
   {
@@ -76,8 +85,11 @@ export const journals: JournalArticle[] = [
     },
     pullQuote: "True luxury is transparent.\nIt is woven with intent.",
     images: {
-      campaignBleed: "/denim_jacket_hero.jpg",
-      gallery: ["/denim_jacket_2.jpg", "/oversized_tee_hero.png"]
+      hero: "/denim_jacket_2.jpg",
+      midShot: "/acid_wash_sneakers.png",
+      closeUps: ["/oversized_tee_hero.png", "/denim_jacket_hero.jpg"],
+      lifestyle: "/denim_jacket_2.jpg",
+      wideCampaign: "/oversized_tee_hero.png"
     }
   },
   {
@@ -96,8 +108,11 @@ export const journals: JournalArticle[] = [
     },
     pullQuote: "Bridging the physical and digital.\nEngineering a new reality.",
     images: {
-      campaignBleed: "/oversized_tee_hero.png",
-      gallery: ["/denim_jacket_hero.jpg", "/acid_wash_sneakers.png"]
+      hero: "/acid_wash_sneakers.png",
+      midShot: "/denim_jacket_hero.jpg",
+      closeUps: ["/denim_jacket_2.jpg", "/oversized_tee_hero.png"],
+      lifestyle: "/acid_wash_sneakers.png",
+      wideCampaign: "/denim_jacket_hero.jpg"
     }
   }
 ];
