@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const faqs = [
@@ -17,47 +17,73 @@ const faqs = [
   { q: 'How can I contact customer support?', a: 'Our studio team is available via email at support@arcopus.studio. We aim to respond to all inquiries within 24 hours regarding sizing, orders, or styling guidance.' }
 ];
 
+const springConfig = { type: "spring" as const, stiffness: 400, damping: 30 };
+
 const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOpen: boolean, onClick: () => void }) => {
   return (
     <motion.div 
+      layout
       variants={{
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 30 },
         visible: { opacity: 1, y: 0 }
       }}
-      className="border-b border-white/10 last:border-b-0 hover:border-white/30 transition-colors duration-500 bg-[#121212] px-6 rounded-sm mb-4"
+      whileHover={{ y: -2 }}
+      className={`border border-white/5 hover:border-white/20 transition-all duration-300 px-8 rounded-sm mb-4 cursor-pointer group ${isOpen ? 'bg-[#0a0a0a] shadow-[0_10px_40px_rgba(0,0,0,0.6)] border-white/20' : 'bg-[#121212]'}`}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      aria-expanded={isOpen}
     >
-      <button 
-        className="w-full py-6 flex justify-between items-center text-left focus:outline-none group"
-        onClick={onClick}
-        aria-expanded={isOpen}
+      <motion.div 
+        layout="position"
+        className="w-full py-6 flex justify-between items-center text-left outline-none"
       >
-        <span className="font-heading text-sm sm:text-base tracking-wider text-white uppercase group-hover:text-brand-red transition-colors duration-300">
+        <motion.span 
+          layout="position"
+          animate={{ letterSpacing: isOpen ? "0.06em" : "0.03em" }}
+          transition={springConfig}
+          className="font-heading text-sm sm:text-base text-white uppercase group-hover:text-brand-red transition-colors duration-300"
+        >
           {faq.q}
-        </span>
-        <div className="relative w-3.5 h-3.5 ml-4 flex-shrink-0 text-white/50 group-hover:text-brand-red transition-colors duration-300">
-          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-current -translate-y-1/2" />
-          <motion.div 
-            className="absolute top-0 left-1/2 w-[1px] h-full bg-current -translate-x-1/2 origin-center" 
-            animate={{ rotate: isOpen ? 90 : 0, opacity: isOpen ? 0 : 1 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </div>
-      </button>
-      <AnimatePresence>
+        </motion.span>
+        <motion.div 
+          layout="position"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={springConfig}
+          className="relative w-4 h-4 ml-4 flex-shrink-0 text-white/50 group-hover:text-brand-red transition-colors duration-300"
+        >
+          <div className="w-full h-full group-hover:translate-x-[2px] transition-transform duration-300">
+             <ArrowDown className="w-full h-full stroke-[1.5]" />
+          </div>
+        </motion.div>
+      </motion.div>
+      
+      <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
+            layout
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={springConfig}
             className="overflow-hidden"
           >
+            {/* Editorial Divider */}
+            <motion.div 
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              exit={{ width: "0%" }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="h-[1px] bg-white/10 mb-6"
+            />
+            {/* Answer */}
             <motion.p 
-              initial={{ y: 10 }}
-              animate={{ y: 0 }}
-              exit={{ y: 10 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed pb-8 max-w-[800px]"
+              initial={{ y: 15, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+              className="font-sans text-xs sm:text-sm text-white/70 leading-relaxed pb-8 max-w-[800px]"
             >
               {faq.a}
             </motion.p>
@@ -191,6 +217,7 @@ export default function JournalPage() {
 
           {/* Accordion Cards */}
           <motion.div 
+            layout
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
