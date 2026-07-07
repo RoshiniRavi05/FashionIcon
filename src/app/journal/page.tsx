@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { journals } from '@/data/journals';
 
 const faqs = [
   { q: 'How do I choose the right size?', a: 'Our garments are designed with deliberate, architectural proportions. We recommend selecting your true size for our signature oversized, boxy fit. Detailed measurements are provided on each product page for precise tailoring insights.' },
@@ -95,42 +97,31 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
 };
 
 export default function JournalPage() {
+  const router = useRouter();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  
+  // Custom Page Transition State
+  const [transitioningId, setTransitioningId] = useState<string | null>(null);
+  const [overlayPos, setOverlayPos] = useState({ top: 0, left: 0, width: 0, height: 0 });
 
-  const articles = [
-    {
-      id: 1,
-      title: 'CAPSULE 01: BLUEPRINT DESIGN NOTES',
-      category: 'Campaigns',
-      date: 'JUNE 2026',
-      image: '/oversized_tee_hero.png',
-      excerpt: 'Detailing the structural drafting, mock-neck ribbing dimensions, and fabric selection processes behind our heavyweight tee releases.'
-    },
-    {
-      id: 2,
-      title: 'TACTICAL LAYERING STYLE GUIDE',
-      category: 'Style Guide',
-      date: 'MAY 2026',
-      image: '/denim_jacket_hero.jpg',
-      excerpt: 'Explore how to combine oversized organic tees, tactical utility cargo bottoms, and heavy denim truckers to achieve sleek architectural silhouettes.'
-    },
-    {
-      id: 3,
-      title: 'PORTUGAL MILL VISIT: TRACEABLE SOURCING',
-      category: 'Ethos',
-      date: 'APRIL 2026',
-      image: '/denim_jacket_2.jpg',
-      excerpt: 'A behind-the-scenes logging of our manufacturing trip to the family-owned mills weaving our signature 360gsm double-yarn combed cotton.'
-    },
-    {
-      id: 4,
-      title: 'THE GEOMETRIC AVATAR: STYLE SIMULATORS',
-      category: 'Innovation',
-      date: 'MARCH 2026',
-      image: '/acid_wash_sneakers.png',
-      excerpt: 'A look into how WebGL and Three.js skeleton rigging is bringing physical high-end showroom configurators directly to browsers.'
-    }
-  ];
+  const handleArticleClick = (e: React.MouseEvent<HTMLElement>, id: string) => {
+    e.preventDefault();
+    if (transitioningId) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    setOverlayPos({
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height
+    });
+    setTransitioningId(id);
+
+    // Wait 250ms for card animation, then 500ms for overlay expansion, then route
+    setTimeout(() => {
+      router.push(`/journal/${id}`);
+    }, 850); 
+  };
 
   return (
     <div className="bg-[#050505] min-h-screen py-20 px-6 md:px-12 max-w-[1600px] mx-auto space-y-20">
@@ -149,50 +140,82 @@ export default function JournalPage() {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {articles.map((art, idx) => (
-          <motion.article 
-            key={art.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: idx * 0.1 }}
-            className="group flex flex-col space-y-6"
-          >
-            {/* Image Box */}
-            <div className="relative h-[360px] bg-[#121212] overflow-hidden border border-white/5">
-              <Image
-                src={art.image}
-                alt={art.title}
-                fill
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-75 group-hover:brightness-50"
-              />
-              <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/80 bg-[#050505] border border-white/10 px-3 py-1.5 uppercase font-bold">
-                {art.category}
-              </span>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+        {journals.map((art, idx) => {
+          const isTransitioning = transitioningId === art.id;
+          return (
+            <motion.article 
+              key={art.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              onClick={(e) => handleArticleClick(e, art.id)}
+              className="group flex flex-col space-y-6 cursor-pointer"
+            >
+              <motion.div 
+                animate={{ y: isTransitioning ? -10 : 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="w-full flex flex-col space-y-6"
+              >
+                {/* Image Box */}
+                <div className="relative h-[360px] bg-[#121212] overflow-hidden border border-white/5">
+                  <motion.div
+                    className="w-full h-full relative"
+                    animate={{ scale: isTransitioning ? 1.05 : 1 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  >
+                    <Image
+                      src={art.image}
+                      alt={art.title}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-75 group-hover:brightness-50"
+                    />
+                  </motion.div>
+                  <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/80 bg-[#050505] border border-white/10 px-3 py-1.5 uppercase font-bold">
+                    {art.category}
+                  </span>
+                </div>
 
-            {/* Content Details */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center font-caption text-[9px] tracking-widest text-white/40 uppercase">
-                <span>POSTED BY ARC OPUS EDITORIAL</span>
-                <span>{art.date}</span>
-              </div>
-              <h2 className="font-heading text-lg tracking-wider text-white uppercase group-hover:text-brand-red transition-colors duration-300">
-                {art.title}
-              </h2>
-              <p className="font-sans text-xs text-white/50 leading-relaxed">
-                {art.excerpt}
-              </p>
+                {/* Content Details */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center font-caption text-[9px] tracking-widest text-white/40 uppercase">
+                    <span>POSTED BY ARC OPUS EDITORIAL</span>
+                    <span>{art.date}</span>
+                  </div>
+                  <motion.h2 
+                    animate={{ color: isTransitioning ? "#C10E1D" : "#FFFFFF" }}
+                    transition={{ duration: 0.25 }}
+                    className="font-heading text-lg tracking-wider uppercase group-hover:text-brand-red transition-colors duration-300"
+                  >
+                    {art.title}
+                  </motion.h2>
+                  <p className="font-sans text-xs text-white/50 leading-relaxed">
+                    {art.excerpt}
+                  </p>
 
-              <div className="pt-2">
-                <span className="font-heading text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-brand-red transition-colors flex items-center space-x-2 w-fit">
-                  <span>Read Article</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </div>
-            </div>
-          </motion.article>
-        ))}
+                  <div className="pt-2">
+                    <span className="font-heading text-[10px] tracking-[0.2em] uppercase text-white/70 flex items-center space-x-2 w-fit">
+                      <motion.span 
+                        animate={{ color: isTransitioning ? "#C10E1D" : "rgba(255,255,255,0.7)" }}
+                        transition={{ duration: 0.25 }}
+                        className="group-hover:text-brand-red transition-colors duration-300"
+                      >
+                        Read Article
+                      </motion.span>
+                      <motion.div
+                        animate={{ x: isTransitioning ? 10 : 0, color: isTransitioning ? "#C10E1D" : "rgba(255,255,255,0.7)" }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="group-hover:text-brand-red transition-colors duration-300"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </motion.div>
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.article>
+          );
+        })}
       </div>
 
       {/* ═══════════════════ FAQ SECTION ═══════════════════ */}
@@ -240,6 +263,34 @@ export default function JournalPage() {
         </motion.div>
       </section>
 
+      {/* ═══════════════════ BLACKOUT TRANSITION OVERLAY ═══════════════════ */}
+      {transitioningId && (
+        <motion.div
+          initial={{
+            position: 'fixed',
+            top: overlayPos.top,
+            left: overlayPos.left,
+            width: overlayPos.width,
+            height: overlayPos.height,
+            backgroundColor: '#000000',
+            opacity: 0,
+            zIndex: 9999
+          }}
+          animate={{
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            opacity: 1
+          }}
+          transition={{
+            delay: 0.25, // Wait for the 250ms card animation to finish
+            duration: 0.5,
+            ease: [0.65, 0, 0.35, 1] // Elegant easeInOut
+          }}
+          className="pointer-events-none"
+        />
+      )}
     </div>
   );
 }
