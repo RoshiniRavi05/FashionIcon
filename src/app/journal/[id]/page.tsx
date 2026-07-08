@@ -120,6 +120,12 @@ const RelatedJournals = ({ currentId }: { currentId: string }) => {
 };
 
 
+export async function generateStaticParams() {
+  return journals.map((article) => ({
+    id: article.id,
+  }));
+}
+
 export default function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   // Next.js 15+ async params handling
   const unwrappedParams = use(params);
