@@ -95,7 +95,8 @@ const EditorialSplit = ({ text, image, reverse = false }: { text: string, image:
     <div className={`flex flex-col ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-24`}>
       <div className="w-full md:w-1/2 flex justify-center">
         <ImageReveal className="w-full">
-          <EditorialImage src={image} alt="Editorial Split" className="w-full h-[60vh] md:h-[800px]" objectPosition="center center" />
+          {/* Portrait constraint: max-height 650px */}
+          <EditorialImage src={image} alt="Editorial Split" className="w-full h-[60vh] max-h-[650px]" objectPosition="center center" />
         </ImageReveal>
       </div>
       <div className="w-full md:w-1/2 flex flex-col justify-center max-w-[500px]">
@@ -122,7 +123,8 @@ const FabricDetails = ({ images }: { images: [string, string] }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
       {images.map((src, idx) => (
         <ImageReveal key={idx} className={idx === 1 ? "md:mt-32" : ""}>
-          <EditorialImage src={src} alt={`Fabric Detail ${idx}`} className="w-full h-[50vh] md:h-[600px]" objectPosition="center center" />
+          {/* Gallery constraint: 400-500px */}
+          <EditorialImage src={src} alt={`Fabric Detail ${idx}`} className="w-full h-[40vh] max-h-[500px]" objectPosition="center center" />
         </ImageReveal>
       ))}
     </div>
@@ -145,7 +147,7 @@ const RelatedJournals = ({ currentId, onOpenArticle }: { currentId: string, onOp
             className="group cursor-pointer flex flex-col"
           >
             <div className="relative h-[400px] mb-6 overflow-hidden rounded-sm bg-[#121212]">
-               <Image src={art.image} alt={art.title} fill className="object-cover transition-transform duration-1000 group-hover:scale-105 brightness-90 group-hover:brightness-100" />
+               <Image src={art.image} alt={art.title} fill className="object-cover transition-transform duration-1000 group-hover:scale-105 brightness-90 group-hover:brightness-100" style={{ objectPosition: "center center" }} />
             </div>
             <div className="mb-3 relative inline-block self-start">
               <h4 className="font-heading text-sm tracking-wider uppercase text-white group-hover:text-brand-red transition-colors duration-300">
@@ -194,20 +196,21 @@ const ArticleOverlay = ({ article, onClose, onOpenArticle }: { article: JournalA
         </button>
       </div>
 
-      {/* Morphing Cinematic Hero (The Good Ones Magazine Style) */}
-      <section className="relative w-full h-[85vh] md:h-[90vh] flex items-center justify-center overflow-hidden">
+      {/* Morphing Cinematic Hero */}
+      <section className="relative w-full h-[80vh] flex items-center justify-center overflow-hidden">
         <motion.div 
           layoutId={`journal-image-${article.id}`}
           className="absolute inset-0 z-0"
         >
-          {/* Using object-position center top for hero to avoid cropping faces, subtle scale down animation on load */}
-          <motion.div initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 1.5, ease: "easeOut" }} className="w-full h-full relative">
-            <Image src={article.images.hero} alt={article.title} fill className="object-cover brightness-[0.4]" style={{ objectPosition: "center top" }} priority sizes="100vw" />
+          {/* Constrained hero: 80vh, center center focal point */}
+          <motion.div initial={{ scale: 1.05 }} animate={{ scale: 1 }} transition={{ duration: 1.5, ease: "easeOut" }} className="w-full h-full relative">
+            <Image src={article.images.hero} alt={article.title} fill className="object-cover brightness-[0.4]" style={{ objectPosition: "center center" }} priority sizes="100vw" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90" />
           </motion.div>
         </motion.div>
         
-        <div className="relative z-10 w-full px-6 md:px-12 max-w-[1200px] mx-auto text-center flex flex-col items-center">
+        {/* Text Container: Max width 1100px */}
+        <div className="relative z-10 w-full px-6 md:px-12 max-w-[1100px] mx-auto text-center flex flex-col items-center">
           <motion.div 
             initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
             className="mb-8 flex flex-wrap justify-center gap-6 font-caption text-[10px] tracking-[0.3em] text-white/90 uppercase font-bold"
@@ -219,9 +222,13 @@ const ArticleOverlay = ({ article, onClose, onOpenArticle }: { article: JournalA
 
           <motion.h1 
             layoutId={`journal-title-${article.id}`}
-            className="font-hero text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] tracking-tight uppercase text-white leading-[0.85] mb-12"
+            className="font-hero tracking-tight uppercase text-white leading-[0.95] mb-12 whitespace-pre-wrap break-words"
+            style={{ fontSize: "clamp(2.5rem, 12vw, 4rem)" }}
+            // We use inline style for base, and tailwind classes for md/lg breakpoints to achieve the requested clamps
           >
-            {article.title}
+            <span className="text-[clamp(2.5rem,12vw,4rem)] md:text-[clamp(4rem,8vw,7rem)] lg:text-[clamp(5rem,10vw,9rem)]">
+              {article.title}
+            </span>
           </motion.h1>
 
           <motion.p
@@ -245,7 +252,7 @@ const ArticleOverlay = ({ article, onClose, onOpenArticle }: { article: JournalA
           whileInView={{ opacity: 1, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2 }}
-          className="py-24 md:py-40 px-6 max-w-[1000px] mx-auto"
+          className="py-24 md:py-32 px-6 max-w-[1000px] mx-auto"
         >
           <motion.p
             initial={{ letterSpacing: "0.1em" }}
@@ -265,9 +272,10 @@ const ArticleOverlay = ({ article, onClose, onOpenArticle }: { article: JournalA
         <EditorialSplit text={article.content.behindTheCollection} image={article.images.lifestyle} reverse />
 
         {/* Final Wide Campaign Bleed */}
-        <ImageReveal className="w-full mt-24 md:mt-40">
-           <div className="relative w-full h-[60vh] md:h-[800px]">
-             <Image src={article.images.wideCampaign} alt="Wide Campaign" fill className="object-cover" sizes="100vw" style={{ objectPosition: "center center" }} />
+        <ImageReveal className="w-full mt-24 md:mt-32 max-w-[1600px] mx-auto px-6">
+           {/* Large constraint: max-height 700px */}
+           <div className="relative w-full h-[60vh] max-h-[700px]">
+             <Image src={article.images.wideCampaign} alt="Wide Campaign" fill className="object-cover rounded-sm" sizes="100vw" style={{ objectPosition: "center center" }} />
            </div>
         </ImageReveal>
 
