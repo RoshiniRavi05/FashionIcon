@@ -64,8 +64,6 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
 };
 
 // ─── IMAGE PRESENTATION COMPONENTS ───
-
-// Shared Reveal Wrapper
 const ImageReveal = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
   <motion.div
     initial={{ opacity: 0, y: 40, scale: 1.05 }}
@@ -91,8 +89,80 @@ const EditorialImage = ({ src, alt, className = "", objectPosition = "center cen
   </div>
 );
 
+// ─── EDITORIAL SPLIT COMPONENT ───
+const EditorialSplit = ({ text, image, reverse = false }: { text: string, image: string, reverse?: boolean }) => (
+  <div className="max-w-[1400px] mx-auto px-6 py-24 md:py-32">
+    <div className={`flex flex-col ${reverse ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 md:gap-24`}>
+      <div className="w-full md:w-1/2 flex justify-center">
+        <ImageReveal className="w-full">
+          <EditorialImage src={image} alt="Editorial Split" className="w-full h-[60vh] md:h-[800px]" objectPosition="center center" />
+        </ImageReveal>
+      </div>
+      <div className="w-full md:w-1/2 flex flex-col justify-center max-w-[500px]">
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
+          className="font-sans text-base md:text-lg text-white/80 leading-[2.2] tracking-wide"
+        >
+          {text}
+        </motion.p>
+      </div>
+    </div>
+  </div>
+);
+
+// ─── FABRIC DETAILS GRID ───
+const FabricDetails = ({ images }: { images: [string, string] }) => (
+  <div className="max-w-[1000px] mx-auto px-6 py-24 md:py-32">
+    <motion.h3 
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+      className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-16 text-center"
+    >
+      Fabric & Construction
+    </motion.h3>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+      {images.map((src, idx) => (
+        <ImageReveal key={idx} className={idx === 1 ? "md:mt-32" : ""}>
+          <EditorialImage src={src} alt={`Fabric Detail ${idx}`} className="w-full h-[50vh] md:h-[600px]" objectPosition="center center" />
+        </ImageReveal>
+      ))}
+    </div>
+  </div>
+);
+
+// ─── RELATED JOURNALS ───
+const RelatedJournals = ({ currentId, onOpenArticle }: { currentId: string, onOpenArticle: (id: string) => void }) => {
+  const related = journals.filter(j => j.id !== currentId).slice(0, 3);
+  return (
+    <div className="max-w-[1400px] mx-auto px-6 py-32 border-t border-white/10 mt-32">
+      <h3 className="font-heading text-lg tracking-[0.2em] uppercase text-white mb-16 text-center">Related Reading</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {related.map((art, idx) => (
+          <motion.article 
+            key={art.id}
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: idx * 0.1 }}
+            onClick={() => onOpenArticle(art.id)}
+            whileHover="hover"
+            className="group cursor-pointer flex flex-col"
+          >
+            <div className="relative h-[400px] mb-6 overflow-hidden rounded-sm bg-[#121212]">
+               <Image src={art.image} alt={art.title} fill className="object-cover transition-transform duration-1000 group-hover:scale-105 brightness-90 group-hover:brightness-100" />
+            </div>
+            <div className="mb-3 relative inline-block self-start">
+              <h4 className="font-heading text-sm tracking-wider uppercase text-white group-hover:text-brand-red transition-colors duration-300">
+                {art.title}
+              </h4>
+              <motion.div variants={{ rest: { scaleX: 0, originX: 0 }, hover: { scaleX: 1, originX: 0 } }} initial="rest" transition={{ duration: 0.4 }} className="absolute -bottom-1 left-0 w-full h-[1px] bg-brand-red" />
+            </div>
+            <p className="font-caption text-[10px] tracking-[0.2em] text-white/50 uppercase">{art.readTime}</p>
+          </motion.article>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ─── ARTICLE OVERLAY COMPONENT ───
-const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose: () => void }) => {
+const ArticleOverlay = ({ article, onClose, onOpenArticle }: { article: JournalArticle, onClose: () => void, onOpenArticle: (id: string) => void }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container: containerRef });
 
@@ -117,129 +187,93 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           onClick={onClose}
           className="group flex items-center space-x-3 font-heading text-[10px] tracking-[0.2em] uppercase transition-opacity hover:opacity-70 focus:outline-none"
         >
-          <motion.div className="group-hover:-translate-x-1 transition-transform duration-300">
+          <motion.div className="group-hover:-translate-x-2 transition-transform duration-300">
             <ArrowLeft className="w-4 h-4" />
           </motion.div>
-          <span>Close</span>
+          <span className="group-hover:opacity-50 transition-opacity duration-300">Back to Journal</span>
         </button>
       </div>
 
-      {/* Morphing Hero */}
-      <section className="relative w-full h-[70vh] flex items-end justify-center overflow-hidden">
+      {/* Morphing Cinematic Hero (The Good Ones Magazine Style) */}
+      <section className="relative w-full h-[85vh] md:h-[90vh] flex items-center justify-center overflow-hidden">
         <motion.div 
           layoutId={`journal-image-${article.id}`}
           className="absolute inset-0 z-0"
         >
-          {/* Using object-position center top for hero to avoid cropping faces */}
-          <Image src={article.images.hero} alt={article.title} fill className="object-cover brightness-50" style={{ objectPosition: "center top" }} priority sizes="100vw" />
+          {/* Using object-position center top for hero to avoid cropping faces, subtle scale down animation on load */}
+          <motion.div initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 1.5, ease: "easeOut" }} className="w-full h-full relative">
+            <Image src={article.images.hero} alt={article.title} fill className="object-cover brightness-[0.4]" style={{ objectPosition: "center top" }} priority sizes="100vw" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90" />
+          </motion.div>
         </motion.div>
         
-        <div className="relative z-10 w-full px-6 md:px-12 pb-20 max-w-[1200px] mx-auto text-center flex flex-col items-center">
+        <div className="relative z-10 w-full px-6 md:px-12 max-w-[1200px] mx-auto text-center flex flex-col items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
+            className="mb-8 flex flex-wrap justify-center gap-6 font-caption text-[10px] tracking-[0.3em] text-white/90 uppercase font-bold"
+          >
+            <span className="text-brand-red">{article.category}</span>
+            <span>{article.date}</span>
+            <span>{article.readTime}</span>
+          </motion.div>
+
           <motion.h1 
             layoutId={`journal-title-${article.id}`}
-            className="font-hero text-4xl sm:text-6xl md:text-7xl tracking-wide uppercase text-white leading-[0.9]"
+            className="font-hero text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] tracking-tight uppercase text-white leading-[0.85] mb-12"
           >
             {article.title}
           </motion.h1>
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="mt-8 flex flex-wrap justify-center gap-6 font-caption text-[10px] tracking-[0.2em] text-white/60 uppercase"
+
+          <motion.p
+             initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}
+             className="font-sans text-lg md:text-xl text-white/90 leading-[2] tracking-wide max-w-[600px] mx-auto"
           >
-            <span>ARC OPUS EDITORIAL</span>
-            <span>{article.date}</span>
-            <span className="text-brand-red">{article.category}</span>
-          </motion.div>
+            {article.content.intro}
+          </motion.p>
         </div>
       </section>
 
       {/* Editorial Content */}
       <article className="pb-32 bg-[#050505] relative z-10">
-        
-        {/* Intro */}
-        <div className="max-w-[700px] mx-auto px-6 py-32 text-center">
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
-            className="font-sans text-lg md:text-xl text-white/90 leading-[2] tracking-wide"
-          >
-            {article.content.intro}
-          </motion.p>
-        </div>
 
-        {/* Mid-Shot Landscape */}
-        <ImageReveal className="w-full max-w-[1400px] mx-auto px-6 mb-32">
-          <EditorialImage src={article.images.midShot} alt="Mid Shot" className="w-full h-[50vh] md:h-[700px]" />
-        </ImageReveal>
-
-        {/* Story */}
-        <div className="max-w-[700px] mx-auto px-6 py-16 text-center">
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
-            className="font-sans text-sm md:text-base text-white/70 leading-[2.2] tracking-wide"
-          >
-            {article.content.story}
-          </motion.p>
-        </div>
+        {/* Text + Image Split Layout */}
+        <EditorialSplit text={article.content.story} image={article.images.midShot} />
 
         {/* Animated Pull Quote */}
         <motion.div
-          initial={{ opacity: 0, filter: 'blur(8px)' }}
+          initial={{ opacity: 0, filter: 'blur(10px)' }}
           whileInView={{ opacity: 1, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2 }}
-          className="py-32 px-6 max-w-[1000px] mx-auto"
+          className="py-24 md:py-40 px-6 max-w-[1000px] mx-auto"
         >
           <motion.p
             initial={{ letterSpacing: "0.1em" }}
             whileInView={{ letterSpacing: "normal" }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1.2 }}
-            className="font-hero text-2xl sm:text-4xl md:text-5xl text-center leading-[1.4] uppercase tracking-wide text-brand-red"
+            className="font-hero text-3xl sm:text-5xl md:text-6xl text-center leading-[1.3] uppercase tracking-wide text-brand-red"
           >
             {article.pullQuote}
           </motion.p>
         </motion.div>
 
-        {/* Asymmetric Close-Ups Gallery */}
-        <div className="max-w-[1400px] mx-auto px-6 mb-32">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12">
-            <div className="md:col-span-5 pt-0 md:pt-24">
-              <ImageReveal>
-                <EditorialImage src={article.images.closeUps[0]} alt="Close Up 1" className="w-full h-[60vh] md:h-[600px]" />
-              </ImageReveal>
-            </div>
-            <div className="md:col-span-7">
-              <ImageReveal>
-                <EditorialImage src={article.images.closeUps[1]} alt="Close Up 2" className="w-full h-[50vh] md:h-[800px]" />
-              </ImageReveal>
-            </div>
-          </div>
-        </div>
+        {/* Fabric Details Grid */}
+        <FabricDetails images={article.images.closeUps} />
 
-        {/* Lifestyle Portrait */}
-        <ImageReveal className="w-full max-w-[800px] mx-auto px-6 mb-32 flex justify-center">
-          <EditorialImage src={article.images.lifestyle} alt="Lifestyle Portrait" className="w-full md:w-[600px] h-[60vh] md:h-[750px]" objectPosition="center top" />
-        </ImageReveal>
+        {/* Designer Notes (Second Text + Image Split, Reversed) */}
+        <EditorialSplit text={article.content.behindTheCollection} image={article.images.lifestyle} reverse />
 
-        {/* Closing Notes */}
-        <div className="max-w-[700px] mx-auto px-6 py-16 space-y-32">
-          <div>
-            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-10 text-center">Fabric & Construction</h3>
-            <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.materialNotes}</p>
-          </div>
-          <div>
-            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-10 text-center">Behind the Collection</h3>
-            <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.behindTheCollection}</p>
-          </div>
-        </div>
-
-        {/* Final Wide Campaign Bleed (No borders, true bleed) */}
-        <ImageReveal className="w-full mt-32">
+        {/* Final Wide Campaign Bleed */}
+        <ImageReveal className="w-full mt-24 md:mt-40">
            <div className="relative w-full h-[60vh] md:h-[800px]">
              <Image src={article.images.wideCampaign} alt="Wide Campaign" fill className="object-cover" sizes="100vw" style={{ objectPosition: "center center" }} />
            </div>
         </ImageReveal>
+
+        {/* Related Journals Footer */}
+        <RelatedJournals currentId={article.id} onOpenArticle={onOpenArticle} />
+
       </article>
     </motion.div>
   );
@@ -396,7 +430,7 @@ export default function JournalPage() {
       {/* ARTICLE OVERLAY RENDERING */}
       <AnimatePresence>
         {selectedArticle && (
-          <ArticleOverlay key="overlay" article={selectedArticle} onClose={closeArticle} />
+          <ArticleOverlay key="overlay" article={selectedArticle} onClose={closeArticle} onOpenArticle={openArticle} />
         )}
       </AnimatePresence>
     </div>
