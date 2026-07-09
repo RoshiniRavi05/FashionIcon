@@ -1,7 +1,6 @@
-"use client";
-
-import React, { use } from 'react';
-import { notFound, useRouter } from 'next/navigation';
+import React from 'react';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { journals } from '@/data/journals';
 import Capsule01Article from '@/components/journal/Capsule01Article';
@@ -16,10 +15,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
-  const unwrappedParams = use(params);
-  const article = journals.find((j) => j.id === unwrappedParams.id);
-  const router = useRouter();
+export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const article = journals.find((j) => j.id === id);
 
   if (!article) {
     notFound();
@@ -46,15 +44,15 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
       <div className="bg-[#050505] min-h-screen selection:bg-brand-red selection:text-white font-sans text-white">
         {/* Global Journal Header */}
         <div className="fixed top-8 left-8 md:left-12 z-50 mix-blend-difference text-white">
-          <button 
-            onClick={() => router.push('/journal')}
+          <Link 
+            href="/journal"
             className="group flex items-center space-x-4 font-heading text-[11px] tracking-[0.2em] uppercase transition-opacity hover:opacity-60 focus:outline-none"
           >
             <div className="group-hover:-translate-x-2 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] text-brand-red">
               <ArrowLeft className="w-4 h-4 stroke-[1.5]" />
             </div>
             <span>Back to Journal</span>
-          </button>
+          </Link>
         </div>
 
         {/* Render Bespoke Experience */}

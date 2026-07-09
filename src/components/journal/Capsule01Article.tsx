@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { JournalArticle } from '@/data/journals';
 import { Reveal, RevealText, ParallaxImage, RelatedJournals } from './ArticleShared';
