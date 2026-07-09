@@ -8,9 +8,11 @@ export interface JournalArticle {
   image: string;
   content: {
     intro: string;
-    story: string;
+    inspiration: string;
+    fabric: string;
     behindTheCollection: string;
-    materialNotes: string;
+    stylingNotes: string;
+    designerCommentary: string;
   };
   pullQuote: string;
   images: {
@@ -33,9 +35,11 @@ export const journals: JournalArticle[] = [
     image: '/oversized_tee_hero.png',
     content: {
       intro: 'Capsule 01 was born to architect a garment that interacts structurally with the human form. Drawing inspiration from brutalist architecture, we approached the oversized tee as a geometric space.',
-      story: 'Every seam was drafted using proprietary skeleton mapping to create an imposing, structured top block without bunching.',
-      behindTheCollection: 'Our studio walls were covered in architectural blueprints, not fashion sketches. Capsule 01 represents our unwavering commitment to clothing as structural design.',
-      materialNotes: 'We bypassed standard jersey in favor of a bespoke 360gsm double-yarn combed cotton. Extremely heavy, incredibly soft.',
+      inspiration: 'Our studio walls were covered in architectural blueprints, not fashion sketches. We wanted the wearer to feel enclosed in a perfectly measured space.',
+      fabric: 'Every seam was drafted using proprietary skeleton mapping to create an imposing, structured top block without bunching.',
+      behindTheCollection: 'Capsule 01 represents our unwavering commitment to clothing as structural design. It took twelve iterations of mock-neck ribbing to create the perfect anchor.',
+      stylingNotes: 'Designed to be worn independently or stacked beneath structured outwear. The rigid hem falls exactly below the belt line.',
+      designerCommentary: 'We bypassed standard jersey in favor of a bespoke 360gsm double-yarn combed cotton. Extremely heavy, incredibly soft.',
     },
     pullQuote: 'We don\'t chase trends. We engineer timeless garments.',
     images: {
@@ -56,9 +60,11 @@ export const journals: JournalArticle[] = [
     image: '/denim_jacket_hero.jpg',
     content: {
       intro: 'True layering is an exercise in proportion and geometry. It requires a foundational understanding of how fabrics interact, stack, and drape over one another.',
-      story: 'By mixing structured outer shells with flowing internal layers, you create dynamic tension. The silhouette becomes three-dimensional.',
-      behindTheCollection: 'We designed the collection as an ecosystem. The heavyweight selvedge jacket was cut precisely to expose the elongated hem of the inner jersey.',
-      materialNotes: 'Contrasting weights are critical. Pairing rigid denim over a micro-modal creates a structured exterior with a fluid, breathable interior.',
+      inspiration: 'Inspired by military modularity and urban utility, we mapped the interaction zones between garments to create an integrated ecosystem.',
+      fabric: 'By mixing structured outer shells with flowing internal layers, you create dynamic tension. The silhouette becomes three-dimensional.',
+      behindTheCollection: 'We designed the entire Fall Capsule as an interconnected unit. The heavyweight selvedge jacket was cut precisely to expose the elongated hem of the inner jersey.',
+      stylingNotes: 'Overlap is everything. Expose 2 inches of contrasting inner fabric beneath your jacket block to create visual break points.',
+      designerCommentary: 'Contrasting weights are critical. Pairing rigid denim over a micro-modal creates a structured exterior armor with a fluid, breathable interior.',
     },
     pullQuote: 'Layering is not about warmth. It is about architectural depth.',
     images: {
@@ -79,9 +85,11 @@ export const journals: JournalArticle[] = [
     image: '/denim_jacket_2.jpg',
     content: {
       intro: 'Traceability is not a buzzword; it is a prerequisite. We traveled to Guimarães, Portugal to document the entire lifecycle of our 360gsm cotton.',
-      story: 'Generations of weaving expertise cannot be replicated. The loom tension here creates a fabric dense enough to hold structure yet soft enough to drape.',
+      inspiration: 'The brutal honesty of industrial manufacturing informed our approach. No smoke and mirrors, just pure mechanical precision.',
+      fabric: 'Generations of weaving expertise cannot be replicated. The loom tension here creates a fabric dense enough to hold structure yet soft enough to drape.',
       behindTheCollection: 'Sitting with the master weavers, we realized true luxury fashion is built in these noisy, dusty rooms.',
-      materialNotes: 'The cotton undergoes a proprietary double-combing process, removing impurities and creating a smooth, pill-resistant surface.',
+      stylingNotes: 'Raw materials require less styling. Let the heavy drape of the unwashed cotton speak for itself without overcomplicating the silhouette.',
+      designerCommentary: 'The cotton undergoes a proprietary double-combing process, removing impurities and creating a smooth, pill-resistant surface.',
     },
     pullQuote: 'True luxury is built in dusty, noisy rooms.',
     images: {
@@ -102,9 +110,11 @@ export const journals: JournalArticle[] = [
     image: '/acid_wash_sneakers.png',
     content: {
       intro: 'Digital fashion should not be a gimmick. It should be a functional extension of physical styling. Our new 3D configurator brings the fitting room to the browser.',
-      story: 'We spent months rigging the drape of our heavyweight cotton in WebGL. The physics had to mirror reality.',
+      inspiration: 'We looked at architectural CAD software and automotive rendering engines to build a lighting environment that respects physical material properties.',
+      fabric: 'We spent months rigging the drape of our heavyweight cotton in WebGL. The digital cloth physics had to mirror reality.',
       behindTheCollection: 'The goal was never to replace physical clothing, but to allow users to experiment with tactical layering before purchasing.',
-      materialNotes: 'Rendering rigid denim versus soft modal required entirely different mathematical physics models.',
+      stylingNotes: 'Use the 3D space to test proportions. See how the cropped jacket alters your visual center of gravity before you commit to the look.',
+      designerCommentary: 'Rendering rigid denim versus soft modal required entirely different mathematical physics models. The intersection of code and cloth is our future.',
     },
     pullQuote: 'Digital fashion is a functional extension of physical styling.',
     images: {
