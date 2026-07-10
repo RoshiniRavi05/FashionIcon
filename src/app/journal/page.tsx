@@ -127,9 +127,14 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
             <span className="text-brand-red">{article.category}</span>
             <span>{article.date}</span>
           </div>
-          <p className="font-sans text-xs sm:text-sm text-white/90 mt-6 leading-relaxed bg-[#0c0c0c]/60 p-4 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 1, staggerChildren: 0.1 }}
+            className="font-sans text-xs sm:text-sm text-white/90 mt-6 leading-[1.8] bg-[#0c0c0c]/60 p-4 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm whitespace-pre-wrap"
+          >
             {article.content.intro}
-          </p>
+          </motion.div>
         </motion.div>
 
         {/* Main Editorial Image (Mid Layer - Z: 20) */}
@@ -149,15 +154,15 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
 
         {/* Pull Quote Card (Foreground Layer - Z: 40) */}
         <motion.div
-          initial={{ opacity: 0, y: 50, rotate: -5 }}
-          animate={{ opacity: 1, y: 0, rotate: -3 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.8, type: "spring", stiffness: 50 }}
           whileHover={{ y: -5, rotate: -1, zIndex: 55 }}
           className="magazine-card relative z-40 mx-6 lg:mx-0 lg:absolute lg:bottom-[8vh] lg:left-[12vw] p-8 max-w-[320px] mt-10 lg:mt-0 cursor-pointer"
         >
           <div className="tape-top-right" />
-          <p className="font-hero text-base xl:text-lg uppercase leading-tight text-[#111]">
-            "{article.pullQuote}"
+          <p className="font-hero text-base xl:text-lg uppercase leading-tight text-[#111] whitespace-pre-wrap">
+            {article.pullQuote}
           </p>
         </motion.div>
 
@@ -171,7 +176,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
         >
           <div className="tape-top-left" />
           <h3 className="font-caption text-[10px] tracking-[0.2em] uppercase text-brand-red mb-3 font-bold">Fabric & Spec</h3>
-          <p className="font-sans text-[11px] leading-relaxed text-[#333]">
+          <p className="font-sans text-[11px] leading-[1.8] text-[#333] whitespace-pre-wrap">
             {article.content.materialNotes}
           </p>
         </motion.div>
@@ -194,13 +199,39 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
+          transition={{ delay: 1, duration: 1.5 }}
           className="relative z-50 mx-6 lg:mx-0 lg:absolute lg:bottom-[22vh] lg:right-[35vw] max-w-[220px] mt-10 lg:mt-0"
         >
-          <p className="font-heading text-[13px] xl:text-sm italic text-white/90 leading-relaxed drop-shadow-md">
-            "{article.content.behindTheCollection}"
+          <p className="font-sans text-[13px] xl:text-sm text-white/90 leading-[1.8] drop-shadow-md whitespace-pre-wrap">
+            {article.content.behindTheCollection}
           </p>
         </motion.div>
+
+        {/* Stamped Metadata Labels (Foreground Layer - Z: 40) */}
+        {article.metadata && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 1 }}
+            className="hidden lg:flex absolute top-[20vh] left-[45vw] z-40 gap-3 font-mono text-[9px] text-white/50 tracking-widest uppercase"
+          >
+            {article.metadata.edition && (
+              <div className="px-2 py-1 border border-white/20 rounded-sm bg-black/20 backdrop-blur-md">
+                {article.metadata.edition}
+              </div>
+            )}
+            {article.metadata.location && (
+              <div className="px-2 py-1 border border-white/20 rounded-sm bg-black/20 backdrop-blur-md">
+                {article.metadata.location}
+              </div>
+            )}
+            {article.metadata.coordinates && (
+              <div className="px-2 py-1 border border-white/20 rounded-sm bg-black/20 backdrop-blur-md">
+                {article.metadata.coordinates}
+              </div>
+            )}
+          </motion.div>
+        )}
 
       </div>
     </motion.div>
