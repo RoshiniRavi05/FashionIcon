@@ -63,143 +63,148 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
   );
 };
 
-// ─── ARTICLE OVERLAY COMPONENT ───
+// ─── MAGAZINE SPREAD OVERLAY COMPONENT ───
 const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose: () => void }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ container: containerRef });
+  useEffect(() => {
+    // Lock body scroll while overlay is open
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[100] bg-[#050505] overflow-y-auto overflow-x-hidden selection:bg-brand-red selection:text-white"
-      ref={containerRef}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-[100] bg-[#0c0c0c] overflow-y-auto lg:overflow-hidden selection:bg-brand-red selection:text-white"
     >
-      {/* Progress Bar */}
-      <motion.div 
-        className="fixed top-0 left-0 h-[2px] bg-brand-red z-[110] origin-left"
-        style={{ scaleX: scrollYProgress }}
-      />
+      <div className="film-grain" />
+      <div className="paper-texture" />
 
       {/* Back Button */}
-      <div className="fixed top-8 left-6 md:left-12 z-[110] mix-blend-difference text-white">
+      <div className="fixed top-8 left-6 md:left-12 z-[110] text-white/70 hover:text-white transition-colors">
         <button 
           onClick={onClose}
-          className="group flex items-center space-x-3 font-heading text-[10px] tracking-[0.2em] uppercase transition-opacity hover:opacity-70 focus:outline-none"
+          className="group flex items-center space-x-3 font-caption text-[10px] tracking-[0.2em] uppercase focus:outline-none"
         >
           <motion.div className="group-hover:-translate-x-1 transition-transform duration-300">
             <ArrowLeft className="w-4 h-4" />
           </motion.div>
-          <span>Close</span>
+          <span>Back to Journal</span>
         </button>
       </div>
 
-      {/* Morphing Hero */}
-      <section className="relative w-full h-[70vh] md:h-[80vh] flex items-end justify-center overflow-hidden">
-        <motion.div 
-          layoutId={`journal-image-${article.id}`}
-          className="absolute inset-0 z-0"
-        >
-          <Image src={article.image} alt={article.title} fill className="object-cover brightness-50" priority sizes="100vw" />
-        </motion.div>
+      {/* Magazine Layout Container */}
+      <div className="relative w-full min-h-screen lg:h-screen pt-24 pb-20 lg:p-0 flex flex-col lg:block">
         
-        <div className="relative z-10 w-full px-6 md:px-12 pb-20 max-w-[1200px] mx-auto text-center flex flex-col items-center">
+        {/* Title & Metadata (Top Leftish) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="relative lg:absolute lg:top-[12vh] lg:left-[5vw] z-20 px-6 lg:px-0 max-w-xl pointer-events-none"
+        >
+          <div className="font-caption text-[10px] tracking-[0.2em] text-white/50 uppercase mb-4 flex gap-4 pointer-events-auto">
+            <span className="text-brand-red">{article.category}</span>
+            <span>{article.date}</span>
+          </div>
           <motion.h1 
             layoutId={`journal-title-${article.id}`}
-            className="font-hero text-4xl sm:text-6xl md:text-7xl tracking-wide uppercase text-white leading-[0.9]"
+            className="font-hero text-4xl sm:text-5xl lg:text-7xl xl:text-[8vw] tracking-wide uppercase text-white leading-[0.85] mix-blend-difference pointer-events-auto"
           >
             {article.title}
           </motion.h1>
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="mt-8 flex flex-wrap justify-center gap-6 font-caption text-[10px] tracking-[0.2em] text-white/60 uppercase"
-          >
-            <span>ARC OPUS EDITORIAL</span>
-            <span>{article.date}</span>
-            <span className="text-brand-red">{article.category}</span>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Editorial Content */}
-      <article className="pb-32 bg-[#050505] relative z-10">
-        
-        {/* Intro */}
-        <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
-            className="font-sans text-lg md:text-xl text-white/90 leading-[2] tracking-wide"
-          >
+          <p className="font-sans text-xs sm:text-sm text-white/70 mt-6 max-w-[400px] leading-relaxed pointer-events-auto bg-black/20 p-2 lg:bg-transparent lg:p-0 backdrop-blur-sm lg:backdrop-blur-none rounded-sm">
             {article.content.intro}
-          </motion.p>
-        </div>
-
-        {/* Campaign Bleed Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1.2, ease: "easeOut" }}
-          className="w-full h-[60vh] md:h-[85vh] relative my-12"
-        >
-          <Image src={article.images.campaignBleed} alt="Campaign Bleed" fill className="object-cover" sizes="100vw" />
+          </p>
         </motion.div>
 
-        {/* Story */}
-        <div className="max-w-[700px] mx-auto px-6 py-24 text-center">
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
-            className="font-sans text-sm md:text-base text-white/70 leading-[2.2] tracking-wide"
-          >
-            {article.content.story}
-          </motion.p>
-        </div>
-
-        {/* Animated Pull Quote */}
+        {/* Main Editorial Image (Center Right) */}
         <motion.div
-          initial={{ opacity: 0, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, filter: 'blur(0px)' }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1.2 }}
-          className="py-16 md:py-24 px-6 max-w-[1000px] mx-auto"
+          initial={{ opacity: 0, x: 50, rotate: 2 }}
+          animate={{ opacity: 1, x: 0, rotate: -1 }}
+          transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
+          whileHover={{ scale: 1.02, rotate: 0, y: -5, zIndex: 50 }}
+          className="relative z-10 mx-6 lg:mx-0 lg:absolute lg:top-1/2 lg:left-1/2 lg:transform lg:-translate-y-1/2 lg:-translate-x-[20%] w-full max-w-lg lg:max-w-2xl xl:max-w-[40vw] aspect-[3/4] mt-10 lg:mt-0 p-3 bg-[#e0e0e0] shadow-2xl cursor-pointer"
         >
-          <motion.p
-            initial={{ letterSpacing: "0.1em" }}
-            whileInView={{ letterSpacing: "normal" }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1.2 }}
-            className="font-hero text-2xl sm:text-4xl md:text-5xl text-center leading-[1.4] uppercase tracking-wide text-brand-red"
-          >
-            {article.pullQuote}
-          </motion.p>
+          <div className="tape-top-left" />
+          <div className="tape-bottom-right" />
+          <motion.div layoutId={`journal-image-${article.id}`} className="relative w-full h-full overflow-hidden border border-black/10">
+            <Image src={article.image} alt={article.title} fill className="object-contain bg-[#111]" sizes="50vw" priority />
+          </motion.div>
         </motion.div>
 
-        {/* Gallery */}
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-6 my-12 md:my-24">
-          {article.images.gallery.map((src, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8, delay: idx * 0.1 }}
-              className="w-full h-[50vh] md:h-[70vh] relative"
-            >
-              <Image src={src} alt={`Editorial Gallery ${idx}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
-            </motion.div>
-          ))}
-        </div>
+        {/* Pull Quote Card (Bottom Left) */}
+        <motion.div
+          initial={{ opacity: 0, y: 50, rotate: -5 }}
+          animate={{ opacity: 1, y: 0, rotate: -3 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          whileHover={{ y: -5, rotate: -1, zIndex: 50 }}
+          className="magazine-card relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[10vh] lg:left-[8vw] p-8 max-w-sm mt-10 lg:mt-0 cursor-pointer"
+        >
+          <div className="tape-top-right" />
+          <p className="font-hero text-lg xl:text-xl uppercase leading-tight text-[#111]">
+            "{article.pullQuote}"
+          </p>
+        </motion.div>
 
-        {/* Closing Notes */}
-        <div className="max-w-[700px] mx-auto px-6 py-12 md:py-24 space-y-20">
-          <div>
-            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-6 text-center">Materials</h3>
-            <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.materialNotes}</p>
+        {/* Material Notes (Top Right) */}
+        <motion.div
+          initial={{ opacity: 0, x: -20, rotate: 3 }}
+          animate={{ opacity: 1, x: 0, rotate: 2 }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+          whileHover={{ y: -5, rotate: 0, zIndex: 50 }}
+          className="magazine-card relative z-20 mx-6 lg:mx-0 lg:absolute lg:top-[15vh] lg:right-[8vw] p-6 max-w-xs mt-10 lg:mt-0 cursor-pointer"
+        >
+          <div className="tape-top-left" />
+          <h3 className="font-caption text-[10px] tracking-[0.2em] uppercase text-brand-red mb-3 font-bold">Fabric & Spec</h3>
+          <p className="font-sans text-xs leading-relaxed text-[#333]">
+            {article.content.materialNotes}
+          </p>
+        </motion.div>
+
+        {/* Small Gallery Photo (Bottom Right) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20, rotate: 6 }}
+          animate={{ opacity: 1, y: 0, rotate: 4 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          whileHover={{ scale: 1.05, rotate: 2, zIndex: 50 }}
+          className="relative z-20 mx-6 lg:mx-0 lg:absolute lg:bottom-[15vh] lg:right-[15vw] w-48 xl:w-56 aspect-[3/4] mt-10 lg:mt-0 p-2 bg-[#f0f0f0] shadow-xl cursor-pointer"
+        >
+          <div className="tape-bottom-left" />
+          <div className="relative w-full h-full">
+            <Image src={article.images.gallery[1] || article.images.campaignBleed} alt="Gallery Note" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-500" sizes="20vw" />
           </div>
-          <div>
-            <h3 className="font-heading text-xs tracking-[0.2em] uppercase text-brand-red mb-6 text-center">Behind the Collection</h3>
-            <p className="font-sans text-sm text-white/70 leading-[2.2] text-center">{article.content.behindTheCollection}</p>
-          </div>
-        </div>
-      </article>
+        </motion.div>
+
+        {/* Designer Commentary Snippet */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[25vh] lg:left-[35vw] max-w-[200px] mt-10 lg:mt-0"
+        >
+          <p className="font-heading text-xs xl:text-sm italic text-white/90 leading-relaxed drop-shadow-md">
+            "{article.content.behindTheCollection}"
+          </p>
+        </motion.div>
+
+        {/* Background Editorial Text Details */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.03 }}
+          transition={{ delay: 1.5, duration: 2 }}
+          className="hidden lg:block absolute bottom-0 right-0 p-12 pointer-events-none"
+        >
+          <p className="font-hero text-[150px] leading-none text-white whitespace-nowrap overflow-hidden">
+            A.OPUS
+          </p>
+        </motion.div>
+
+      </div>
     </motion.div>
   );
 };
