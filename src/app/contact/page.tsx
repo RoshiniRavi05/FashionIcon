@@ -38,15 +38,15 @@ export default function ContactPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1.5 }}
-        className="hidden xl:block absolute top-[25vh] left-[4vw] font-mono text-[9px] text-white/30 tracking-widest uppercase -rotate-90 origin-left z-0"
+        className="hidden xl:block absolute top-[25vh] left-[2vw] font-mono text-[9px] text-white/30 tracking-widest uppercase -rotate-90 origin-left z-0"
       >
         EDITION 07 // EST. 2026
       </motion.div>
 
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 pt-32 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-32 relative z-10">
         
         {/* Editorial Hero */}
-        <div className="mb-24 md:mb-32">
+        <div className="mb-16 border-b border-white/10 pb-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -56,50 +56,53 @@ export default function ContactPage() {
             <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
               ARC OPUS LOGISTICS
             </span>
-            <h1 className="font-hero text-4xl sm:text-6xl md:text-7xl tracking-widest uppercase text-white leading-[0.9]">
+            <h1 className="font-hero text-4xl sm:text-5xl md:text-6xl tracking-widest uppercase text-white leading-[0.9]">
               CONNECT
             </h1>
             
-            <div className="pt-4 max-w-[420px]">
+            <div className="pt-4 max-w-[500px]">
               <p className="font-sans text-[11px] md:text-xs text-white/50 leading-[1.8] uppercase tracking-wider">
-                Private communication channels for:
-                <br />
-                <span className="text-white/80">Editorial // Wholesale // Collaborations // Custom Projects</span>
+                Private communication channels for:<br />
+                <span className="text-white/80 mt-1 block">Editorial // Wholesale // Collaborations // Custom Projects</span>
               </p>
             </div>
           </motion.div>
         </div>
 
-        {/* Asymmetrical Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative">
+        {/* 60/40 Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           
-          {/* Left: Communication Registry (Form) */}
+          {/* Left (60%): Communication Registry (Form) */}
           <div className="lg:col-span-7">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
+              className="bg-black/20 border border-white/5 p-8 md:p-12 rounded-sm"
             >
-              <h2 className="font-hero text-xs sm:text-sm tracking-[0.2em] uppercase text-white mb-10 pb-4 border-b border-white/10">
-                COMMUNICATION REGISTRY
-              </h2>
+              <div className="flex items-center justify-between mb-10 pb-4 border-b border-white/10">
+                <h2 className="font-hero text-sm tracking-[0.2em] uppercase text-white">
+                  COMMUNICATION REGISTRY
+                </h2>
+                <span className="font-mono text-[9px] text-white/30 tracking-widest uppercase">INTAKE LOG</span>
+              </div>
 
               {sent ? (
                 <motion.div 
-                  className="py-16 space-y-6"
+                  className="py-16 space-y-6 text-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  <div className="w-10 h-10 border border-brand-red flex items-center justify-center text-brand-red text-lg mb-8">
+                  <div className="w-12 h-12 rounded-full border border-brand-red/30 flex items-center justify-center text-brand-red text-xl mx-auto bg-brand-red/5">
                     ✓
                   </div>
-                  <h3 className="font-heading text-lg tracking-widest uppercase text-white">TRANSMISSION LOGGED</h3>
-                  <p className="font-sans text-xs text-white/50 max-w-[400px] leading-relaxed">
+                  <h3 className="font-heading text-sm tracking-widest uppercase text-white">TRANSMISSION LOGGED</h3>
+                  <p className="font-sans text-xs text-white/50 max-w-[400px] mx-auto leading-relaxed">
                     Your dispatch has been successfully recorded in the studio registry. A representative will review your inquiry and establish contact within standard operating hours.
                   </p>
                   <button 
                     onClick={() => setSent(false)}
-                    className="font-caption text-[10px] tracking-[0.2em] uppercase text-brand-red hover:text-white transition-colors duration-300 mt-4 block border-b border-brand-red pb-1"
+                    className="font-caption text-[10px] tracking-[0.2em] uppercase text-brand-red hover:text-white transition-colors duration-300 mt-4 inline-block border-b border-brand-red pb-1"
                   >
                     Submit Additional Dispatch
                   </button>
@@ -109,12 +112,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     
                     {/* Name */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4, duration: 0.6 }}
-                      className="group relative"
-                    >
+                    <div className="group relative">
                       <label className="font-caption text-[9px] tracking-widest text-white/40 uppercase block mb-3">Identity / Alias</label>
                       <input
                         type="text"
@@ -124,15 +122,10 @@ export default function ContactPage() {
                         placeholder="ENTER DISPATCHER NAME"
                         className="w-full bg-transparent border-0 border-b border-white/20 pb-3 text-xs tracking-wider text-white uppercase placeholder-white/10 focus:outline-none focus:border-brand-red focus:ring-0 font-sans transition-colors duration-300"
                       />
-                    </motion.div>
+                    </div>
 
                     {/* Email */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5, duration: 0.6 }}
-                      className="group relative"
-                    >
+                    <div className="group relative">
                       <label className="font-caption text-[9px] tracking-widest text-white/40 uppercase block mb-3">Channel / Email</label>
                       <input
                         type="email"
@@ -142,16 +135,11 @@ export default function ContactPage() {
                         placeholder="ENTER CONTACT VECTOR"
                         className="w-full bg-transparent border-0 border-b border-white/20 pb-3 text-xs tracking-wider text-white uppercase placeholder-white/10 focus:outline-none focus:border-brand-red focus:ring-0 font-sans transition-colors duration-300"
                       />
-                    </motion.div>
+                    </div>
                   </div>
 
                   {/* Department */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.6 }}
-                    className="group relative"
-                  >
+                  <div className="group relative">
                     <label className="font-caption text-[9px] tracking-widest text-white/40 uppercase block mb-3">Classification</label>
                     <div className="relative">
                       <select
@@ -166,15 +154,10 @@ export default function ContactPage() {
                       </select>
                       <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none pb-3 text-white/40 text-xs">▼</div>
                     </div>
-                  </motion.div>
+                  </div>
 
                   {/* Message */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7, duration: 0.6 }}
-                    className="group relative"
-                  >
+                  <div className="group relative">
                     <label className="font-caption text-[9px] tracking-widest text-white/40 uppercase block mb-3">Dispatch Details</label>
                     <textarea
                       rows={5}
@@ -184,45 +167,46 @@ export default function ContactPage() {
                       placeholder="ENTER LOG NOTES..."
                       className="w-full bg-transparent border-0 border-b border-white/20 pb-3 text-xs tracking-wider text-white placeholder-white/10 focus:outline-none focus:border-brand-red focus:ring-0 font-sans resize-none transition-colors duration-300"
                     />
-                  </motion.div>
+                  </div>
 
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className="pt-6"
-                  >
+                  <div className="pt-4">
                     <button
                       type="submit"
-                      className="group flex items-center space-x-4 bg-transparent hover:bg-[#F5F5F5] text-[#F5F5F5] hover:text-[#050505] font-heading text-[10px] tracking-[0.2em] uppercase py-4 px-8 border border-white/20 hover:border-transparent transition-all duration-500 font-bold"
+                      className="group flex items-center justify-center space-x-4 w-full bg-[#F5F5F5] hover:bg-brand-red text-[#050505] hover:text-white font-heading text-xs tracking-[0.2em] uppercase py-4 transition-all duration-500 font-bold"
                     >
                       <span>TRANSMIT DISPATCH</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                     </button>
-                  </motion.div>
+                  </div>
                 </form>
               )}
             </motion.div>
           </div>
 
-          {/* Right: Studio Headquarters Information Sheet */}
-          <div className="lg:col-span-5 relative">
+          {/* Right (40%): Studio Headquarters Information Sheet */}
+          <div className="lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="lg:pl-12 space-y-16"
+              className="bg-black/20 border border-white/5 p-8 md:p-10 rounded-sm h-full flex flex-col space-y-12 relative"
             >
               
               {/* Studio Info Block */}
-              <div className="space-y-8">
-                <div className="flex items-center space-x-3">
-                  <h2 className="font-hero text-xs sm:text-sm tracking-[0.2em] uppercase text-white">
-                    STUDIO HEADQUARTERS
+              <div className="space-y-10 flex-grow">
+                
+                {/* Section Header */}
+                <div className="flex items-center justify-between mb-2 pb-4 border-b border-white/10">
+                  <h2 className="font-hero text-sm tracking-[0.2em] uppercase text-white">
+                    STUDIO HQ
                   </h2>
-                  <div className="h-[1px] w-8 bg-brand-red" />
+                  <div className="flex items-center space-x-2 bg-brand-red/10 border border-brand-red/30 px-3 py-1 rounded-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+                    <span className="text-brand-red font-bold font-caption text-[9px] tracking-widest uppercase">ONLINE</span>
+                  </div>
                 </div>
 
+                {/* Location */}
                 <div className="space-y-4">
                   <p className="font-sans tracking-widest text-white uppercase text-xs md:text-sm">TOKYO, JAPAN</p>
                   <p className="font-mono text-white/50 text-xs tracking-wider">
@@ -231,46 +215,44 @@ export default function ContactPage() {
                   </p>
                 </div>
 
-                {/* Online Status */}
-                <div className="flex items-center space-x-3 font-caption text-[10px] tracking-[0.2em] uppercase pt-2">
-                  <span className="text-white/40">STATUS</span>
-                  <div className="flex items-center space-x-2 border border-brand-red/30 bg-brand-red/5 px-3 py-1 rounded-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
-                    <span className="text-brand-red font-bold">ONLINE</span>
-                  </div>
-                </div>
-
                 {/* Logistics Info */}
-                <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/10">
+                <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <p className="font-caption text-[8px] text-white/30 tracking-widest uppercase">Communication Hours</p>
-                    <p className="font-sans text-[10px] text-white/80 tracking-widest uppercase">10:00 - 18:00</p>
+                    <p className="font-sans text-[10px] text-white/80 tracking-widest uppercase">10:00 - 18:00 JST</p>
                     <p className="font-sans text-[10px] text-white/50 tracking-widest uppercase">MON - FRI</p>
                   </div>
                   <div className="space-y-2">
                     <p className="font-caption text-[8px] text-white/30 tracking-widest uppercase">Timezone Info</p>
-                    <p className="font-sans text-[10px] text-white/80 tracking-widest uppercase">JAPAN STD TIME</p>
-                    <p className="font-sans text-[10px] text-white/50 tracking-widest uppercase">UTC +9</p>
+                    <p className="font-sans text-[10px] text-white/80 tracking-widest uppercase">UTC +9</p>
+                    <p className="font-sans text-[10px] text-white/50 tracking-widest uppercase">JAPAN STD TIME</p>
                   </div>
                 </div>
+
+                <div className="space-y-2 pt-2">
+                  <p className="font-caption text-[8px] text-white/30 tracking-widest uppercase">Digital Dispatches</p>
+                  <p className="font-sans text-[10px] text-white/80 tracking-widest uppercase hover:text-brand-red cursor-pointer transition-colors">STUDIO@ARCOPUS.FASHION</p>
+                  <p className="font-sans text-[10px] text-white/80 tracking-widest uppercase hover:text-brand-red cursor-pointer transition-colors">LOGISTICS@ARCOPUS.FASHION</p>
+                </div>
+
               </div>
 
-              {/* Magazine Clipping Card */}
+              {/* Integrated Magazine Clipping Card */}
               <motion.div
-                initial={{ opacity: 0, rotate: -2, x: 20 }}
-                animate={{ opacity: 1, rotate: 2, x: 0 }}
-                transition={{ delay: 0.9, duration: 1 }}
-                whileHover={{ rotate: 0, y: -5, scale: 1.02 }}
-                className="relative bg-[#e0e0e0] p-6 max-w-[280px] shadow-2xl cursor-pointer ml-auto lg:mr-8 xl:mr-16"
+                initial={{ opacity: 0, rotate: -1, y: 10 }}
+                animate={{ opacity: 1, rotate: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 1 }}
+                whileHover={{ rotate: 0, y: -2, scale: 1.01 }}
+                className="relative bg-[#e0e0e0] p-6 shadow-xl cursor-pointer mt-auto border border-black/10"
               >
                 {/* Tape detail */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-white/40 backdrop-blur-sm shadow-sm rotate-2" />
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-white/40 backdrop-blur-sm shadow-sm rotate-1" />
                 
-                <h3 className="font-caption text-[9px] tracking-[0.2em] uppercase text-brand-red mb-4 font-bold border-b border-black/10 pb-2">
+                <h3 className="font-caption text-[9px] tracking-[0.2em] uppercase text-brand-red mb-3 font-bold border-b border-black/10 pb-2">
                   CURRENT STATUS
                 </h3>
-                <p className="font-sans text-[10px] text-black/50 uppercase tracking-widest mb-3">Accepting:</p>
-                <ul className="font-hero text-sm leading-relaxed text-[#111] uppercase space-y-1">
+                <p className="font-sans text-[10px] text-black/50 uppercase tracking-widest mb-2">Accepting:</p>
+                <ul className="font-hero text-[13px] leading-relaxed text-[#111] uppercase space-y-1">
                   <li>• Wholesale Partnerships</li>
                   <li>• Editorial Collaborations</li>
                   <li>• Creative Projects</li>
@@ -283,15 +265,10 @@ export default function ContactPage() {
         </div>
 
         {/* Floating Bottom Label */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 1 }}
-          className="absolute bottom-8 right-6 md:right-12 font-mono text-[9px] text-white/20 tracking-widest uppercase text-right pointer-events-none"
-        >
-          ARC OPUS STUDIO<br />
-          COMMUNICATIONS OPEN
-        </motion.div>
+        <div className="flex justify-between items-center mt-12 font-mono text-[9px] text-white/20 tracking-widest uppercase pb-6">
+          <span>ARC OPUS STUDIO</span>
+          <span>COMMUNICATIONS OPEN</span>
+        </div>
       </div>
     </div>
   );
