@@ -1,128 +1,103 @@
 export interface JournalArticle {
   id: string;
+  title: string;
   category: string;
   date: string;
   readTime: string;
-  title: string;
-  excerpt: string;
   image: string;
+  excerpt: string;
   content: {
     intro: string;
-    inspiration: string;
-    fabric: string;
+    story: string;
+    materialNotes: string;
     behindTheCollection: string;
-    stylingNotes: string;
-    designerCommentary: string;
   };
   pullQuote: string;
   images: {
-    hero: string;
-    midShot: string;
-    closeUps: [string, string];
-    lifestyle: string;
-    wideCampaign: string;
+    campaignBleed: string;
+    gallery: [string, string];
   };
 }
 
 export const journals: JournalArticle[] = [
   {
-    id: '1',
-    category: 'Campaigns',
-    date: 'June 2026',
-    readTime: '3 min',
+    id: "1",
     title: 'CAPSULE 01: BLUEPRINT DESIGN NOTES',
-    excerpt: 'An exploration of oversized silhouettes, heavyweight cotton, and timeless garment construction.',
+    category: 'Campaigns',
+    date: 'JUNE 2026',
+    readTime: '3 MIN READ',
     image: '/oversized_tee_hero.png',
+    excerpt: 'An exploration of oversized silhouettes, heavyweight cotton, and timeless garment construction.',
     content: {
-      intro: 'Capsule 01 was born to architect a garment that interacts structurally with the human form. Drawing inspiration from brutalist architecture, we approached the oversized tee as a geometric space.',
-      inspiration: 'Our studio walls were covered in architectural blueprints, not fashion sketches. We wanted the wearer to feel enclosed in a perfectly measured space.',
-      fabric: 'Every seam was drafted using proprietary skeleton mapping to create an imposing, structured top block without bunching.',
-      behindTheCollection: 'Capsule 01 represents our unwavering commitment to clothing as structural design. It took twelve iterations of mock-neck ribbing to create the perfect anchor.',
-      stylingNotes: 'Designed to be worn independently or stacked beneath structured outwear. The rigid hem falls exactly below the belt line.',
-      designerCommentary: 'We bypassed standard jersey in favor of a bespoke 360gsm double-yarn combed cotton. Extremely heavy, incredibly soft.',
+      intro: "Capsule 01 was born not from a desire to create another t-shirt, but to architect a garment that interacts structurally with the human form. Drawing inspiration from brutalist architecture, we approached the oversized tee as a geometric space.",
+      story: "Every seam was drafted using proprietary skeleton mapping to create an imposing, structured top block without bunching. The mock-neck ribbing underwent twelve iterations to serve as a rigid anchor for the entire piece.",
+      materialNotes: "We bypassed standard jersey in favor of a bespoke 360gsm double-yarn combed cotton. Significantly heavier than industry standards, this fabric provides the necessary density to hold its architectural shape while softening luxuriously against the skin.",
+      behindTheCollection: "Our studio walls were covered in architectural blueprints, not fashion sketches. We wanted the wearer to feel enclosed in a perfectly measured space. Capsule 01 represents our unwavering commitment to clothing as structural design."
     },
-    pullQuote: 'We don\'t chase trends. We engineer timeless garments.',
+    pullQuote: "We don't chase trends.\nWe engineer timeless garments.",
     images: {
-      hero: '/oversized_tee_hero.png',
-      midShot: '/oversized_tee_back.png',
-      closeUps: ['/denim_jacket_2.jpg', '/oversized_tee_hero.png'],
-      lifestyle: '/black_hoodie_2.png',
-      wideCampaign: '/acid_wash_sneakers.png'
+      campaignBleed: "/denim_jacket_2.jpg",
+      gallery: ["/oversized_tee_hero.png", "/acid_wash_sneakers.png"]
     }
   },
   {
-    id: '2',
-    category: 'Style Guide',
-    date: 'May 2026',
-    readTime: '2 min',
+    id: "2",
     title: 'TACTICAL LAYERING STYLE GUIDE',
-    excerpt: 'Redefining layering as a tactical exercise in proportion, geometry, and contrasting weight.',
+    category: 'Style Guide',
+    date: 'MAY 2026',
+    readTime: '2 MIN READ',
     image: '/denim_jacket_hero.jpg',
+    excerpt: 'Redefining layering as a tactical exercise in proportion, geometry, and contrasting weight.',
     content: {
-      intro: 'True layering is an exercise in proportion and geometry. It requires a foundational understanding of how fabrics interact, stack, and drape over one another.',
-      inspiration: 'Inspired by military modularity and urban utility, we mapped the interaction zones between garments to create an integrated ecosystem.',
-      fabric: 'By mixing structured outer shells with flowing internal layers, you create dynamic tension. The silhouette becomes three-dimensional.',
-      behindTheCollection: 'We designed the entire Fall Capsule as an interconnected unit. The heavyweight selvedge jacket was cut precisely to expose the elongated hem of the inner jersey.',
-      stylingNotes: 'Overlap is everything. Expose 2 inches of contrasting inner fabric beneath your jacket block to create visual break points.',
-      designerCommentary: 'Contrasting weights are critical. Pairing rigid denim over a micro-modal creates a structured exterior armor with a fluid, breathable interior.',
+      intro: "Layering is often approached haphazardly, resulting in undefined silhouettes. Inspired by urban utility, this guide explores how heavy denim and structured cotton can be integrated into cohesive, sleek armor.",
+      story: "We mapped the interaction zones between garments. How the cropped hem of a trucker jacket sits against an elongated tee dictated our modular layering system, turning disparate pieces into a unified structure.",
+      materialNotes: "The key lies in contrasting textures. Combining the rough rigidity of 14oz selvedge denim with the dense drape of 360gsm cotton creates a striking visual tension without adding unnecessary bulk.",
+      behindTheCollection: "Our editorial team spent days styling the same five garments, obsessed with finding the perfect balance of overlap and exposure. Mastering tactical layering is an exercise in deliberate assembly."
     },
-    pullQuote: 'Layering is not about warmth. It is about architectural depth.',
+    pullQuote: "Layering is not adding bulk.\nIt's assembling architecture.",
     images: {
-      hero: '/denim_jacket_hero.jpg',
-      midShot: '/denim_jacket_2.jpg',
-      closeUps: ['/black_hoodie_2.png', '/acid_wash_sneakers.png'],
-      lifestyle: '/oversized_tee_back.png',
-      wideCampaign: '/oversized_tee_hero.png'
+      campaignBleed: "/acid_wash_sneakers.png",
+      gallery: ["/denim_jacket_hero.jpg", "/denim_jacket_2.jpg"]
     }
   },
   {
-    id: '3',
-    category: 'Ethos',
-    date: 'April 2026',
-    readTime: '3 min',
+    id: "3",
     title: 'PORTUGAL MILL VISIT: TRACEABLE SOURCING',
-    excerpt: 'A visual diary of our journey to the historic family-owned mills weaving our signature cotton.',
+    category: 'Ethos',
+    date: 'APRIL 2026',
+    readTime: '3 MIN READ',
     image: '/denim_jacket_2.jpg',
+    excerpt: 'A visual diary of our journey to the historic family-owned mills weaving our signature cotton.',
     content: {
-      intro: 'Traceability is not a buzzword; it is a prerequisite. We traveled to Guimarães, Portugal to document the entire lifecycle of our 360gsm cotton.',
-      inspiration: 'The brutal honesty of industrial manufacturing informed our approach. No smoke and mirrors, just pure mechanical precision.',
-      fabric: 'Generations of weaving expertise cannot be replicated. The loom tension here creates a fabric dense enough to hold structure yet soft enough to drape.',
-      behindTheCollection: 'Sitting with the master weavers, we realized true luxury fashion is built in these noisy, dusty rooms.',
-      stylingNotes: 'Raw materials require less styling. Let the heavy drape of the unwashed cotton speak for itself without overcomplicating the silhouette.',
-      designerCommentary: 'The cotton undergoes a proprietary double-combing process, removing impurities and creating a smooth, pill-resistant surface.',
+      intro: "True luxury cannot exist without transparency. We traveled to Portugal to build relationships with the artisans who share our obsession with structural integrity and material perfection.",
+      story: "We partnered with a family-owned mill nestled in the hills, utilizing their decades of experience to weave a fabric that resists warping. The rhythmic clatter of the looms was intoxicating.",
+      materialNotes: "The mill specializes in a double-yarn weaving technique. By twisting two fine yarns together before weaving, they engineer a fabric that is exceptionally dense and durable, finished with our custom bio-wash.",
+      behindTheCollection: "Seeing raw cotton transform into our precise 360gsm fabric was a visceral reminder of the human effort woven into every piece. When you wear ARC OPUS, you wear a piece of textile history."
     },
-    pullQuote: 'True luxury is built in dusty, noisy rooms.',
+    pullQuote: "True luxury is transparent.\nIt is woven with intent.",
     images: {
-      hero: '/denim_jacket_2.jpg',
-      midShot: '/oversized_tee_hero.png',
-      closeUps: ['/acid_wash_sneakers.png', '/black_hoodie_2.png'],
-      lifestyle: '/denim_jacket_hero.jpg',
-      wideCampaign: '/oversized_tee_back.png'
+      campaignBleed: "/denim_jacket_hero.jpg",
+      gallery: ["/denim_jacket_2.jpg", "/oversized_tee_hero.png"]
     }
   },
   {
-    id: '4',
-    category: 'Innovation',
-    date: 'March 2026',
-    readTime: '4 min',
+    id: "4",
     title: 'THE GEOMETRIC AVATAR: STYLE SIMULATORS',
-    excerpt: 'Bridging the physical and digital with real-time WebGL configurators and structural rigging.',
+    category: 'Innovation',
+    date: 'MARCH 2026',
+    readTime: '4 MIN READ',
     image: '/acid_wash_sneakers.png',
+    excerpt: 'Bridging the physical and digital with real-time WebGL configurators and structural rigging.',
     content: {
-      intro: 'Digital fashion should not be a gimmick. It should be a functional extension of physical styling. Our new 3D configurator brings the fitting room to the browser.',
-      inspiration: 'We looked at architectural CAD software and automotive rendering engines to build a lighting environment that respects physical material properties.',
-      fabric: 'We spent months rigging the drape of our heavyweight cotton in WebGL. The digital cloth physics had to mirror reality.',
-      behindTheCollection: 'The goal was never to replace physical clothing, but to allow users to experiment with tactical layering before purchasing.',
-      stylingNotes: 'Use the 3D space to test proportions. See how the cropped jacket alters your visual center of gravity before you commit to the look.',
-      designerCommentary: 'Rendering rigid denim versus soft modal required entirely different mathematical physics models. The intersection of code and cloth is our future.',
+      intro: "The traditional online shopping experience is flat. We sought to bridge the gap between digital convenience and physical showroom tactility by creating a real-time, browser-based physics engine.",
+      story: "Utilizing Three.js, we mapped the specific drape, weight, and tension of our 360gsm cotton onto a digital skeleton. When the avatar moves, the virtual fabric creases and folds exactly as its physical counterpart would.",
+      materialNotes: "We captured ultra-high-resolution photogrammetry scans to create accurate normal maps. This allows the simulator to realistically render the interplay of light and shadow across heavy cotton and rigid denim.",
+      behindTheCollection: "Merging high-fashion design with complex software engineering was a unique challenge. Seeing the digital fabric hold its boxy silhouette perfectly was a moment of true validation for our digital and physical teams."
     },
-    pullQuote: 'Digital fashion is a functional extension of physical styling.',
+    pullQuote: "Bridging the physical and digital.\nEngineering a new reality.",
     images: {
-      hero: '/acid_wash_sneakers.png',
-      midShot: '/denim_jacket_hero.jpg',
-      closeUps: ['/oversized_tee_hero.png', '/denim_jacket_2.jpg'],
-      lifestyle: '/oversized_tee_back.png',
-      wideCampaign: '/black_hoodie_2.png'
+      campaignBleed: "/oversized_tee_hero.png",
+      gallery: ["/denim_jacket_hero.jpg", "/acid_wash_sneakers.png"]
     }
   }
 ];
