@@ -3,11 +3,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { journals } from '@/data/journals';
-import SmoothScrollProvider from '@/components/journal/SmoothScrollProvider';
-import { ParallaxImage, Reveal, RevealText } from '@/components/journal/ArticleShared';
 
 // ─── FAQ COMPONENT ───
 const faqs = [
@@ -28,7 +26,7 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
         visible: { opacity: 1, y: 0 }
       }}
       whileHover={{ y: -2 }}
-      className={`border border-white/5 hover:border-white/20 transition-all duration-300 px-8 rounded-sm mb-4 cursor-pointer group ${isOpen ? 'bg-[#0a0a0a] shadow-[0_10px_40px_rgba(0,0,0,0.6)] border-white/20' : 'bg-transparent'}`}
+      className={`border border-white/5 hover:border-white/20 transition-all duration-300 px-8 rounded-sm mb-4 cursor-pointer group ${isOpen ? 'bg-[#0a0a0a] shadow-[0_10px_40px_rgba(0,0,0,0.6)] border-white/20' : 'bg-[#121212]'}`}
       onClick={onClick}
     >
       <motion.div layout="position" className="w-full py-6 flex justify-between items-center text-left">
@@ -66,147 +64,121 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
   );
 };
 
-// ─── ASYMMETRICAL INDEX LAYOUT ───
+// ─── MAIN JOURNAL PAGE ───
 export default function JournalPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
-  // We assign specific layouts and images to each index item to create the asymmetrical editorial feel
-  const articleLayouts = [
-    {
-      // 0: Massive Hero
-      image: journals[0].images.hero,
-      containerClasses: "w-full flex flex-col items-center max-w-[1400px] mx-auto",
-      imageClasses: "w-full max-h-[85vh]",
-      textClasses: "w-full text-center mt-12",
-      parallaxOffset: 3
-    },
-    {
-      // 1: Shifted Right Portrait
-      image: journals[1].images.closeUps[0],
-      containerClasses: "w-full flex flex-col items-end max-w-[1200px] mx-auto mt-[180px]",
-      imageClasses: "w-[80%] md:w-[50%] max-h-[80vh]",
-      textClasses: "w-[80%] md:w-[50%] text-left mt-12 pl-8 border-l border-brand-red",
-      parallaxOffset: 8
-    },
-    {
-      // 2: Shifted Left Landscape
-      image: journals[2].images.midShot,
-      containerClasses: "w-full flex flex-col items-start max-w-[1200px] mx-auto mt-[180px]",
-      imageClasses: "w-[90%] md:w-[65%] max-h-[75vh]",
-      textClasses: "w-[90%] md:w-[65%] text-left mt-12 pr-8",
-      parallaxOffset: 5
-    },
-    {
-      // 3: Centered Clinical
-      image: journals[3].images.lifestyle,
-      containerClasses: "w-full flex flex-col items-center max-w-[900px] mx-auto mt-[180px]",
-      imageClasses: "w-full max-h-[90vh] border border-white/10",
-      textClasses: "w-full text-center mt-12 border-t border-white/10 pt-8",
-      parallaxOffset: 4
-    }
-  ];
-
   return (
-    <SmoothScrollProvider>
-      <div className="bg-[#050505] min-h-screen pb-32 selection:bg-brand-red selection:text-white font-sans text-white">
-        
-        {/* HEADER */}
-        <section className="w-full flex flex-col items-center text-center pt-[180px] pb-[120px] px-6">
-          <RevealText>
-            <span className="font-caption text-[11px] md:text-[12px] tracking-[0.3em] text-brand-red uppercase block mb-[24px]">
-              EDITORIAL ARCHIVES
-            </span>
-          </RevealText>
-          <RevealText delay={0.1}>
-            <h1 className="font-hero text-[48px] md:text-[60px] lg:text-[72px] tracking-tight uppercase text-white leading-[1.1] max-w-[900px] mb-[40px] mx-auto">
-              THE JOURNAL
-            </h1>
-          </RevealText>
-          <RevealText delay={0.2}>
-            <p className="font-sans text-[18px] text-white/50 leading-[1.7] tracking-wide max-w-[600px] mx-auto">
-              Deep-dives into styling theory, technical material log files, and behind-the-scenes production runs at ARC OPUS.
-            </p>
-          </RevealText>
-        </section>
-
-        {/* ASYMMETRICAL EDITORIAL FEED */}
-        <section className="w-full px-6 md:px-12 pb-[120px]">
-          {journals.map((art, idx) => {
-            const layout = articleLayouts[idx];
-            return (
-              <div key={art.id} className={layout.containerClasses}>
-                <Reveal className="w-full relative">
-                  <Link href={`/journal/${art.id}`} className="group block w-full relative">
-                    {/* Abstract Line Connector between articles (skip first) */}
-                    {idx > 0 && (
-                      <div className="absolute -top-[180px] left-1/2 w-[1px] h-[100px] bg-white/10 -translate-x-1/2"></div>
-                    )}
-                    
-                    <div className="relative w-full overflow-hidden">
-                      <ParallaxImage 
-                        src={layout.image} 
-                        alt={art.title} 
-                        className="w-full" 
-                        imgClassName={layout.imageClasses} 
-                        yOffset={layout.parallaxOffset}
-                        priority={idx === 0}
-                      />
-                      {/* Overlay label */}
-                      <div className="absolute top-8 left-8 mix-blend-difference z-10 pointer-events-none">
-                        <span className="font-caption text-[10px] tracking-[0.2em] text-white/90 uppercase font-bold">
-                          {art.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className={layout.textClasses}>
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                        <div className="flex-1">
-                          <h2 className="font-heading text-[24px] md:text-[32px] tracking-widest uppercase text-white group-hover:text-brand-red transition-colors duration-500 mb-4">
-                            {art.title}
-                          </h2>
-                          <div className="flex items-center space-x-3 font-caption text-[10px] tracking-[0.2em] text-white/40 uppercase mb-4">
-                            <span>{art.date}</span>
-                            <span className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-brand-red transition-colors duration-500"></span>
-                            <span>{art.readTime} read</span>
-                          </div>
-                        </div>
-                        <div className="md:w-[40%] flex flex-col justify-between">
-                          <p className="font-sans text-[14px] text-white/50 leading-[1.6] mb-6 md:mb-0">
-                            {art.excerpt}
-                          </p>
-                          <div className="flex items-center space-x-2 text-brand-red font-caption text-[10px] tracking-[0.2em] uppercase mt-4 md:mt-0 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                            <span>Read Article</span>
-                            <ArrowRight className="w-3 h-3" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </Reveal>
-              </div>
-            );
-          })}
-        </section>
-
-        {/* FAQ SECTION */}
-        <section className="pt-[120px] pb-16 px-6 md:px-12 border-t border-white/10">
-          <RevealText className="max-w-[800px] mx-auto space-y-16">
-            <div className="text-center space-y-4">
-              <h2 className="font-hero text-[32px] md:text-[40px] tracking-wide uppercase text-white">
-                Frequently Asked Questions
-              </h2>
-              <div className="w-12 h-[1px] bg-brand-red mx-auto" />
-            </div>
-            <div className="flex flex-col">
-              {faqs.map((faq, idx) => (
-                <FAQItem key={idx} faq={faq} isOpen={openFaqIndex === idx} onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} />
-              ))}
-            </div>
-          </RevealText>
-        </section>
-        
+    <div className="bg-[#050505] min-h-screen py-20 px-6 md:px-12 max-w-[1600px] mx-auto space-y-20 relative selection:bg-brand-red selection:text-white">
+      
+      {/* Title */}
+      <div className="space-y-4 pt-10">
+        <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black">
+          EDITORIAL ARCHIVES
+        </span>
+        <h1 className="font-hero text-3xl sm:text-5xl tracking-wide uppercase text-white">
+          THE JOURNAL
+        </h1>
+        <p className="font-sans text-xs text-white/50 max-w-[520px] leading-relaxed">
+          Deep-dives into styling theory, technical material log files, and behind-the-scenes production runs at ARC OPUS.
+        </p>
       </div>
-    </SmoothScrollProvider>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
+        {journals.map((art, idx) => (
+          <Link href={`/journal/${art.id}`} key={art.id} className="block">
+            <motion.article 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              whileHover="hover"
+              className="group flex flex-col cursor-pointer"
+            >
+              {/* Card Lift Wrapper */}
+              <motion.div 
+                variants={{ hover: { y: -3 } }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="flex flex-col h-full"
+              >
+                {/* Image Box */}
+                <div className="relative h-[400px] md:h-[500px] bg-[#121212] overflow-hidden rounded-sm">
+                  <div className="w-full h-full relative">
+                    <Image
+                      src={art.image}
+                      alt={art.title}
+                      fill
+                      className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 brightness-90 group-hover:brightness-100"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{ objectPosition: "center top" }}
+                    />
+                  </div>
+                  <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/90 bg-[#050505] px-3 py-1.5 uppercase font-bold z-10">
+                    {art.category}
+                  </span>
+                </div>
+
+                {/* Content Details aligned to grid */}
+                <div className="pt-8 flex flex-col flex-grow">
+                  <motion.div 
+                    variants={{ hover: { opacity: 0.5 } }}
+                    transition={{ duration: 0.3 }}
+                    className="flex justify-between items-center font-caption text-[9px] tracking-[0.2em] text-white/50 uppercase mb-4"
+                  >
+                    <span>{art.date}</span>
+                    <span>{art.readTime}</span>
+                  </motion.div>
+                  
+                  <div className="mb-4 relative inline-block self-start">
+                    <h2 
+                      className="font-heading text-lg sm:text-xl tracking-wider uppercase text-white group-hover:text-brand-red transition-colors duration-300"
+                    >
+                      {art.title}
+                    </h2>
+                    {/* Animated Underline */}
+                    <motion.div 
+                      variants={{
+                        rest: { scaleX: 0, originX: 0 },
+                        hover: { scaleX: 1, originX: 0 }
+                      }}
+                      initial="rest"
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute -bottom-2 left-0 w-full h-[1px] bg-brand-red"
+                    />
+                  </div>
+                  
+                  <p className="font-sans text-xs sm:text-sm text-white/50 leading-relaxed max-w-[450px] mt-2">
+                    {art.excerpt}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.article>
+          </Link>
+        ))}
+      </div>
+
+      {/* FAQ SECTION */}
+      <section className="pt-32 pb-16">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="max-w-[800px] mx-auto space-y-16"
+        >
+          <div className="text-center space-y-4">
+            <h2 className="font-hero text-2xl sm:text-4xl tracking-wide uppercase text-white">
+              FREQUENTLY ASKED QUESTIONS
+            </h2>
+            <div className="w-12 h-[1px] bg-brand-red mx-auto" />
+          </div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={{ visible: { transition: { staggerChildren: 0.1 } } }} className="flex flex-col">
+            {faqs.map((faq, idx) => (
+              <FAQItem key={idx} faq={faq} isOpen={openFaqIndex === idx} onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} />
+            ))}
+          </motion.div>
+        </motion.div>
+      </section>
+    </div>
   );
 }
