@@ -271,118 +271,128 @@ export default function JournalPage() {
   const selectedArticle = journals.find(j => j.id === selectedId);
 
   return (
-    <div className="bg-[#050505] min-h-screen py-20 px-6 md:px-12 max-w-[1600px] mx-auto space-y-20 relative selection:bg-brand-red selection:text-white">
+    <div className="bg-[#050505] min-h-screen py-20 flex flex-col overflow-y-scroll selection:bg-brand-red selection:text-white">
       
-      {/* Title */}
-      <div className="space-y-4 pt-10">
-        <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black">
-          EDITORIAL ARCHIVES
-        </span>
-        <h1 className="font-hero text-3xl sm:text-5xl tracking-wide uppercase text-white">
-          THE JOURNAL
-        </h1>
-        <p className="font-sans text-xs text-white/50 max-w-[520px] leading-relaxed">
-          Deep-dives into styling theory, technical material log files, and behind-the-scenes production runs at ARC OPUS.
-        </p>
-      </div>
+      {/* 1. Fixed Header Section */}
+      <section className="w-full flex-shrink-0">
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 space-y-4 pt-10">
+          <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
+            EDITORIAL ARCHIVES
+          </span>
+          <h1 className="font-hero text-3xl sm:text-5xl tracking-wide uppercase text-white m-0">
+            THE JOURNAL
+          </h1>
+          <p className="font-sans text-xs text-white/50 max-w-[520px] leading-relaxed m-0">
+            Deep-dives into styling theory, technical material log files, and behind-the-scenes production runs at ARC OPUS.
+          </p>
+        </div>
+        
+        {/* Invisible spacer to match the exact height of the Shop filters (155px) */}
+        <div className="w-full h-[155px] pointer-events-none" />
+      </section>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
-        {journals.map((art, idx) => (
-          <motion.article 
-            key={art.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: idx * 0.1 }}
-            onClick={() => openArticle(art.id)}
-            whileHover="hover"
-            className="group flex flex-col cursor-pointer"
-          >
-            {/* Card Lift Wrapper */}
-            <motion.div 
-              variants={{ hover: { y: -3 } }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="flex flex-col h-full"
-            >
-              {/* Image Box */}
-              <div className="relative h-[400px] bg-[#121212] overflow-hidden">
+      {/* 2. Journal Grid Section */}
+      <section className="w-full flex-grow">
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 min-h-[600px]">
+          {/* Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 relative z-10">
+            {journals.map((art, idx) => (
+              <motion.article 
+                key={art.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                onClick={() => openArticle(art.id)}
+                whileHover="hover"
+                className="group flex flex-col cursor-pointer"
+              >
+                {/* Card Lift Wrapper */}
                 <motion.div 
-                  layoutId={`journal-image-${art.id}`}
-                  className="w-full h-full relative"
+                  variants={{ hover: { y: -3 } }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="flex flex-col h-full"
                 >
-                  <Image
-                    src={art.image}
-                    alt={art.title}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-90 group-hover:brightness-100"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </motion.div>
-                <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/90 bg-[#050505] px-3 py-1.5 uppercase font-bold z-10">
-                  {art.category}
-                </span>
-              </div>
+                  {/* Image Box */}
+                  <div className="relative h-[400px] bg-[#121212] overflow-hidden">
+                    <motion.div 
+                      layoutId={`journal-image-${art.id}`}
+                      className="w-full h-full relative"
+                    >
+                      <Image
+                        src={art.image}
+                        alt={art.title}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 brightness-90 group-hover:brightness-100"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </motion.div>
+                    <span className="absolute top-6 left-6 font-caption text-[9px] tracking-[0.2em] text-white/90 bg-[#050505] px-3 py-1.5 uppercase font-bold z-10">
+                      {art.category}
+                    </span>
+                  </div>
 
-              {/* Content Details aligned to grid */}
-              <div className="pt-8 flex flex-col flex-grow">
-                <motion.div 
-                  variants={{ hover: { opacity: 0.5 } }}
-                  transition={{ duration: 0.3 }}
-                  className="flex justify-between items-center font-caption text-[9px] tracking-[0.2em] text-white/50 uppercase mb-4"
-                >
-                  <span>{art.date}</span>
-                  <span>{art.readTime}</span>
+                  {/* Content Details aligned to grid */}
+                  <div className="pt-8 flex flex-col flex-grow">
+                    <motion.div 
+                      variants={{ hover: { opacity: 0.5 } }}
+                      transition={{ duration: 0.3 }}
+                      className="flex justify-between items-center font-caption text-[9px] tracking-[0.2em] text-white/50 uppercase mb-4"
+                    >
+                      <span>{art.date}</span>
+                      <span>{art.readTime}</span>
+                    </motion.div>
+                    
+                    <div className="mb-4 relative inline-block self-start">
+                      <motion.h2 
+                        layoutId={`journal-title-${art.id}`}
+                        className="font-heading text-lg sm:text-xl tracking-wider uppercase text-white group-hover:text-brand-red transition-colors duration-300"
+                      >
+                        {art.title}
+                      </motion.h2>
+                      {/* Animated Underline */}
+                      <motion.div 
+                        variants={{
+                          rest: { scaleX: 0, originX: 0 },
+                          hover: { scaleX: 1, originX: 0 }
+                        }}
+                        initial="rest"
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="absolute -bottom-2 left-0 w-full h-[1px] bg-brand-red"
+                      />
+                    </div>
+                    
+                    <p className="font-sans text-xs sm:text-sm text-white/50 leading-relaxed max-w-[450px] mt-2">
+                      {art.excerpt}
+                    </p>
+                  </div>
                 </motion.div>
-                
-                <div className="mb-4 relative inline-block self-start">
-                  <motion.h2 
-                    layoutId={`journal-title-${art.id}`}
-                    className="font-heading text-lg sm:text-xl tracking-wider uppercase text-white group-hover:text-brand-red transition-colors duration-300"
-                  >
-                    {art.title}
-                  </motion.h2>
-                  {/* Animated Underline */}
-                  <motion.div 
-                    variants={{
-                      rest: { scaleX: 0, originX: 0 },
-                      hover: { scaleX: 1, originX: 0 }
-                    }}
-                    initial="rest"
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute -bottom-2 left-0 w-full h-[1px] bg-brand-red"
-                  />
-                </div>
-                
-                <p className="font-sans text-xs sm:text-sm text-white/50 leading-relaxed max-w-[450px] mt-2">
-                  {art.excerpt}
-                </p>
-              </div>
-            </motion.div>
-          </motion.article>
-        ))}
-      </div>
-
-      {/* FAQ SECTION */}
-      <section className="pt-32 pb-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="max-w-[800px] mx-auto space-y-16"
-        >
-          <div className="text-center space-y-4">
-            <h2 className="font-hero text-2xl sm:text-4xl tracking-wide uppercase text-white">
-              FREQUENTLY ASKED QUESTIONS
-            </h2>
-            <div className="w-12 h-[1px] bg-brand-red mx-auto" />
-          </div>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={{ visible: { transition: { staggerChildren: 0.1 } } }} className="flex flex-col">
-            {faqs.map((faq, idx) => (
-              <FAQItem key={idx} faq={faq} isOpen={openFaqIndex === idx} onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} />
+              </motion.article>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+
+          {/* FAQ SECTION */}
+          <section className="pt-32 pb-16">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+              className="max-w-[800px] mx-auto space-y-16"
+            >
+              <div className="text-center space-y-4">
+                <h2 className="font-hero text-2xl sm:text-4xl tracking-wide uppercase text-white">
+                  FREQUENTLY ASKED QUESTIONS
+                </h2>
+                <div className="w-12 h-[1px] bg-brand-red mx-auto" />
+              </div>
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={{ visible: { transition: { staggerChildren: 0.1 } } }} className="flex flex-col">
+                {faqs.map((faq, idx) => (
+                  <FAQItem key={idx} faq={faq} isOpen={openFaqIndex === idx} onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)} />
+                ))}
+              </motion.div>
+            </motion.div>
+          </section>
+        </div>
       </section>
 
       {/* ARTICLE OVERLAY RENDERING */}
