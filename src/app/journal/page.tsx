@@ -84,8 +84,20 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
       <div className="film-grain" />
       <div className="paper-texture" />
 
-      {/* Back Button */}
-      <div className="fixed top-8 left-6 md:left-12 z-[110] text-white/70 hover:text-white transition-colors">
+      {/* Decorative Oversized Title (Background Graphic Layer - Z: 10) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.3, duration: 1.5 }}
+        className="hidden lg:block absolute top-[15vh] left-[2vw] z-10 pointer-events-none w-[90vw]"
+      >
+        <h1 className="font-hero text-[8vw] xl:text-[9vw] leading-[0.85] tracking-tight uppercase text-stroke-white opacity-20">
+          {article.title}
+        </h1>
+      </motion.div>
+
+      {/* Back Button & Navigation (Top Layer - Z: 60) */}
+      <div className="fixed top-8 left-6 md:left-12 z-[60] text-white/70 hover:text-white transition-colors">
         <button 
           onClick={onClose}
           className="group flex items-center space-x-3 font-caption text-[10px] tracking-[0.2em] uppercase focus:outline-none"
@@ -100,35 +112,33 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
       {/* Magazine Layout Container */}
       <div className="relative w-full min-h-screen lg:h-screen pt-24 pb-20 lg:p-0 flex flex-col lg:block">
         
-        {/* Title & Metadata (Top Leftish) */}
+        {/* Metadata & Intro (Foreground Layer - Z: 50) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="relative lg:absolute lg:top-[12vh] lg:left-[5vw] z-20 px-6 lg:px-0 max-w-xl pointer-events-none"
+          className="relative lg:absolute lg:top-[35vh] lg:left-[5vw] z-50 px-6 lg:px-0 max-w-sm pointer-events-auto"
         >
-          <div className="font-caption text-[10px] tracking-[0.2em] text-white/50 uppercase mb-4 flex gap-4 pointer-events-auto">
+          {/* Mobile Title (Hidden on Desktop) */}
+          <h1 className="lg:hidden font-hero text-4xl sm:text-5xl uppercase text-white leading-none mb-6">
+            {article.title}
+          </h1>
+          <div className="font-caption text-[10px] tracking-[0.2em] text-white/70 uppercase mb-4 flex gap-4">
             <span className="text-brand-red">{article.category}</span>
             <span>{article.date}</span>
           </div>
-          <motion.h1 
-            layoutId={`journal-title-${article.id}`}
-            className="font-hero text-4xl sm:text-5xl lg:text-7xl xl:text-[8vw] tracking-wide uppercase text-white leading-[0.85] mix-blend-difference pointer-events-auto"
-          >
-            {article.title}
-          </motion.h1>
-          <p className="font-sans text-xs sm:text-sm text-white/70 mt-6 max-w-[400px] leading-relaxed pointer-events-auto bg-black/20 p-2 lg:bg-transparent lg:p-0 backdrop-blur-sm lg:backdrop-blur-none rounded-sm">
+          <p className="font-sans text-xs sm:text-sm text-white/90 mt-6 leading-relaxed bg-[#0c0c0c]/60 p-4 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm">
             {article.content.intro}
           </p>
         </motion.div>
 
-        {/* Main Editorial Image (Center Right) */}
+        {/* Main Editorial Image (Mid Layer - Z: 20) */}
         <motion.div
           initial={{ opacity: 0, x: 50, rotate: 2 }}
           animate={{ opacity: 1, x: 0, rotate: -1 }}
           transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
-          whileHover={{ scale: 1.02, rotate: 0, y: -5, zIndex: 50 }}
-          className="relative z-10 mx-6 lg:mx-0 lg:absolute lg:top-1/2 lg:left-1/2 lg:transform lg:-translate-y-1/2 lg:-translate-x-[20%] w-full max-w-lg lg:max-w-2xl xl:max-w-[40vw] aspect-[3/4] mt-10 lg:mt-0 p-3 bg-[#e0e0e0] shadow-2xl cursor-pointer"
+          whileHover={{ scale: 1.02, rotate: 0, y: -5, zIndex: 55 }}
+          className="relative z-20 mx-6 lg:mx-0 lg:absolute lg:top-1/2 lg:left-[50%] lg:transform lg:-translate-y-1/2 lg:-translate-x-[30%] w-full max-w-lg lg:max-w-2xl xl:max-w-[40vw] aspect-[3/4] mt-10 lg:mt-0 p-3 bg-[#e0e0e0] shadow-2xl cursor-pointer"
         >
           <div className="tape-top-left" />
           <div className="tape-bottom-right" />
@@ -137,42 +147,42 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           </motion.div>
         </motion.div>
 
-        {/* Pull Quote Card (Bottom Left) */}
+        {/* Pull Quote Card (Foreground Layer - Z: 40) */}
         <motion.div
           initial={{ opacity: 0, y: 50, rotate: -5 }}
           animate={{ opacity: 1, y: 0, rotate: -3 }}
           transition={{ delay: 0.6, duration: 0.8 }}
-          whileHover={{ y: -5, rotate: -1, zIndex: 50 }}
-          className="magazine-card relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[10vh] lg:left-[8vw] p-8 max-w-sm mt-10 lg:mt-0 cursor-pointer"
+          whileHover={{ y: -5, rotate: -1, zIndex: 55 }}
+          className="magazine-card relative z-40 mx-6 lg:mx-0 lg:absolute lg:bottom-[8vh] lg:left-[12vw] p-8 max-w-[320px] mt-10 lg:mt-0 cursor-pointer"
         >
           <div className="tape-top-right" />
-          <p className="font-hero text-lg xl:text-xl uppercase leading-tight text-[#111]">
+          <p className="font-hero text-base xl:text-lg uppercase leading-tight text-[#111]">
             "{article.pullQuote}"
           </p>
         </motion.div>
 
-        {/* Material Notes (Top Right) */}
+        {/* Material Notes (Foreground Layer - Z: 40) */}
         <motion.div
           initial={{ opacity: 0, x: -20, rotate: 3 }}
           animate={{ opacity: 1, x: 0, rotate: 2 }}
           transition={{ delay: 0.7, duration: 0.8 }}
-          whileHover={{ y: -5, rotate: 0, zIndex: 50 }}
-          className="magazine-card relative z-20 mx-6 lg:mx-0 lg:absolute lg:top-[15vh] lg:right-[8vw] p-6 max-w-xs mt-10 lg:mt-0 cursor-pointer"
+          whileHover={{ y: -5, rotate: 0, zIndex: 55 }}
+          className="magazine-card relative z-40 mx-6 lg:mx-0 lg:absolute lg:top-[12vh] lg:right-[6vw] p-6 max-w-[280px] mt-10 lg:mt-0 cursor-pointer"
         >
           <div className="tape-top-left" />
           <h3 className="font-caption text-[10px] tracking-[0.2em] uppercase text-brand-red mb-3 font-bold">Fabric & Spec</h3>
-          <p className="font-sans text-xs leading-relaxed text-[#333]">
+          <p className="font-sans text-[11px] leading-relaxed text-[#333]">
             {article.content.materialNotes}
           </p>
         </motion.div>
 
-        {/* Small Gallery Photo (Bottom Right) */}
+        {/* Small Gallery Photo (Mid Layer - Z: 30) */}
         <motion.div
           initial={{ opacity: 0, y: 20, rotate: 6 }}
           animate={{ opacity: 1, y: 0, rotate: 4 }}
           transition={{ delay: 0.8, duration: 0.8 }}
-          whileHover={{ scale: 1.05, rotate: 2, zIndex: 50 }}
-          className="relative z-20 mx-6 lg:mx-0 lg:absolute lg:bottom-[15vh] lg:right-[15vw] w-48 xl:w-56 aspect-[3/4] mt-10 lg:mt-0 p-2 bg-[#f0f0f0] shadow-xl cursor-pointer"
+          whileHover={{ scale: 1.05, rotate: 2, zIndex: 55 }}
+          className="relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[15vh] lg:right-[10vw] w-40 xl:w-48 aspect-[3/4] mt-10 lg:mt-0 p-2 bg-[#f0f0f0] shadow-xl cursor-pointer"
         >
           <div className="tape-bottom-left" />
           <div className="relative w-full h-full">
@@ -180,27 +190,15 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           </div>
         </motion.div>
 
-        {/* Designer Commentary Snippet */}
+        {/* Designer Commentary Snippet (Foreground Layer - Z: 50) */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[25vh] lg:left-[35vw] max-w-[200px] mt-10 lg:mt-0"
+          className="relative z-50 mx-6 lg:mx-0 lg:absolute lg:bottom-[22vh] lg:right-[35vw] max-w-[220px] mt-10 lg:mt-0"
         >
-          <p className="font-heading text-xs xl:text-sm italic text-white/90 leading-relaxed drop-shadow-md">
+          <p className="font-heading text-[13px] xl:text-sm italic text-white/90 leading-relaxed drop-shadow-md">
             "{article.content.behindTheCollection}"
-          </p>
-        </motion.div>
-
-        {/* Background Editorial Text Details */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.03 }}
-          transition={{ delay: 1.5, duration: 2 }}
-          className="hidden lg:block absolute bottom-0 right-0 p-12 pointer-events-none"
-        >
-          <p className="font-hero text-[150px] leading-none text-white whitespace-nowrap overflow-hidden">
-            A.OPUS
           </p>
         </motion.div>
 
