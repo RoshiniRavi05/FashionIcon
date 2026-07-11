@@ -8,6 +8,8 @@ import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { WishlistDrawer } from "@/components/WishlistDrawer";
 import { CheckoutDrawer } from "@/components/CheckoutDrawer";
+import AuthProvider from "@/components/AuthProvider";
+import { AuthModal } from "@/components/AuthModal";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -51,17 +53,20 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${syne.variable} ${unbounded.variable} ${plusJakartaSans.variable} h-full antialiased dark`}
     >
       <body className="min-h-full bg-[#050505] text-[#F5F5F5] selection:bg-[#C10E1D] selection:text-white flex flex-col font-sans overflow-x-hidden">
-        <AppProvider>
-          <CustomCursor />
-          <Navbar />
-          <main className="flex-grow flex flex-col pt-[80px]">
-            {children}
-          </main>
-          <CartDrawer />
-          <WishlistDrawer />
-          <CheckoutDrawer />
-          <Footer />
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <CustomCursor />
+            <Navbar />
+            <main className="flex-grow flex flex-col pt-[80px]">
+              {children}
+            </main>
+            <CartDrawer />
+            <WishlistDrawer />
+            <CheckoutDrawer />
+            <AuthModal />
+            <Footer />
+          </AppProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -5,6 +5,7 @@ import { useApp } from '../context/AppContext';
 import { X, ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 
 export const CartDrawer: React.FC = () => {
   const { 
@@ -13,8 +14,11 @@ export const CartDrawer: React.FC = () => {
     setCartOpen, 
     updateCartQuantity, 
     removeFromCart, 
-    setCheckoutOpen 
+    setCheckoutOpen,
+    setAuthModalOpen
   } = useApp();
+  
+  const { status } = useSession();
 
   const total = cart.reduce((sum, item) => {
     const priceNum = parseInt(item.product.price.replace('$', ''));
@@ -23,7 +27,11 @@ export const CartDrawer: React.FC = () => {
 
   const handleCheckoutClick = () => {
     setCartOpen(false);
-    setCheckoutOpen(true);
+    if (status !== 'authenticated') {
+      setAuthModalOpen(true);
+    } else {
+      setCheckoutOpen(true);
+    }
   };
 
   return (

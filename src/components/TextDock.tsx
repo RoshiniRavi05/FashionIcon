@@ -47,7 +47,7 @@ function TextDockItem({
     <Link
       ref={ref}
       href={href}
-      className="relative py-3 px-4 font-heading text-xs tracking-[0.2em] uppercase text-[#F5F5F5] block select-none"
+      className="group relative py-3 px-4 font-heading text-xs tracking-[0.2em] uppercase text-[#F5F5F5] block select-none"
     >
       <motion.span
         style={{
@@ -57,10 +57,13 @@ function TextDockItem({
           opacity,
           transformOrigin: 'center bottom'
         }}
-        className="transition-colors duration-300 hover:text-brand-red"
+        className="transition-colors duration-300 group-hover:text-brand-red"
       >
         {label}
       </motion.span>
+      {!isActive && (
+        <span className="absolute bottom-0 left-4 right-4 h-[1px] bg-brand-red origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+      )}
       {isActive && (
         <motion.span
           layoutId="activeNavUnderline"

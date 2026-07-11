@@ -23,6 +23,17 @@ export default function Home() {
   } = useApp();
 
   const [loading, setLoading] = useState(true);
+  const [skipIntro, setSkipIntro] = useState(false);
+
+  useEffect(() => {
+    const hasSeenIntro = sessionStorage.getItem('arcopus-intro');
+    if (hasSeenIntro) {
+      setSkipIntro(true);
+      setLoading(false);
+    } else {
+      sessionStorage.setItem('arcopus-intro', 'true');
+    }
+  }, []);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const [heroScale, setHeroScale] = useState(1);
@@ -146,9 +157,9 @@ export default function Home() {
 
   return (
     <>
-      <LuxuryLoader onComplete={() => setLoading(false)} />
+      {!skipIntro && <LuxuryLoader onComplete={() => setLoading(false)} />}
 
-      <div className={`transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`transition-opacity ${skipIntro ? 'duration-0' : 'duration-1000'} ${loading ? 'opacity-0' : 'opacity-100'}`}>
         
         {/* HERO SECTION */}
         <section 
@@ -176,35 +187,35 @@ export default function Home() {
           <div className="relative z-20 max-w-[1600px] w-full px-6 md:px-12 text-center flex flex-col items-center space-y-6">
             <motion.p
               className="font-caption text-[10px] md:text-xs tracking-[0.4em] text-brand-red uppercase font-black"
-              initial={{ y: 20, opacity: 0 }}
+              initial={skipIntro ? false : { y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1.0, delay: 0.8 }}
+              transition={skipIntro ? { duration: 0 } : { duration: 1.0, delay: 0.8 }}
             >
               CAPSULE RELEASE 001 / EDITIONS
             </motion.p>
 
             <motion.h1
               className="font-hero text-3xl sm:text-5xl md:text-7xl lg:text-8xl tracking-tight text-[#F5F5F5] uppercase max-w-[1100px] leading-[1.05]"
-              initial={{ y: 50, opacity: 0 }}
+              initial={skipIntro ? false : { y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1.2, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
+              transition={skipIntro ? { duration: 0 } : { duration: 1.2, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
             >
               CRAFTED BEYOND ORDINARY
             </motion.h1>
 
             <motion.p
               className="font-sans text-xs sm:text-sm tracking-widest text-[#F5F5F5]/60 max-w-[500px]"
-              initial={{ opacity: 0 }}
+              initial={skipIntro ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: 1.2 }}
+              transition={skipIntro ? { duration: 0 } : { duration: 1.2, delay: 1.2 }}
             >
               A high-end designer showroom catalog. Melding technical clothing geometries with premium organic fibers.
             </motion.p>
 
             <motion.div
-              initial={{ y: 30, opacity: 0 }}
+              initial={skipIntro ? false : { y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1.0, delay: 1.4 }}
+              transition={skipIntro ? { duration: 0 } : { duration: 1.0, delay: 1.4 }}
               className="pt-6"
             >
               <Link

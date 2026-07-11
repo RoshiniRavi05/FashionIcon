@@ -28,6 +28,8 @@ interface AppContextType {
   setWishlistOpen: (open: boolean) => void;
   checkoutOpen: boolean;
   setCheckoutOpen: (open: boolean) => void;
+  authModalOpen: boolean;
+  setAuthModalOpen: (open: boolean) => void;
   orders: any[];
   addOrder: (order: any) => void;
 }
@@ -47,6 +49,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [cartOpen, setCartOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
 
   // Load state from localStorage on mount
@@ -209,6 +212,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWishlistOpen,
         checkoutOpen,
         setCheckoutOpen,
+        authModalOpen,
+        setAuthModalOpen,
         orders,
         addOrder,
       }}

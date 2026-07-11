@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Search, Heart, ShoppingBag, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -51,10 +52,16 @@ export const Navbar: React.FC = () => {
       >
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="group flex items-center select-none">
-            <span className="font-logo text-xl md:text-2xl tracking-[0.35em] text-[#F5F5F5] font-black group-hover:text-brand-red transition-colors duration-500">
-              ARC OPUS
-            </span>
+          <Link href="/" className="group flex items-center select-none space-x-3">
+            <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0">
+              <Image src="/arc_opus_logo.jpeg" alt="ARC OPUS Logo" fill className="object-cover" priority />
+            </div>
+            <div className="relative overflow-visible pb-1">
+              <span className="font-logo text-xl md:text-2xl tracking-[0.35em] text-brand-red font-black transition-colors duration-500 block">
+                ARC OPUS
+              </span>
+              <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-red origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+            </div>
           </Link>
 
           {/* Center Navigation Links - Desktop with Dock Magnification Animation */}
