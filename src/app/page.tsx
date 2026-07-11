@@ -291,7 +291,7 @@ export default function Home() {
           </div>
 
           {/* Background Typography */}
-          <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-20 opacity-[0.015]">
+          <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-20 opacity-[0.01]">
             <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none">ARCHIVE</span>
             <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none">CAPSULE</span>
           </div>
@@ -341,13 +341,15 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-8 h-[600px] lg:h-[800px] relative rounded-[32px] overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05] z-10"
+                className="lg:col-span-8 h-[600px] lg:h-[800px] max-w-[700px] relative rounded-[32px] overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05] z-10"
               >
+                <div className="absolute inset-0 opacity-[0.03] z-[15] pointer-events-none" style={{ backgroundImage: 'url(/film-grain.png)' }} />
                 <Image
                   src={capsuleDetails[activeCapsule].image}
                   alt={capsuleDetails[activeCapsule].name}
                   fill
-                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
+                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04] z-10"
+                  style={{ filter: 'contrast(1.05) brightness(0.95) saturate(0.92)' }}
                 />
                 
                 {/* Floating Meta Tag */}
@@ -359,7 +361,7 @@ export default function Home() {
               </motion.div>
 
               {/* Right: Floating Information Pinned Cards */}
-              <div className="lg:col-span-4 relative flex flex-col space-y-4 lg:-ml-28 pt-8 lg:pt-32 z-20">
+              <div className="lg:col-span-4 relative flex flex-col space-y-4 lg:-ml-20 pt-8 lg:pt-32 z-20">
                 
                 {/* Title Card (Paper Texture) */}
                 <motion.div
@@ -426,7 +428,7 @@ export default function Home() {
                     className="group font-heading text-[11px] tracking-[0.2em] uppercase bg-[#050505] text-white border border-brand-red/20 px-10 py-5 rounded-[32px] transition-all duration-500 font-bold inline-flex items-center space-x-4 shadow-[0_20px_60px_rgba(0,0,0,0.45)] hover:border-brand-red hover:-translate-y-2 rotate-[-0.5deg] overflow-hidden"
                   >
                     <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover' }} />
-                    <span className="relative z-10">Explore Capsule</span>
+                    <span className="relative z-10">View Dossier</span>
                     <div className="w-8 h-8 rounded-full bg-brand-red flex items-center justify-center relative z-10 group-hover:scale-110 transition-transform duration-500">
                       <ArrowRight className="w-4 h-4 text-white" />
                     </div>

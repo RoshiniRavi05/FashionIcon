@@ -53,8 +53,8 @@ export default function EditorialProductGrid() {
 
       {/* Huge Faded Typography */}
       <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-20">
-        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.015]">CRAFTED</span>
-        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.015]">CAMPAIGN</span>
+        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.01]">CRAFTED</span>
+        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.01]">CAMPAIGN</span>
       </div>
 
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 relative z-10">
@@ -88,14 +88,25 @@ export default function EditorialProductGrid() {
           {/* ANCHOR: Large Hero Campaign Image */}
           <motion.div 
             variants={itemVariants} 
-            className="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4 relative h-[600px] lg:h-[800px] z-10 group rounded-none md:rounded-[32px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05]"
+            className="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4 relative h-[600px] lg:h-[800px] max-w-[700px] w-full mx-auto z-10 group rounded-none md:rounded-[32px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05]"
           >
+            <div className="absolute inset-0 opacity-[0.03] z-[15] pointer-events-none" style={{ backgroundImage: 'url(/film-grain.png)' }} />
             <Image
               src="/denim_jacket_2.jpg"
               alt="Campaign Hero"
               fill
               className="object-contain object-center bg-[#080808] transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
+              style={{ filter: 'contrast(1.05) brightness(0.95) saturate(0.92)' }}
             />
+            {/* Pinned Object - Tiny Meta Tag */}
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+              <div className="bg-white px-3 py-1.5 flex items-center space-x-2 shadow-lg">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                <span className="font-caption text-[8px] tracking-[0.2em] text-black uppercase font-black">
+                  EDITION 001 &nbsp;|&nbsp; JUNE 2026 &nbsp;|&nbsp; STUDIO 04
+                </span>
+              </div>
+            </div>
             {/* Small Information Tag on Hero */}
             <div className="absolute bottom-6 left-6 z-20 flex items-center space-x-3">
               <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
