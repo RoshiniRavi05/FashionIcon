@@ -10,7 +10,7 @@ import { DEFAULT_PRODUCTS } from '@/data/products';
 import { LuxuryLoader } from '@/components/LuxuryLoader';
 import Carousel from '@/components/Carousel';
 import TiltedCard from '@/components/TiltedCard';
-import FeaturedGarmentsHorizontal from '@/components/FeaturedGarmentsHorizontal';
+import EditorialProductGrid from '@/components/EditorialProductGrid';
 
 const capsuleDetails = [
   {
@@ -439,8 +439,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CINEMATIC HORIZONTAL FEATURED GARMENTS SHOWCASE */}
-        <FeaturedGarmentsHorizontal />
+        {/* CINEMATIC EDITORIAL PRODUCT GRID SHOWCASE */}
+        <EditorialProductGrid />
 
         {/* CAROUSEL BRAND SPECIFICATIONS */}
         <section className="material-architecture-section relative py-24 border-t border-white/5 overflow-hidden flex flex-col items-center justify-center">
