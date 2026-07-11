@@ -33,9 +33,13 @@ export default function ShopPage() {
   // Filter
   const filtered = useMemo(() => {
     let result = DEFAULT_PRODUCTS.filter((prod) => {
-      const matchesSearch = prod.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            prod.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            prod.subcat.toLowerCase().includes(searchQuery.toLowerCase());
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = 
+        (prod.name && prod.name.toLowerCase().includes(searchLower)) || 
+        (prod.category && prod.category.toLowerCase().includes(searchLower)) ||
+        (prod.subcat && prod.subcat.toLowerCase().includes(searchLower)) ||
+        (prod.tag && prod.tag.toLowerCase().includes(searchLower));
+        
       const matchesCategory = activeCategory === 'all' || prod.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
