@@ -9,7 +9,7 @@ import { useApp } from '@/context/AppContext';
 import { DEFAULT_PRODUCTS, Product } from '@/data/products';
 
 const ShopHero = React.memo(() => (
-  <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 space-y-4 pt-10">
+  <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 space-y-4 pt-10 min-h-[160px]">
     <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
       ARC OPUS CATALOGUE
     </span>
@@ -65,7 +65,7 @@ export default function ShopPage() {
         <ShopHero />
         
         {/* Filters Toolbar */}
-        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 mt-12 mb-8">
+        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 mt-12 mb-8 min-h-[60px]">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-b border-white/5 pb-8">
             
             {/* Search */}
@@ -81,12 +81,16 @@ export default function ShopPage() {
             </div>
 
             {/* Category Tabs */}
-            <div className="md:col-span-5 flex overflow-x-auto scrollbar-none space-x-2 p-1 font-heading text-[10px] tracking-widest uppercase">
+            <div className="md:col-span-5 flex overflow-x-auto scrollbar-none space-x-3 p-1">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2.5 border transition-all duration-300 ${activeCategory === cat ? 'border-brand-red bg-brand-red text-white' : 'border-white/10 text-white/40 hover:text-white'}`}
+                  className={`px-5 py-2 font-sans font-medium text-[13px] tracking-[0.12em] lowercase transition-all duration-300 ${
+                    activeCategory === cat 
+                      ? 'bg-brand-red text-white border border-brand-red' 
+                      : 'border border-[rgba(255,255,255,0.12)] text-[rgba(255,255,255,0.7)] hover:border-[rgba(255,255,255,0.3)] hover:text-white hover:-translate-y-[1px]'
+                  }`}
                 >
                   {cat.replace('-', ' ')}
                 </button>
@@ -114,15 +118,20 @@ export default function ShopPage() {
       <section className="w-full flex-grow">
         <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 min-h-[600px]">
           {filtered.length === 0 ? (
-            <div className="h-[300px] flex flex-col items-center justify-center space-y-4 text-center">
-              <p className="font-caption text-xs tracking-wider text-white/30 uppercase">No elements matched your filter parameters</p>
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ duration: 0.6 }}
+              className="h-[300px] flex flex-col items-center justify-center space-y-4 text-center"
+            >
+              <p className="font-caption text-xs tracking-wider text-white/30 uppercase">No registry entries found.</p>
               <button 
                 onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
                 className="text-brand-red font-heading text-[10px] tracking-widest uppercase hover:underline"
               >
                 Reset Filters
               </button>
-            </div>
+            </motion.div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start w-full">
               <AnimatePresence mode="popLayout">

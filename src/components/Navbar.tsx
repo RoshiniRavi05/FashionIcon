@@ -30,7 +30,6 @@ export const Navbar: React.FC = () => {
   const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const navLinks = [
-    { href: '/', label: 'Home' },
     { href: '/collections', label: 'Collections' },
     { href: '/shop', label: 'Shop' },
     { href: '/story', label: 'Story' },
