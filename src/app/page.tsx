@@ -271,19 +271,24 @@ export default function Home() {
 
 
 
-        {/* EDITORIAL CAPSULES - INTERACTIVE ZINE SHOWCASE */}
-        <section ref={sectionRef} className="relative py-28 overflow-hidden border-t border-white/5 bg-[#050505] z-10 flex flex-col justify-center">
-          {/* Scroll-Responsive Horizontal Background Text (Tubik / R.D.E Style) */}
-          <motion.div 
-            style={{ x: xText }} 
-            className="absolute left-0 right-0 top-[40%] -translate-y-1/2 select-none pointer-events-none opacity-[0.03] text-[13vw] font-hero font-black whitespace-nowrap text-stroke-white z-0"
-          >
-            ARC OPUS SYSTEM CAPSULE 001 ARCHIVES
-          </motion.div>
+        {/* EDITORIAL CAPSULES - FLIPO CAMPAIGN SPREAD */}
+        <section ref={sectionRef} className="relative py-32 overflow-hidden border-t border-white/5 bg-[#050505] z-10 flex flex-col justify-center min-h-[900px]">
+          {/* Background Typography */}
+          <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-0 overflow-hidden py-10 opacity-[0.02]">
+            <span className="font-hero text-[20vw] leading-[0.8] tracking-tighter text-white uppercase select-none">ARCHIVE</span>
+            <span className="font-hero text-[20vw] leading-[0.8] tracking-tighter text-white uppercase select-none">CAPSULE</span>
+          </div>
 
-          <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-10 w-full space-y-16">
+          {/* Blueprint & Grain */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
+          </div>
+
+          <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-10 w-full h-full flex flex-col">
+            
             {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
               <div className="space-y-4">
                 <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black">
                   CURATED CAMPAIGN
@@ -292,149 +297,127 @@ export default function Home() {
                   EDITORIAL CAPSULES
                 </h2>
               </div>
-              <Link 
-                href="/collections"
-                className="font-heading text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-brand-red transition-colors flex items-center space-x-2"
-              >
-                <span>View All Campaigns</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+              
+              {/* Controls */}
+              <div className="flex items-center space-x-4">
+                <button 
+                  onClick={() => setActiveCapsule((prev) => (prev - 1 + capsuleDetails.length) % capsuleDetails.length)}
+                  className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-brand-red transition-all"
+                >
+                  <ArrowRight className="w-4 h-4 rotate-180" />
+                </button>
+                <span className="font-heading text-xs tracking-[0.2em] text-white/60">
+                  0{activeCapsule + 1} / 0{capsuleDetails.length}
+                </span>
+                <button 
+                  onClick={() => setActiveCapsule((prev) => (prev + 1) % capsuleDetails.length)}
+                  className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-brand-red transition-all"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Interactive Showcase Block */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            {/* Layout Spread */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 items-start h-full">
               
-              {/* Left Column: Active Image Viewer with TiltedCard Hover Effect */}
-              <div className="lg:col-span-5 relative h-[500px] md:h-[600px] w-full bg-[#121212] overflow-hidden border border-white/5 group">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeCapsule}
-                    initial={{ opacity: 0, scale: 1.02 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-none select-none"
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={0.5}
-                    onDragEnd={(_, info) => {
-                      const swipeThreshold = 50;
-                      if (info.offset.x < -swipeThreshold) {
-                        // Swipe left -> next capsule
-                        setActiveCapsule((prev) => (prev + 1) % capsuleDetails.length);
-                      } else if (info.offset.x > swipeThreshold) {
-                        // Swipe right -> previous capsule
-                        setActiveCapsule((prev) => (prev - 1 + capsuleDetails.length) % capsuleDetails.length);
-                      }
-                    }}
-                  >
-                    <TiltedCard
-                      imageSrc={capsuleDetails[activeCapsule].image}
-                      altText={capsuleDetails[activeCapsule].name}
-                      captionText={capsuleDetails[activeCapsule].name}
-                      containerHeight="100%"
-                      containerWidth="100%"
-                      imageHeight="100%"
-                      imageWidth="100%"
-                      scaleOnHover={1.03}
-                      rotateAmplitude={10}
-                      showMobileWarning={false}
-                      showTooltip={true}
-                      displayOverlayContent={true}
-                      overlayContent={
-                        <>
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 z-10 pointer-events-none" />
-                          <span className="absolute bottom-6 left-6 font-hero text-[10px] text-[#F5F5F5]/40 tracking-widest uppercase z-20">
-                            CODE: {capsuleDetails[activeCapsule].code}
-                          </span>
-                        </>
-                      }
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+              {/* Left: Large Hero Campaign Image */}
+              <motion.div 
+                key={`img-${activeCapsule}`}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="lg:col-span-7 h-[600px] lg:h-[700px] relative rounded-[32px] overflow-hidden group shadow-[0_20px_60px_rgba(0,0,0,0.45)] border border-white/[0.05]"
+              >
+                <Image
+                  src={capsuleDetails[activeCapsule].image}
+                  alt={capsuleDetails[activeCapsule].name}
+                  fill
+                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
+                />
+                {/* Floating Tag */}
+                <div className="absolute top-6 left-6 bg-[rgba(0,0,0,0.55)] backdrop-blur-[12px] border border-white/[0.08] rounded-xl py-2.5 px-4 z-10 shadow-lg">
+                  <p className="font-caption text-[9px] tracking-widest text-white/50 uppercase">
+                    CODE
+                  </p>
+                  <p className="font-heading text-[11px] font-bold tracking-[0.15em] text-white uppercase pt-0.5">
+                    {capsuleDetails[activeCapsule].code}
+                  </p>
+                </div>
+              </motion.div>
 
-              {/* Right Column: Active Text Info & Selector */}
-              <div className="lg:col-span-7 flex flex-col justify-between h-full py-2 space-y-8">
-                <div className="space-y-6">
-                  {/* Category Title */}
-                  <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
-                    CAPSULE EDITION {capsuleDetails[activeCapsule].code}
+              {/* Right: Floating Information Pinned Cards */}
+              <div className="lg:col-span-5 relative flex flex-col space-y-4 lg:-ml-16 pt-8 lg:pt-16 z-20">
+                
+                {/* Title Card */}
+                <motion.div
+                  key={`title-${activeCapsule}`}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[-0.5deg]"
+                >
+                  <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block mb-3">
+                    CAPSULE EDITION
                   </span>
-                  
-                  {/* Heading */}
-                  <h3 className="font-hero text-xl sm:text-3xl lg:text-4xl tracking-wide uppercase text-white leading-tight">
+                  <h3 className="font-hero text-2xl lg:text-3xl uppercase text-white leading-tight">
                     {capsuleDetails[activeCapsule].heading}
                   </h3>
-                  
-                  <div className="w-12 h-[1px] bg-brand-red" />
-                  
-                  {/* Description */}
-                  <p className="font-sans text-sm text-[#F5F5F5]/60 leading-relaxed max-w-[600px]">
+                </motion.div>
+
+                {/* Description Card */}
+                <motion.div
+                  key={`desc-${activeCapsule}`}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] ml-0 lg:ml-8 transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[0.5deg]"
+                >
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                    <span className="font-heading text-[10px] tracking-widest text-white/50 uppercase">Material Notes</span>
+                  </div>
+                  <p className="font-sans text-sm text-[#F5F5F5]/70 leading-relaxed">
                     {capsuleDetails[activeCapsule].description}
                   </p>
+                </motion.div>
 
-                  {/* Technical Specifications Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-6 border-t border-white/5">
+                {/* Specs Card */}
+                <motion.div
+                  key={`specs-${activeCapsule}`}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.36, ease: [0.16, 1, 0.3, 1] }}
+                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02]"
+                >
+                  <div className="grid grid-cols-2 gap-y-6">
                     {capsuleDetails[activeCapsule].specs.map((spec) => (
-                      <div key={spec.label} className="space-y-1">
+                      <div key={spec.label} className="space-y-1.5">
                         <p className="font-caption text-[9px] tracking-widest text-[#F5F5F5]/40 uppercase">{spec.label}</p>
                         <p className="font-heading text-xs tracking-wider text-[#F5F5F5] uppercase font-bold">{spec.value}</p>
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Interactive Selector Thumbnails & CTA */}
-                <div className="space-y-8 pt-6 border-t border-white/5">
-                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
-                    
-                    {/* Horizontal Thumbnails Selector */}
-                    <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-none select-none">
-                      {capsuleDetails.map((cap, idx) => (
-                        <button
-                          key={cap.name}
-                          onClick={() => setActiveCapsule(idx)}
-                          className={`flex-shrink-0 text-left transition-all duration-500 ease-out focus:outline-none`}
-                        >
-                          <div className={`relative w-[60px] h-[80px] bg-[#121212] overflow-hidden border transition-all duration-500 ${
-                            activeCapsule === idx 
-                              ? 'border-brand-red scale-105 opacity-100 shadow-[0_0_15px_rgba(193,14,29,0.25)]' 
-                              : 'border-white/10 opacity-40 hover:opacity-80 hover:scale-[1.02]'
-                          }`}>
-                            <Image
-                              src={cap.image}
-                              alt={cap.name}
-                              fill
-                              className="object-cover"
-                              sizes="60px"
-                            />
-                          </div>
-                          <span className={`block text-[8px] font-caption tracking-widest uppercase mt-2 text-center transition-colors duration-300 ${
-                            activeCapsule === idx ? 'text-[#F5F5F5] font-black' : 'text-[#F5F5F5]/40'
-                          }`}>
-                            {cap.name.split(' ')[0]}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* CTA Button */}
-                    <div className="flex-shrink-0">
-                      <Link
-                        href={capsuleDetails[activeCapsule].path}
-                        className="font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] hover:bg-brand-red hover:text-white px-8 py-4 transition-all duration-500 font-bold inline-flex items-center space-x-2 shadow-lg"
-                      >
-                        <span>EXPLORE CAPSULE</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-
-                  </div>
-                </div>
+                {/* Explore CTA Card */}
+                <motion.div
+                  key={`cta-${activeCapsule}`}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.48, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex justify-end pt-2 lg:pt-4 lg:-mr-8"
+                >
+                  <Link
+                    href={capsuleDetails[activeCapsule].path}
+                    className="font-heading text-[11px] tracking-[0.2em] uppercase bg-brand-red text-white hover:bg-white hover:text-black px-10 py-5 rounded-[24px] transition-all duration-500 font-bold inline-flex items-center space-x-3 shadow-lg hover:shadow-[0_20px_40px_rgba(200,16,46,0.3)] hover:-translate-y-1 rotate-[-1deg]"
+                  >
+                    <span>Explore Capsule</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </motion.div>
 
               </div>
-
             </div>
           </div>
         </section>
