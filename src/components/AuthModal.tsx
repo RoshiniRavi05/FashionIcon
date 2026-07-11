@@ -46,7 +46,7 @@ export const AuthModal: React.FC = () => {
             </button>
 
             {/* Left Image Section */}
-            <div className="relative w-full md:w-1/2 h-64 md:h-full bg-[#111]">
+            <div className="relative w-full md:w-1/2 h-64 md:h-full bg-[#111] overflow-hidden rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl">
               <Image 
                 src="/yellow_tracksuit_model.png" 
                 alt="Streetwear Model" 
