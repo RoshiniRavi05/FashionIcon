@@ -7,6 +7,7 @@ export interface JournalArticle {
   image: string;
   excerpt: string;
   content: {
+    introTitle?: string;
     intro: string;
     story: string;
     materialNotes: string;
@@ -34,7 +35,8 @@ export const journals: JournalArticle[] = [
     image: '/oversized_tee_hero.png',
     excerpt: 'An exploration of oversized silhouettes and timeless garment construction.',
     content: {
-      intro: "BLUEPRINT DESIGN NOTES\n\nArchitecture over fashion.\n\nStructure over drape.\n\nWe engineered a space for the human form.",
+      introTitle: "BLUEPRINT DESIGN NOTES",
+      intro: "Blueprint Design Notes explores our belief that garments should be engineered like architecture—where structure takes precedence over ornament and every silhouette is designed as a measured space for the human form.",
       story: "OBSERVATION\n\nConstruction before decoration.\n\nTwelve mock-neck iterations.\nZero compromises.",
       materialNotes: "360gsm Combed Cotton\n\nDouble-Yarn Construction\n\nRigid Structure\n\nBuilt to age beautifully.",
       behindTheCollection: "Not fashion sketches.\nArchitectural blueprints."
@@ -59,7 +61,8 @@ export const journals: JournalArticle[] = [
     image: '/denim_jacket_hero.jpg',
     excerpt: 'Redefining layering as a tactical exercise in proportion and geometry.',
     content: {
-      intro: "PROPORTION AND GEOMETRY\n\nModular systems.\n\nContrasting weights.\n\nAssembling architecture on the body.",
+      introTitle: "PROPORTION AND GEOMETRY",
+      intro: "We approach layering as a tactical exercise in modular systems and contrasting weights, meticulously assembling architectural forms directly on the body.",
       story: "OBSERVATION\n\nTension between rigidity and drape.\n\nCropped hems against elongated lines.\n\nDeliberate assembly.",
       materialNotes: "14oz Selvedge Denim\n\nHeavyweight Cotton\n\nIndustrial Hardware\n\nMaximum durability.",
       behindTheCollection: "Layering is not adding bulk.\nIt's creating armor."
@@ -84,7 +87,8 @@ export const journals: JournalArticle[] = [
     image: '/denim_jacket_2.jpg',
     excerpt: 'A visual diary of our journey to the historic family-owned mills in Portugal.',
     content: {
-      intro: "PORTUGAL, APRIL 2026\n\nLuxury begins at the source.\n\nEvery yarn.\nEvery stitch.\nEvery hand involved.",
+      introTitle: "PORTUGAL, APRIL 2026",
+      intro: "Luxury begins at the source. From every selected yarn to every meticulous stitch, we trace the narrative of hands that craft our fundamental materials.",
       story: "OBSERVATION\n\nTexture before color.\n\nWe don't manufacture garments.\n\nWe build relationships with materials.",
       materialNotes: "14oz Selvedge Denim\n\n360gsm Cotton\n\nDouble-Yarn Construction\n\nBio-Washed Finish\n\nMade to age beautifully.",
       behindTheCollection: "The fabric remembers\nevery hand that touched it."
@@ -109,7 +113,8 @@ export const journals: JournalArticle[] = [
     image: '/acid_wash_sneakers.png',
     excerpt: 'Bridging the physical and digital with real-time WebGL configurators.',
     content: {
-      intro: "DIGITAL PHYSICS\n\nBeyond flat imagery.\n\nReal-time tension.\n\nStructural rigging for the web.",
+      introTitle: "DIGITAL PHYSICS",
+      intro: "Moving beyond flat imagery to introduce real-time tension and structural rigging for the web, translating tactile design into a seamless digital experience.",
       story: "OBSERVATION\n\nWeight simulation.\n\nPhotogrammetry scans.\n\nThe tactile made virtual.",
       materialNotes: "WebGL Rendered\n\n3D Normal Mapping\n\nPhysics Engine\n\nDigital permanence.",
       behindTheCollection: "Bridging the physical\nand digital space."

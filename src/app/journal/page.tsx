@@ -117,24 +117,34 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="relative lg:absolute lg:top-[35vh] lg:left-[5vw] z-50 px-6 lg:px-0 max-w-sm pointer-events-auto"
+          className="relative lg:absolute lg:top-[30vh] lg:left-[5vw] z-50 px-6 lg:px-0 max-w-[520px] pointer-events-auto"
         >
           {/* Mobile Title (Hidden on Desktop) */}
-          <h1 className="lg:hidden font-hero text-4xl sm:text-5xl uppercase text-white leading-none mb-6">
+          <h1 className="lg:hidden font-hero text-4xl sm:text-5xl uppercase text-white leading-none mb-8">
             {article.title}
           </h1>
-          <div className="font-caption text-[10px] tracking-[0.2em] text-white/70 uppercase mb-4 flex gap-4">
-            <span className="text-brand-red">{article.category}</span>
-            <span>{article.date}</span>
+          
+          <div className="flex flex-col gap-3 mb-10">
+            <div className="font-caption text-[10px] tracking-[0.2em] text-white/70 uppercase flex gap-4">
+              <span className="text-brand-red">{article.category}</span>
+              <span>{article.date}</span>
+            </div>
+            {article.content.introTitle && (
+              <span className="font-caption text-[10px] tracking-[0.2em] text-white uppercase font-bold">
+                {article.content.introTitle}
+              </span>
+            )}
           </div>
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1, staggerChildren: 0.1 }}
-            className="font-sans text-xs sm:text-sm text-white/90 mt-6 leading-[1.8] bg-[#0c0c0c]/60 p-4 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm whitespace-pre-wrap"
+
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+            className="font-sans text-[24px] leading-[1.8] font-normal tracking-[-0.02em] text-[rgba(255,255,255,0.88)] max-w-[520px] bg-[#0c0c0c]/60 p-6 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm"
           >
             {article.content.intro}
-          </motion.div>
+          </motion.p>
         </motion.div>
 
         {/* Main Editorial Image (Mid Layer - Z: 20) */}
