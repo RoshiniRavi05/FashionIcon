@@ -80,8 +80,7 @@ export default function EditorialProductGrid() {
         <motion.div 
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          animate="visible"
           className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-start"
         >
           

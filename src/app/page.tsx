@@ -341,7 +341,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-8 h-[600px] lg:h-[800px] max-w-[700px] relative rounded-[32px] overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05] z-10"
+                className="lg:col-span-6 lg:col-start-2 h-[600px] lg:h-[800px] max-w-[700px] w-full ml-auto relative rounded-[32px] overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05] z-10"
               >
                 <div className="absolute inset-0 opacity-[0.03] z-[15] pointer-events-none" style={{ backgroundImage: 'url(/film-grain.png)' }} />
                 <Image
@@ -361,7 +361,7 @@ export default function Home() {
               </motion.div>
 
               {/* Right: Floating Information Pinned Cards */}
-              <div className="lg:col-span-4 relative flex flex-col space-y-4 lg:-ml-20 pt-8 lg:pt-32 z-20">
+              <div className="lg:col-span-5 lg:col-start-8 relative flex flex-col space-y-4 lg:-ml-24 pt-8 lg:pt-32 z-20">
                 
                 {/* Title Card (Paper Texture) */}
                 <motion.div
