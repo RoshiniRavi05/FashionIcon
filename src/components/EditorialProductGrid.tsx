@@ -44,7 +44,7 @@ export default function EditorialProductGrid() {
 
       {/* Huge Faded Typography */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
-        <h2 className="font-hero text-[18vw] leading-[0.8] tracking-tighter text-white opacity-[0.03] uppercase text-center flex flex-col whitespace-nowrap select-none">
+        <h2 className="font-hero text-[18vw] leading-[0.8] tracking-tighter text-white opacity-[0.025] uppercase text-center flex flex-col whitespace-nowrap select-none">
           <span>CRAFTED</span>
           <span>BEYOND</span>
           <span>ORDINARY</span>
@@ -89,18 +89,18 @@ export default function EditorialProductGrid() {
 
           {/* Product 2: Portrait */}
           <motion.div variants={itemVariants} className="h-full float-anim-delayed">
-            <ProductCard product={products[1]} aspectClass="min-h-[520px]" collection="DROP 002" />
+            <ProductCard product={products[1]} aspectClass="min-h-[580px]" collection="DROP 002" />
           </motion.div>
 
           {/* Product 3: Hero (Landscape / Tall) */}
-          <motion.div variants={itemVariants} className="h-full lg:col-start-3 lg:row-span-2 float-anim">
-            <ProductCard product={products[2]} aspectClass="min-h-[620px] rotate-[1deg]" collection="LIMITED EDITION" />
+          <motion.div variants={itemVariants} className="h-full lg:col-start-3 lg:row-span-2 float-anim z-10 lg:-mb-12">
+            <ProductCard product={products[2]} aspectClass="min-h-[720px] rotate-[1deg]" collection="LIMITED EDITION" />
           </motion.div>
 
           {/* Bottom Row */}
           {/* Editorial Card: Spans 2 columns */}
           <motion.div variants={itemVariants} className="lg:col-span-2 h-full float-anim-delayed">
-            <Link href="/collections" className="group block relative w-full h-full min-h-[340px] rounded-[28px] overflow-hidden bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center p-12 transition-all duration-700 ease-out hover:-translate-y-[6px] hover:scale-[1.02] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+            <Link href="/collections" className="group block relative w-full h-full min-h-[340px] rounded-[28px] overflow-hidden bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center p-12 transition-all duration-700 ease-out hover:-translate-y-[6px] hover:rotate-0 rotate-[-0.5deg] hover:scale-[1.02] hover:shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
               {/* Animated Blueprint Background */}
               <div 
                 className="absolute inset-0 opacity-20 pointer-events-none transition-opacity duration-700 group-hover:opacity-40"
@@ -115,13 +115,19 @@ export default function EditorialProductGrid() {
               
               <div className="relative z-10 flex flex-col items-center text-center space-y-6">
                 <div className="w-px h-12 bg-brand-red mb-2" />
+                <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black">
+                  COLLECTION 01
+                </span>
                 <h3 className="font-hero text-4xl lg:text-5xl uppercase tracking-wider text-white">
                   ARC OPUS
                 </h3>
                 <p className="font-heading text-lg lg:text-xl tracking-[0.15em] text-white/80 uppercase">
                   Crafted Beyond Ordinary
                 </p>
-                <div className="pt-6">
+                <p className="font-sans text-xs sm:text-sm text-white/60 max-w-[400px] mx-auto leading-relaxed mt-2">
+                  An exploration of architectural silhouettes, material experimentation and technical tailoring.
+                </p>
+                <div className="pt-4">
                   <span className="font-caption text-[10px] tracking-[0.2em] uppercase bg-white text-black px-6 py-3 font-bold flex items-center space-x-2 group-hover:bg-brand-red group-hover:text-white transition-colors duration-300">
                     <span>View Collection 01</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -178,16 +184,23 @@ function ProductCard({ product, aspectClass, collection }: { product: any; aspec
 
       {/* Glass Overlay Details */}
       <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-center">
-        <div className="w-full max-w-[90%] bg-[rgba(0,0,0,0.35)] backdrop-blur-[14px] border border-white/5 rounded-[20px] p-5 flex flex-col items-center text-center space-y-1.5 transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.45)]">
+        <div className="w-full max-w-[90%] bg-[rgba(0,0,0,0.55)] backdrop-blur-[12px] border border-white/[0.08] rounded-[20px] py-4 px-6 flex flex-col items-center text-center space-y-1.5 transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.65)]">
           <p className="font-caption text-[11px] tracking-widest text-white/60 uppercase">
             {product.category}
           </p>
-          <h3 className="font-sans text-[18px] font-medium tracking-[0.06em] text-white uppercase">
+          <h3 className="font-sans text-[18px] font-medium tracking-[0.06em] leading-[1.2] text-white uppercase max-w-[180px]">
             {product.name}
           </h3>
           <p className="font-heading text-[16px] font-semibold tracking-wider text-brand-red pt-1">
             {collection}
           </p>
+          {/* Hover CTA */}
+          <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 group-hover:pt-3 transition-all duration-500">
+            <span className="font-caption text-[10px] tracking-[0.2em] uppercase text-white/80 font-bold flex items-center space-x-1.5 group-hover:text-white">
+              <span>VIEW PRODUCT</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
         </div>
       </div>
     </Link>
