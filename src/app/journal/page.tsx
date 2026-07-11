@@ -117,7 +117,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="relative lg:absolute lg:top-[30vh] lg:left-[5vw] z-50 px-6 lg:px-0 max-w-[520px] pointer-events-auto"
+          className="relative lg:absolute lg:top-[20vh] lg:left-[5vw] z-50 px-6 lg:px-0 max-w-[520px] pointer-events-auto"
         >
           {/* Mobile Title (Hidden on Desktop) */}
           <h1 className="lg:hidden font-hero text-4xl sm:text-5xl uppercase text-white leading-none mb-8">
@@ -141,7 +141,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-            className="font-sans text-[24px] leading-[1.8] font-normal tracking-[-0.02em] text-[rgba(255,255,255,0.88)] max-w-[520px] bg-[#0c0c0c]/60 p-6 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm"
+            className="font-sans text-[16px] lg:text-[18px] leading-[1.8] font-normal tracking-[-0.01em] text-[rgba(255,255,255,0.88)] max-w-[520px] bg-[#0c0c0c]/60 p-6 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm"
           >
             {article.content.intro}
           </motion.p>
@@ -168,7 +168,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8, type: "spring", stiffness: 50 }}
           whileHover={{ y: -5, rotate: -1, zIndex: 55 }}
-          className="magazine-card relative z-40 mx-6 lg:mx-0 lg:absolute lg:bottom-[8vh] lg:left-[12vw] p-8 max-w-[320px] mt-10 lg:mt-0 cursor-pointer"
+          className="magazine-card relative z-40 mx-6 lg:mx-0 lg:absolute lg:bottom-[8vh] lg:left-[5vw] xl:left-[8vw] p-8 max-w-[280px] md:max-w-[320px] mt-10 lg:mt-0 cursor-pointer"
         >
           <div className="tape-top-right" />
           <p className="font-hero text-base xl:text-lg uppercase leading-tight text-[#111] whitespace-pre-wrap">
@@ -210,9 +210,9 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1.5 }}
-          className="relative z-50 mx-6 lg:mx-0 lg:absolute lg:bottom-[22vh] lg:right-[35vw] max-w-[220px] mt-10 lg:mt-0"
+          className="relative z-50 mx-6 lg:mx-0 lg:absolute lg:bottom-[28vh] lg:right-[38vw] max-w-[220px] mt-10 lg:mt-0"
         >
-          <p className="font-sans text-[13px] xl:text-sm text-white/90 leading-[1.8] drop-shadow-md whitespace-pre-wrap">
+          <p className="font-sans text-[13px] xl:text-sm text-white/90 leading-[1.8] drop-shadow-md whitespace-pre-wrap bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-sm">
             {article.content.behindTheCollection}
           </p>
         </motion.div>

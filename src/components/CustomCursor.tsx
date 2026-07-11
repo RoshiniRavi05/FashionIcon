@@ -45,7 +45,7 @@ export const CustomCursor: React.FC = () => {
     
     const updatePosition = () => {
       // Lerp (Linear Interpolation) calculation: target + (current - target) * ease
-      const ease = 0.15; // Lower = smoother/slower lag
+      const ease = 1; // 1 = instant (no lag) for the sharp arrow pointer
       circleRef.current.x += (mouseRef.current.x - circleRef.current.x) * ease;
       circleRef.current.y += (mouseRef.current.y - circleRef.current.y) * ease;
       

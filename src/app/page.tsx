@@ -9,63 +9,10 @@ import { useApp } from '@/context/AppContext';
 import { DEFAULT_PRODUCTS } from '@/data/products';
 import { LuxuryLoader } from '@/components/LuxuryLoader';
 import Carousel from '@/components/Carousel';
-import TiltedCard from '@/components/TiltedCard';
 import EditorialProductGrid from '@/components/EditorialProductGrid';
+import EditorialScrollSection from '@/components/EditorialScrollSection';
 
-const capsuleDetails = [
-  {
-    name: 'Tees & Tops',
-    image: '/oversized_tee_hero.png',
-    path: '/collections/t-shirts',
-    code: '001/01',
-    heading: 'GEOMETRIC OVERSIZED SILHOUETTES',
-    description: 'Engineered from 360gsm double-yarn combed cotton. Drafted with dropped shoulders, raw blind hems, and custom mineral-oxide dye wells for a structured, architectural drape.',
-    specs: [
-      { label: 'Weight', value: '360gsm' },
-      { label: 'Fabric', value: '100% Combed Cotton' },
-      { label: 'Fit', value: 'Geometric Oversized' }
-    ]
-  },
-  {
-    name: 'Outerwear',
-    image: '/denim_jacket_hero.jpg',
-    path: '/collections/jackets',
-    code: '001/02',
-    heading: 'STRUCTURED TECHNICAL CANVASES',
-    description: 'Heavyweight denim canvases overlaid with custom red stay-positive canvas patches. Designed with storm-guard double flaps, hand-distressed seams, and industrial-grade steel button enclosures.',
-    specs: [
-      { label: 'Weight', value: '550gsm' },
-      { label: 'Fabric', value: 'Raw Canvas Denim' },
-      { label: 'Enclosure', value: 'Industrial Steel Buttons' }
-    ]
-  },
-  {
-    name: 'Pants & Denim',
-    image: '/bottoms/c1.png',
-    path: '/collections/bottoms',
-    code: '001/03',
-    heading: 'ANATOMICAL DRILL CHINOS',
-    description: 'Drafted from high-tension military drill cotton. Engineered with knee dart articulations, deep side utility slits, and tapered hems designed to drape cleanly over footwear.',
-    specs: [
-      { label: 'Weight', value: '420gsm' },
-      { label: 'Fabric', value: 'High-Tension Drill Cotton' },
-      { label: 'Joints', value: 'Anatomical Knee Darts' }
-    ]
-  },
-  {
-    name: 'Footwear',
-    image: '/acid_wash_sneakers.png',
-    path: '/collections/shoes',
-    code: '001/04',
-    heading: 'VULCANIZED SPEED SNEAKERS',
-    description: 'Handmade runway sneakers combining layered vulcanized rubber treads, memory-foam insoles, speed-lace metal eyelets, and hand-aged distressed canvas uppers.',
-    specs: [
-      { label: 'Type', value: 'Speed Runner' },
-      { label: 'Sole', value: 'Vulcanized Rubber' },
-      { label: 'Upper', value: 'Distressed Canvas' }
-    ]
-  }
-];
+// Removed capsuleDetails array (moved to EditorialScrollSection)
 
 export default function Home() {
   const { 
@@ -76,7 +23,6 @@ export default function Home() {
   } = useApp();
 
   const [loading, setLoading] = useState(true);
-  const [activeCapsule, setActiveCapsule] = useState(0);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const [heroScale, setHeroScale] = useState(1);
@@ -94,6 +40,31 @@ export default function Home() {
   const philosophyImageX = useSpring(0, { stiffness: 100, damping: 22 });
   const philosophyImageY = useSpring(0, { stiffness: 100, damping: 22 });
   const [btnOffset, setBtnOffset] = useState({ x: 0, y: 0 });
+
+  // Editorial Capsules Parallax states
+  const capsuleMouseX = useSpring(0, { stiffness: 50, damping: 30 });
+  const capsuleMouseY = useSpring(0, { stiffness: 50, damping: 30 });
+  const handleCapsuleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const { clientX, clientY, currentTarget } = e;
+    const { width, height, left, top } = currentTarget.getBoundingClientRect();
+    const x = (clientX - left) / width - 0.5;
+    const y = (clientY - top) / height - 0.5;
+    capsuleMouseX.set(x);
+    capsuleMouseY.set(y);
+  };
+  const handleCapsuleMouseLeave = () => {
+    capsuleMouseX.set(0);
+    capsuleMouseY.set(0);
+  };
+  const imageX = useTransform(capsuleMouseX, [-0.5, 0.5], [-10, 10]);
+  const imageY = useTransform(capsuleMouseY, [-0.5, 0.5], [-10, 10]);
+  const typeX = useTransform(capsuleMouseX, [-0.5, 0.5], [-5, 5]);
+  const typeY = useTransform(capsuleMouseY, [-0.5, 0.5], [-5, 5]);
+  const metaX = useTransform(capsuleMouseX, [-0.5, 0.5], [-15, 15]);
+  const metaY = useTransform(capsuleMouseY, [-0.5, 0.5], [-15, 15]);
+
+  // Removing horizontal scroll parallax from background type to keep layout stable
+  const bgTypeX = "0px";
   const philosophyBtnRef = useRef<HTMLAnchorElement>(null);
 
   const handlePhilosophyMouseMove = (e: React.MouseEvent) => {
@@ -271,210 +242,11 @@ export default function Home() {
 
 
 
-        {/* EDITORIAL CAPSULES - FLIPO CAMPAIGN SPREAD */}
-        <section ref={sectionRef} className="relative py-32 overflow-hidden border-t border-white/5 bg-[#050505] z-10 flex flex-col justify-center min-h-[1000px]">
-          
-          {/* Background Campaign Image */}
-          <div className="absolute inset-0 pointer-events-none z-0">
-            <Image
-              src="/oversized_tee_hero.png"
-              alt="Campaign Backdrop"
-              fill
-              className="object-cover object-center opacity-[0.12] blur-[1px]"
-              sizes="100vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/40 z-[1]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#050505_120%)] z-[1]" />
-            {/* Subtle Textures */}
-            <div className="absolute inset-0 opacity-[0.05] z-[1]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div className="absolute inset-0 opacity-[0.03] z-[1]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
-          </div>
-
-          {/* Background Typography */}
-          <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-20 opacity-[0.01]">
-            <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none">ARCHIVE</span>
-            <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none">CAPSULE</span>
-          </div>
-
-          <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-10 w-full h-full flex flex-col">
-            
-            {/* Section Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 lg:mb-24">
-              <div className="space-y-4">
-                <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
-                  CURATED CAMPAIGN
-                </span>
-                <h2 className="font-hero text-[clamp(42px,5vw,82px)] leading-[0.95] tracking-[-0.05em] uppercase text-white">
-                  EDITORIAL CAPSULES
-                </h2>
-              </div>
-              
-              {/* Controls */}
-              <div className="flex items-center space-x-6 z-30">
-                <span className="font-heading text-[9px] tracking-widest uppercase text-white/40 text-right mr-4">
-                  SHOT IN STUDIO 04<br/>JUNE 2026
-                </span>
-                <button 
-                  onClick={() => setActiveCapsule((prev) => (prev - 1 + capsuleDetails.length) % capsuleDetails.length)}
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:bg-white hover:text-black transition-all"
-                >
-                  <ArrowRight className="w-4 h-4 rotate-180" />
-                </button>
-                <span className="font-heading text-xs tracking-[0.2em] text-white/80 font-bold">
-                  0{activeCapsule + 1} / 0{capsuleDetails.length}
-                </span>
-                <button 
-                  onClick={() => setActiveCapsule((prev) => (prev + 1) % capsuleDetails.length)}
-                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/50 hover:bg-white hover:text-black transition-all"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Layout Spread */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 items-start h-full">
-              
-              {/* Left: Large Hero Campaign Image */}
-              <motion.div 
-                key={`img-${activeCapsule}`}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-6 lg:col-start-2 h-[600px] lg:h-[800px] max-w-[700px] w-full ml-auto relative rounded-[32px] overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05] z-10"
-              >
-                <div className="absolute inset-0 opacity-[0.03] z-[15] pointer-events-none" style={{ backgroundImage: 'url(/film-grain.png)' }} />
-                <Image
-                  src={capsuleDetails[activeCapsule].image}
-                  alt={capsuleDetails[activeCapsule].name}
-                  fill
-                  className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04] z-10"
-                  style={{ filter: 'contrast(1.05) brightness(0.95) saturate(0.92)' }}
-                />
-                
-                {/* Floating Meta Tag */}
-                <div className="absolute top-8 left-8 z-20 flex flex-col space-y-1">
-                  <span className="font-caption text-[10px] tracking-widest text-white/80 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded border border-white/10 uppercase font-bold">
-                    CODE {capsuleDetails[activeCapsule].code}
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* Right: Floating Information Pinned Cards */}
-              <div className="lg:col-span-5 lg:col-start-8 relative flex flex-col space-y-4 lg:-ml-24 pt-8 lg:pt-32 z-20">
-                
-                {/* Title Card (Paper Texture) */}
-                <motion.div
-                  key={`title-${activeCapsule}`}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-                  className="bg-[#111111] border border-white/5 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[-0.5deg] relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
-                  <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block mb-4 relative z-10">
-                    EDITION {capsuleDetails[activeCapsule].code}
-                  </span>
-                  <h3 className="font-hero text-3xl lg:text-4xl uppercase text-white leading-[1.1] relative z-10">
-                    {capsuleDetails[activeCapsule].heading}
-                  </h3>
-                </motion.div>
-
-                {/* Description Card (Matte Black) */}
-                <motion.div
-                  key={`desc-${activeCapsule}`}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                  className="bg-[#0A0A0A] border border-white/5 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] ml-0 lg:ml-12 -mt-6 lg:-mt-10 transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[1.5deg] z-10 relative"
-                >
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-                    <span className="font-heading text-[9px] tracking-widest text-white/50 uppercase">Material Notes</span>
-                  </div>
-                  <p className="font-sans text-sm text-[#F5F5F5]/70 leading-relaxed">
-                    {capsuleDetails[activeCapsule].description}
-                  </p>
-                </motion.div>
-
-                {/* Specs Card (Frosted Glass) */}
-                <motion.div
-                  key={`specs-${activeCapsule}`}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.36, ease: [0.16, 1, 0.3, 1] }}
-                  className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] lg:-ml-6 -mt-6 lg:-mt-8 transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[-1deg] z-20 relative"
-                >
-                  <div className="grid grid-cols-2 gap-y-6">
-                    {capsuleDetails[activeCapsule].specs.map((spec) => (
-                      <div key={spec.label} className="space-y-1.5">
-                        <p className="font-caption text-[9px] tracking-widest text-brand-red/80 uppercase">{spec.label}</p>
-                        <p className="font-heading text-xs tracking-wider text-[#F5F5F5] uppercase font-bold">{spec.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-
-                {/* Explore CTA Card (Blueprint) */}
-                <motion.div
-                  key={`cta-${activeCapsule}`}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.48, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex justify-end pt-2 lg:pt-4 lg:-mr-12 -mt-4 lg:-mt-8 z-30 relative"
-                >
-                  <Link
-                    href={capsuleDetails[activeCapsule].path}
-                    className="group font-heading text-[11px] tracking-[0.2em] uppercase bg-[#050505] text-white border border-brand-red/20 px-10 py-5 rounded-[32px] transition-all duration-500 font-bold inline-flex items-center space-x-4 shadow-[0_20px_60px_rgba(0,0,0,0.45)] hover:border-brand-red hover:-translate-y-2 rotate-[-0.5deg] overflow-hidden"
-                  >
-                    <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover' }} />
-                    <span className="relative z-10">View Dossier</span>
-                    <div className="w-8 h-8 rounded-full bg-brand-red flex items-center justify-center relative z-10 group-hover:scale-110 transition-transform duration-500">
-                      <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
-                  </Link>
-                </motion.div>
-
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* EDITORIAL GSAP SCROLL SECTION */}
+        <EditorialScrollSection />
 
         {/* CINEMATIC EDITORIAL PRODUCT GRID SHOWCASE */}
         <EditorialProductGrid />
-
-        {/* CAROUSEL BRAND SPECIFICATIONS */}
-        <section className="material-architecture-section relative py-24 border-t border-white/5 overflow-hidden flex flex-col items-center justify-center">
-          <div className="relative z-10 max-w-[1600px] mx-auto px-6 md:px-12 flex flex-col items-center text-center space-y-12 w-full">
-            {/* Header Content */}
-            <div className="space-y-4 max-w-[600px] flex flex-col items-center">
-              <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black">
-                SYSTEM SPECIFICATIONS
-              </span>
-              <h2 className="font-hero text-2xl sm:text-4xl tracking-wide uppercase text-white leading-tight">
-                MATERIAL ARCHITECTURE
-              </h2>
-              <div className="w-12 h-[1px] bg-brand-red my-2" />
-              <p className="font-sans text-xs tracking-widest text-[#F5F5F5]/60 leading-relaxed">
-                Drag to explore the structural dimensions, technical fabrics, and modular elements that define our capsule editions.
-              </p>
-            </div>
-
-            {/* Center Carousel */}
-            <div className="w-full flex justify-center">
-              <div className="relative w-full max-w-[500px] h-[340px] flex items-center justify-center">
-                <Carousel
-                  baseWidth={400}
-                  autoplay={true}
-                  autoplayDelay={4000}
-                  pauseOnHover={true}
-                  loop={true}
-                  round={false}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* BRAND STORY PREVIEW */}
         <section 

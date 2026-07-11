@@ -1,208 +1,125 @@
 "use client";
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.16, 1, 0.3, 1] as const,
-    },
-  },
-};
-
 export default function EditorialProductGrid() {
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+  
+  const transitionConfig = { duration: 1.6, ease: [0.16, 1, 0.3, 1] as const };
+  const hoverConfig = { duration: 1, ease: [0.22, 1, 0.36, 1] as const };
+
+  const subtleTornMaskMain = "polygon(1% 0%, 4% 1.5%, 8% 0%, 12% 1%, 17% 0%, 22% 1.5%, 26% 0%, 31% 1%, 36% 0.5%, 41% 1.5%, 45% 0%, 50% 1%, 55% 0.5%, 60% 1.5%, 64% 0%, 68% 1%, 73% 0.5%, 78% 1.5%, 82% 0%, 87% 1%, 91% 0.5%, 96% 1.5%, 99% 0%, 100% 4%, 98.5% 8%, 100% 13%, 99% 18%, 100% 23%, 98.5% 28%, 100% 33%, 99% 38%, 100% 43%, 98.5% 48%, 100% 53%, 99% 58%, 100% 63%, 98.5% 68%, 100% 73%, 99% 78%, 100% 83%, 98.5% 88%, 100% 93%, 99% 97%, 98% 100%, 94% 98.5%, 89% 100%, 84% 99%, 79% 100%, 74% 98.5%, 69% 100%, 64% 99%, 59% 100%, 54% 98.5%, 49% 100%, 44% 99%, 39% 100%, 34% 98.5%, 29% 100%, 24% 99%, 19% 100%, 14% 98.5%, 9% 100%, 4% 99%, 1% 100%, 0% 96%, 1.5% 91%, 0% 86%, 1% 81%, 0% 76%, 1.5% 71%, 0% 66%, 1% 61%, 0% 56%, 1.5% 51%, 0% 46%, 1% 41%, 0% 36%, 1.5% 31%, 0% 26%, 1% 21%, 0% 16%, 1.5% 11%, 0% 6%)";
+  const subtleTornMaskSecondary = "polygon(0% 1%, 5% 0%, 9% 1.5%, 14% 0%, 19% 1%, 23% 0.5%, 28% 1.5%, 33% 0%, 38% 1%, 43% 0.5%, 48% 1.5%, 52% 0%, 57% 1%, 62% 0.5%, 67% 1.5%, 72% 0%, 77% 1%, 82% 0.5%, 86% 1.5%, 91% 0%, 96% 1%, 100% 0%, 98.5% 5%, 100% 10%, 99% 15%, 100% 20%, 98.5% 25%, 100% 30%, 99% 35%, 100% 40%, 98.5% 45%, 100% 50%, 99% 55%, 100% 60%, 98.5% 65%, 100% 70%, 99% 75%, 100% 80%, 98.5% 85%, 100% 90%, 99% 95%, 100% 99%, 95% 100%, 90% 98.5%, 85% 100%, 80% 99%, 75% 100%, 70% 98.5%, 65% 100%, 60% 99%, 55% 100%, 50% 98.5%, 45% 100%, 40% 99%, 35% 100%, 30% 98.5%, 25% 100%, 20% 99%, 15% 100%, 10% 98.5%, 5% 100%, 1% 99%, 0% 94%, 1.5% 89%, 0% 84%, 1% 79%, 0% 74%, 1.5% 69%, 0% 64%, 1% 59%, 0% 54%, 1.5% 49%, 0% 44%, 1% 39%, 0% 34%, 1.5% 29%, 0% 24%, 1% 19%, 0% 14%, 1.5% 9%, 0% 4%)";
+
   return (
-    <section className="relative w-full bg-[#050505] py-32 overflow-hidden border-t border-white/5 min-h-[1000px] flex items-center">
-      
-      {/* Background Campaign Image & Overlays */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <Image
-          src="/denim_jacket_2.jpg"
-          alt="Campaign Backdrop"
-          fill
-          className="object-cover object-center opacity-[0.12] blur-[1px]"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] z-[1]" />
+    <section 
+      ref={sectionRef}
+      className="relative w-full bg-[#000000] z-10 border-t border-white/5 py-32 md:py-48"
+    >
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
         
-        {/* Soft Vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#050505_120%)] z-[1]" />
-
-        {/* Textures */}
-        <div className="absolute inset-0 opacity-[0.05] z-[1]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 opacity-[0.03] z-[1]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
-      </div>
-
-      {/* Huge Faded Typography */}
-      <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-20">
-        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.01]">CRAFTED</span>
-        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.01]">CAMPAIGN</span>
-      </div>
-
-      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 relative z-10">
-        
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 lg:mb-24 relative z-30">
-          <div className="space-y-4">
-            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
-              LATEST ARRIVALS
-            </span>
-            <h2 className="font-hero text-[clamp(42px,5vw,82px)] leading-[0.95] tracking-[-0.05em] uppercase text-white">
-              EDITORIAL REGISTRY
-            </h2>
-          </div>
-          <div className="flex items-center space-x-6">
-            <span className="font-heading text-[9px] tracking-widest uppercase text-white/40 text-right">
-              SHOT IN STUDIO 04<br/>JUNE 2026
-            </span>
-          </div>
-        </div>
-
-        {/* FL!PØ-Inspired Editorial Collage (12 Column Grid) */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-start"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-center">
           
-          {/* ANCHOR: Large Hero Campaign Image */}
-          <motion.div 
-            variants={itemVariants} 
-            className="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4 relative h-[600px] lg:h-[800px] max-w-[700px] w-full mx-auto z-10 group rounded-none md:rounded-[32px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05]"
-          >
-            <div className="absolute inset-0 opacity-[0.03] z-[15] pointer-events-none" style={{ backgroundImage: 'url(/film-grain.png)' }} />
-            <Image
-              src="/denim_jacket_2.jpg"
-              alt="Campaign Hero"
-              fill
-              className="object-contain object-center bg-[#080808] transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
-              style={{ filter: 'contrast(1.05) brightness(0.95) saturate(0.92)' }}
-            />
-            {/* Pinned Object - Tiny Meta Tag */}
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-              <div className="bg-white px-3 py-1.5 flex items-center space-x-2 shadow-lg">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-                <span className="font-caption text-[8px] tracking-[0.2em] text-black uppercase font-black">
-                  EDITION 001 &nbsp;|&nbsp; JUNE 2026 &nbsp;|&nbsp; STUDIO 04
-                </span>
-              </div>
-            </div>
-            {/* Small Information Tag on Hero */}
-            <div className="absolute bottom-6 left-6 z-20 flex items-center space-x-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
-              <span className="font-heading text-[10px] tracking-widest text-white uppercase font-bold bg-black/40 backdrop-blur-md px-3 py-1.5 rounded border border-white/10">
-                ARCHIVE 01
-              </span>
-            </div>
-          </motion.div>
-
-          {/* FLOATING BLOCK 1: Frosted Glass Campaign Card */}
-          <motion.div 
-            variants={itemVariants}
-            className="md:col-span-5 lg:col-span-3 md:col-start-1 md:row-start-1 lg:mt-32 z-20 transform translate-y-[20px] hover:-translate-y-[6px] hover:scale-[1.02] transition-all duration-700 ease-out"
-          >
-            <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] flex flex-col justify-between min-h-[300px]">
-              <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black border-b border-white/10 pb-4">
-                THE CAMPAIGN
-              </span>
-              <h3 className="font-hero text-3xl lg:text-4xl text-white uppercase mt-6 leading-tight">
-                Structured<br/>Fluidity
+          {/* LEFT COLUMN: 45% (col-span-5) */}
+          <div className="md:col-span-5 flex flex-col justify-center space-y-12">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0, transition: { ...transitionConfig, delay: 0.1 } }}
+              viewport={{ once: true, margin: "-10%" }}
+            >
+              <h3 
+                className="font-hero text-white uppercase flex flex-col mb-10"
+                style={{ fontSize: 'clamp(2rem, 3.8vw, 4.4rem)', lineHeight: 0.9, letterSpacing: '-0.04em' }}
+              >
+                <span className="block opacity-90">EDITORIAL</span>
+                <span className="block opacity-90">STUDY</span>
+                <span className="block opacity-90 text-brand-red">VOL.01</span>
               </h3>
-              <p className="font-sans text-xs text-white/50 mt-4 leading-relaxed">
-                A study in contrasting forms, merging rigid tailoring with natural drape.
-              </p>
-            </div>
-          </motion.div>
 
-          {/* FLOATING BLOCK 2: Paper Texture Manifesto Card */}
-          <motion.div 
-            variants={itemVariants}
-            className="md:col-span-5 lg:col-span-4 md:col-start-8 lg:col-start-9 md:row-start-1 lg:mt-16 z-20 transform translate-y-[-16px] hover:-translate-y-[22px] hover:scale-[1.02] transition-all duration-700 ease-out md:-ml-8"
-          >
-            <div className="bg-[#111111] border border-white/5 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] min-h-[360px] relative overflow-hidden flex flex-col items-center justify-center text-center">
-              {/* Paper Texture Overlay */}
-              <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
-              
-              <span className="font-heading text-[9px] tracking-widest text-white/40 uppercase mb-6">
-                TECHNICAL MANIFESTO
-              </span>
-              
-              <ul className="font-heading text-xs lg:text-sm tracking-[0.2em] text-white/80 uppercase space-y-4">
-                <li>360GSM HEAVYWEIGHT</li>
-                <li className="w-12 h-px bg-white/20 mx-auto" />
-                <li>DOUBLE-YARN KNIT</li>
-                <li className="w-12 h-px bg-white/20 mx-auto" />
-                <li>MINERAL WASH DYE</li>
-                <li className="w-12 h-px bg-white/20 mx-auto" />
-                <li>ARCHITECTURAL FIT</li>
-              </ul>
-            </div>
-          </motion.div>
-
-          {/* FLOATING BLOCK 3: Matte Black Story Card */}
-          <motion.div 
-            variants={itemVariants}
-            className="md:col-span-6 lg:col-span-4 md:col-start-2 lg:col-start-2 md:row-start-2 lg:-mt-32 z-30 transform translate-y-[0px] hover:-translate-y-[6px] hover:scale-[1.02] transition-all duration-700 ease-out"
-          >
-            <Link href="/story" className="block bg-[#0A0A0A] border border-white/5 rounded-[32px] p-10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] group relative overflow-hidden min-h-[320px]">
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent pointer-events-none" />
-              
-              <h3 className="font-hero text-4xl lg:text-5xl uppercase tracking-wider text-white">
-                ARC OPUS
-              </h3>
-              <p className="font-heading text-sm lg:text-base tracking-[0.15em] text-white/80 uppercase mt-2">
-                Crafted Beyond Ordinary.
-              </p>
-              
-              <p className="font-sans text-xs text-white/50 mt-6 leading-relaxed max-w-[280px]">
-                Redefining the modern silhouette through relentless material experimentation and brutalist design principles.
-              </p>
-
-              <div className="absolute bottom-10 right-10 w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red transition-all duration-500">
-                <ArrowRight className="w-4 h-4 text-white group-hover:text-black transition-colors" />
+              <div className="space-y-6 max-w-[420px]">
+                <h4 className="font-heading text-xs tracking-[0.3em] uppercase text-white/50 border-b border-white/10 pb-4">
+                  DESIGN ARCHIVE
+                </h4>
+                <p className="font-sans text-[13px] md:text-[14px] leading-relaxed text-[#F4F1EC]/70">
+                  Exploring unconventional silhouettes, material innovation, and timeless construction techniques. A precise study in architectural draping.
+                </p>
               </div>
-            </Link>
-          </motion.div>
+            </motion.div>
 
-          {/* FLOATING BLOCK 4: Blueprint Collection Card */}
-          <motion.div 
-            variants={itemVariants}
-            className="md:col-span-4 lg:col-span-3 md:col-start-8 lg:col-start-8 md:row-start-2 lg:-mt-16 z-20 transform translate-y-[12px] hover:-translate-y-[0px] hover:scale-[1.02] transition-all duration-700 ease-out"
-          >
-            <div className="bg-[#050505] border border-brand-red/20 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] relative overflow-hidden min-h-[240px] flex flex-col justify-end">
-              <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover' }} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1, transition: { ...transitionConfig, delay: 0.3 } }}
+              viewport={{ once: true, margin: "-10%" }}
+            >
+              <Link
+                href="/journal"
+                className="group font-heading text-[10px] md:text-[11px] tracking-[0.25em] uppercase text-[#F4F1EC] inline-flex flex-col relative pb-3 w-fit"
+              >
+                <span className="relative z-10 flex items-center gap-4 transition-all duration-700 ease-[0.16,1,0.3,1] group-hover:tracking-[0.3em]">
+                  EXPLORE JOURNAL <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-3 transition-transform duration-700 ease-[0.16,1,0.3,1]" />
+                </span>
+                <div className="absolute bottom-0 left-0 h-[1px] bg-white/20 w-full" />
+                <div className="absolute bottom-0 left-0 h-[1px] bg-white w-0 group-hover:w-full transition-all duration-700 ease-[0.16,1,0.3,1]" />
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* RIGHT COLUMN: 55% (col-span-7) */}
+          <div className="md:col-span-7 relative flex justify-end mt-12 md:mt-0 md:-ml-[160px]">
+            
+            <div className="relative w-full max-w-[850px] h-[70vh] md:h-[90vh]">
               
-              <div className="relative z-10">
-                <span className="font-caption text-[9px] tracking-[0.2em] text-white/40 uppercase mb-2 block">
-                  CAPSULE 001
-                </span>
-                <span className="font-heading text-lg tracking-widest text-brand-red uppercase font-black">
-                  EDITION 001
-                </span>
-              </div>
-            </div>
-          </motion.div>
+              {/* Main Image */}
+              <motion.div
+                initial={{ opacity: 0, clipPath: 'inset(10% 10% 10% 10%)' }}
+                whileInView={{ opacity: 1, clipPath: subtleTornMaskMain, transition: { ...transitionConfig, delay: 0.2 } }}
+                viewport={{ once: true, margin: "-20%" }}
+                className="absolute top-[5%] right-0 w-[75%] h-[85%] z-20 origin-center bg-[#111111] overflow-hidden"
+              >
+                <motion.div style={{ y: imgY, width: '100%', height: '115%' }} className="absolute -top-[10%] left-0">
+                  <Image
+                    src="/oversized_tee_hero.png"
+                    alt="Editorial Main Study"
+                    fill
+                    className="object-cover object-center grayscale-[15%] hover:grayscale-0 hover:scale-[1.02] transition-all duration-1000 ease-[0.16,1,0.3,1]"
+                    priority
+                  />
+                </motion.div>
+              </motion.div>
 
-        </motion.div>
+              {/* Secondary Image - Peeks under bottom-left corner with 2deg rotation and torn edge */}
+              <motion.div
+                initial={{ opacity: 0, clipPath: 'inset(10% 10% 10% 10%)', y: 30, rotate: -10 }}
+                whileInView={{ opacity: 1, clipPath: subtleTornMaskSecondary, y: 0, rotate: 2, transition: { ...transitionConfig, delay: 0.4 } }}
+                viewport={{ once: true, margin: "-20%" }}
+                className="absolute bottom-[5%] left-[10%] w-[40%] h-[48%] z-30 origin-center bg-[#0A0A0A] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)]"
+              >
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/graphic_tee_hero.jpg"
+                    alt="Editorial Secondary Study"
+                    fill
+                    className="object-cover object-center grayscale-[40%] hover:grayscale-0 hover:scale-[1.02] transition-all duration-1000 ease-[0.16,1,0.3,1]"
+                  />
+                </div>
+              </motion.div>
+
+            </div>
+
+          </div>
+
+        </div>
       </div>
     </section>
   );
