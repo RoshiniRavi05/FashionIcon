@@ -64,10 +64,6 @@ export const Navbar: React.FC = () => {
 
           {/* Right Action Icons */}
           <div className="flex items-center space-x-6">
-            <button className="text-[#F5F5F5]/70 hover:text-brand-red transition-colors duration-300">
-              <Search className="w-[18px] h-[18px] stroke-[1.5]" />
-            </button>
-
             {/* Wishlist Button */}
             <button
               onClick={() => setWishlistOpen(true)}
