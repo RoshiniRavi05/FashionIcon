@@ -47,20 +47,20 @@ export const AuthModal: React.FC = () => {
 
             {/* Left Image Section */}
             <div className="relative w-full md:w-1/2 h-64 md:h-full bg-[#111] overflow-hidden rounded-t-3xl md:rounded-tr-none md:rounded-l-3xl">
-              <Image 
-                src="/my_image.png.png" 
-                alt="Streetwear Model" 
-                fill 
-                className="object-cover" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              
-              {/* Image Overlay Text */}
-              <div className="absolute bottom-8 left-8 right-8">
-                <h3 className="font-heading text-3xl leading-none text-white uppercase font-bold drop-shadow-lg">
-                  "THE STREETS<br/>ARE YOUR<br/>RUNWAY."
-                </h3>
-              </div>
+              <motion.div 
+                className="absolute inset-0"
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+              >
+                <Image 
+                  src="/my_image.png.png" 
+                  alt="Streetwear Model" 
+                  fill 
+                  className="object-cover" 
+                  priority
+                />
+              </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
             </div>
 
             {/* Right Content Section */}
