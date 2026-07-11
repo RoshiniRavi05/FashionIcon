@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { DEFAULT_PRODUCTS } from '@/data/products';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -30,184 +29,171 @@ const itemVariants = {
 };
 
 export default function EditorialProductGrid() {
-  const products = DEFAULT_PRODUCTS.slice(0, 3);
-
   return (
-    <section className="relative w-full bg-[#050505] py-32 overflow-hidden border-t border-white/5">
+    <section className="relative w-full bg-[#050505] py-32 overflow-hidden border-t border-white/5 min-h-[1000px] flex items-center">
       
-      {/* Background Campaign Image (Flipo aesthetic) */}
+      {/* Background Campaign Image & Overlays */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <Image
           src="/denim_jacket_2.jpg"
           alt="Campaign Backdrop"
           fill
-          className="object-cover object-center opacity-[0.15] blur-[2px]"
+          className="object-cover object-center opacity-[0.12] blur-[1px]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/40 z-[1]" />
-        {/* Subtle Textures */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] z-[1]" />
+        
+        {/* Soft Vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#050505_120%)] z-[1]" />
+
+        {/* Textures */}
         <div className="absolute inset-0 opacity-[0.05] z-[1]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
         <div className="absolute inset-0 opacity-[0.03] z-[1]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
       </div>
 
       {/* Huge Faded Typography */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[2] overflow-hidden">
-        <h2 className="font-hero text-[16vw] leading-[0.8] tracking-tighter text-white opacity-[0.02] uppercase text-center flex flex-col whitespace-nowrap select-none">
-          <span>ARCHIVE</span>
-          <span>CRAFTED</span>
-          <span>CAPSULE</span>
-          <span>CAMPAIGN</span>
-        </h2>
+      <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-20">
+        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.015]">CRAFTED</span>
+        <span className="font-hero text-[22vw] leading-[0.75] tracking-tighter text-white uppercase select-none opacity-[0.015]">CAMPAIGN</span>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-10">
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 relative z-10">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 lg:mb-24 relative z-30">
           <div className="space-y-4">
-            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black">
+            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
               LATEST ARRIVALS
             </span>
-            <h2 className="font-hero text-2xl md:text-4xl tracking-wide uppercase text-white">
+            <h2 className="font-hero text-[clamp(42px,5vw,82px)] leading-[0.95] tracking-[-0.05em] uppercase text-white">
               EDITORIAL REGISTRY
             </h2>
           </div>
-          <Link 
-            href="/shop"
-            className="font-heading text-[10px] tracking-[0.2em] uppercase text-white/70 hover:text-brand-red transition-colors flex items-center space-x-2"
-          >
-            <span>View Full Registry</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="flex items-center space-x-6">
+            <span className="font-heading text-[9px] tracking-widest uppercase text-white/40 text-right">
+              SHOT IN STUDIO 04<br/>JUNE 2026
+            </span>
+          </div>
         </div>
 
-        {/* Flipo-Inspired Nested Asymmetrical Grid */}
+        {/* FL!PØ-Inspired Editorial Collage (12 Column Grid) */}
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 lg:grid-cols-[2fr_1.3fr] gap-7"
+          className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-start"
         >
           
-          {/* LEFT COLUMN (2fr) */}
-          <div className="flex flex-col gap-7">
-            {/* Top Inner Grid for Card 1 & Card 2 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
-              {/* Product 1: Portrait */}
-              <motion.div variants={itemVariants} className="w-full">
-                <ProductCard product={products[0]} aspectClass="min-h-[520px]" collection="DROP 002" />
-              </motion.div>
-
-              {/* Product 2: Portrait (slightly taller) */}
-              <motion.div variants={itemVariants} className="w-full">
-                <ProductCard product={products[1]} aspectClass="min-h-[580px]" collection="COLLECTION 01" />
-              </motion.div>
+          {/* ANCHOR: Large Hero Campaign Image */}
+          <motion.div 
+            variants={itemVariants} 
+            className="md:col-span-8 md:col-start-3 lg:col-span-6 lg:col-start-4 relative h-[600px] lg:h-[800px] z-10 group rounded-none md:rounded-[32px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/[0.05]"
+          >
+            <Image
+              src="/denim_jacket_2.jpg"
+              alt="Campaign Hero"
+              fill
+              className="object-contain object-center bg-[#080808] transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
+            />
+            {/* Small Information Tag on Hero */}
+            <div className="absolute bottom-6 left-6 z-20 flex items-center space-x-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+              <span className="font-heading text-[10px] tracking-widest text-white uppercase font-bold bg-black/40 backdrop-blur-md px-3 py-1.5 rounded border border-white/10">
+                ARCHIVE 01
+              </span>
             </div>
+          </motion.div>
 
-            {/* Bottom: Editorial Story Card */}
-            <motion.div variants={itemVariants} className="w-full">
-              <Link href="/collections" className="group block relative w-full h-full min-h-[340px] rounded-[32px] overflow-hidden bg-[#0A0A0A] border border-white/[0.05] flex items-center p-12 transition-all duration-700 ease-out hover:-translate-y-[6px] rotate-[-1deg] hover:scale-[1.02] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-white/[0.04] via-transparent to-transparent pointer-events-none" />
-                <div className="relative z-10 flex flex-col items-start text-left space-y-6">
-                  <div className="w-12 h-px bg-brand-red mb-2" />
-                  <h3 className="font-hero text-3xl lg:text-5xl uppercase tracking-wider text-white">
-                    ARC OPUS
-                  </h3>
-                  <p className="font-heading text-lg lg:text-xl tracking-[0.15em] text-white/80 uppercase">
-                    Crafted Beyond Ordinary.
-                  </p>
-                  <p className="font-sans text-xs sm:text-sm text-white/60 max-w-[400px] leading-relaxed mt-2">
-                    An exploration of architectural silhouettes,<br />technical tailoring,<br />and material experimentation.
-                  </p>
-                  <div className="pt-4">
-                    <span className="font-caption text-[10px] tracking-[0.2em] uppercase bg-white text-black px-6 py-3 font-bold flex items-center space-x-2 group-hover:bg-brand-red group-hover:text-white transition-colors duration-300">
-                      <span>View Collection</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          </div>
+          {/* FLOATING BLOCK 1: Frosted Glass Campaign Card */}
+          <motion.div 
+            variants={itemVariants}
+            className="md:col-span-5 lg:col-span-3 md:col-start-1 md:row-start-1 lg:mt-32 z-20 transform translate-y-[20px] hover:-translate-y-[6px] hover:scale-[1.02] transition-all duration-700 ease-out"
+          >
+            <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] flex flex-col justify-between min-h-[300px]">
+              <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black border-b border-white/10 pb-4">
+                THE CAMPAIGN
+              </span>
+              <h3 className="font-hero text-3xl lg:text-4xl text-white uppercase mt-6 leading-tight">
+                Structured<br/>Fluidity
+              </h3>
+              <p className="font-sans text-xs text-white/50 mt-4 leading-relaxed">
+                A study in contrasting forms, merging rigid tailoring with natural drape.
+              </p>
+            </div>
+          </motion.div>
 
-          {/* RIGHT COLUMN (1.3fr) */}
-          <div className="flex flex-col gap-7">
-            {/* Product 3: Hero (visually dominant) */}
-            <motion.div variants={itemVariants} className="w-full">
-              <ProductCard product={products[2]} aspectClass="min-h-[750px]" collection="LIMITED EDITION" isHero />
-            </motion.div>
+          {/* FLOATING BLOCK 2: Paper Texture Manifesto Card */}
+          <motion.div 
+            variants={itemVariants}
+            className="md:col-span-5 lg:col-span-4 md:col-start-8 lg:col-start-9 md:row-start-1 lg:mt-16 z-20 transform translate-y-[-16px] hover:-translate-y-[22px] hover:scale-[1.02] transition-all duration-700 ease-out md:-ml-8"
+          >
+            <div className="bg-[#111111] border border-white/5 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] min-h-[360px] relative overflow-hidden flex flex-col items-center justify-center text-center">
+              {/* Paper Texture Overlay */}
+              <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
+              
+              <span className="font-heading text-[9px] tracking-widest text-white/40 uppercase mb-6">
+                TECHNICAL MANIFESTO
+              </span>
+              
+              <ul className="font-heading text-xs lg:text-sm tracking-[0.2em] text-white/80 uppercase space-y-4">
+                <li>360GSM HEAVYWEIGHT</li>
+                <li className="w-12 h-px bg-white/20 mx-auto" />
+                <li>DOUBLE-YARN KNIT</li>
+                <li className="w-12 h-px bg-white/20 mx-auto" />
+                <li>MINERAL WASH DYE</li>
+                <li className="w-12 h-px bg-white/20 mx-auto" />
+                <li>ARCHITECTURAL FIT</li>
+              </ul>
+            </div>
+          </motion.div>
 
-            {/* Bottom: Technical Manifest Card */}
-            <motion.div variants={itemVariants} className="w-full">
-              <div className="group block relative w-full h-full min-h-[320px] rounded-[32px] overflow-hidden bg-[#0A0A0A] border border-white/[0.05] flex flex-col items-center justify-center p-8 transition-all duration-700 ease-out hover:-translate-y-[6px] rotate-[1deg] hover:scale-[1.02] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-                 <div className="absolute top-8 left-8 right-8 flex justify-between">
-                    <span className="w-3 h-3 border-t border-l border-white/20" />
-                    <span className="w-3 h-3 border-t border-r border-white/20" />
-                 </div>
-                 <div className="absolute bottom-8 left-8 right-8 flex justify-between">
-                    <span className="w-3 h-3 border-b border-l border-white/20" />
-                    <span className="w-3 h-3 border-b border-r border-white/20" />
-                 </div>
-                 <div className="w-full h-full flex flex-col justify-center items-center text-center space-y-4">
-                    <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black border-b border-brand-red/30 pb-2 mb-2">
-                      EDITION 001
-                    </span>
-                    <ul className="font-heading text-xs tracking-[0.2em] text-white/70 uppercase space-y-3">
-                      <li>360GSM</li>
-                      <li>DOUBLE-YARN</li>
-                      <li>MINERAL DYE</li>
-                      <li>ARCHITECTURAL FIT</li>
-                      <li>TECHNICAL TAILORING</li>
-                    </ul>
-                 </div>
+          {/* FLOATING BLOCK 3: Matte Black Story Card */}
+          <motion.div 
+            variants={itemVariants}
+            className="md:col-span-6 lg:col-span-4 md:col-start-2 lg:col-start-2 md:row-start-2 lg:-mt-32 z-30 transform translate-y-[0px] hover:-translate-y-[6px] hover:scale-[1.02] transition-all duration-700 ease-out"
+          >
+            <Link href="/story" className="block bg-[#0A0A0A] border border-white/5 rounded-[32px] p-10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] group relative overflow-hidden min-h-[320px]">
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent pointer-events-none" />
+              
+              <h3 className="font-hero text-4xl lg:text-5xl uppercase tracking-wider text-white">
+                ARC OPUS
+              </h3>
+              <p className="font-heading text-sm lg:text-base tracking-[0.15em] text-white/80 uppercase mt-2">
+                Crafted Beyond Ordinary.
+              </p>
+              
+              <p className="font-sans text-xs text-white/50 mt-6 leading-relaxed max-w-[280px]">
+                Redefining the modern silhouette through relentless material experimentation and brutalist design principles.
+              </p>
+
+              <div className="absolute bottom-10 right-10 w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red transition-all duration-500">
+                <ArrowRight className="w-4 h-4 text-white group-hover:text-black transition-colors" />
               </div>
-            </motion.div>
-          </div>
+            </Link>
+          </motion.div>
+
+          {/* FLOATING BLOCK 4: Blueprint Collection Card */}
+          <motion.div 
+            variants={itemVariants}
+            className="md:col-span-4 lg:col-span-3 md:col-start-8 lg:col-start-8 md:row-start-2 lg:-mt-16 z-20 transform translate-y-[12px] hover:-translate-y-[0px] hover:scale-[1.02] transition-all duration-700 ease-out"
+          >
+            <div className="bg-[#050505] border border-brand-red/20 rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] relative overflow-hidden min-h-[240px] flex flex-col justify-end">
+              <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover' }} />
+              
+              <div className="relative z-10">
+                <span className="font-caption text-[9px] tracking-[0.2em] text-white/40 uppercase mb-2 block">
+                  CAPSULE 001
+                </span>
+                <span className="font-heading text-lg tracking-widest text-brand-red uppercase font-black">
+                  EDITION 001
+                </span>
+              </div>
+            </div>
+          </motion.div>
 
         </motion.div>
       </div>
     </section>
-  );
-}
-
-function ProductCard({ product, aspectClass, collection, isHero = false }: { product: any; aspectClass: string; collection: string; isHero?: boolean }) {
-  return (
-    <Link 
-      href={`/product/${product.id}`}
-      className={`group block relative w-full h-full rounded-[32px] overflow-hidden bg-[#0A0A0A] border border-white/[0.05] shadow-[0_20px_60px_rgba(0,0,0,0.45)] transition-all duration-700 ease-out hover:-translate-y-[6px] hover:scale-[1.02] ${aspectClass}`}
-    >
-      <div className="absolute inset-0 p-7 flex items-center justify-center z-[10]">
-        <div className="relative w-full h-full overflow-hidden">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          />
-        </div>
-      </div>
-
-      <div className={`absolute p-6 z-[20] ${isHero ? 'bottom-0 left-0' : 'top-0 right-0'}`}>
-        <div className="bg-[rgba(0,0,0,0.55)] backdrop-blur-[12px] border border-white/[0.08] rounded-xl py-2.5 px-4 flex flex-col items-start transition-colors duration-500 group-hover:bg-[rgba(0,0,0,0.7)] shadow-lg">
-          <p className="font-caption text-[9px] tracking-widest text-white/50 uppercase">
-            {product.category}
-          </p>
-          <p className="font-heading text-[11px] font-bold tracking-[0.15em] text-brand-red uppercase pt-0.5">
-            {collection}
-          </p>
-        </div>
-      </div>
-
-      <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center space-x-2 z-[20]">
-        <span className="font-sans text-[12px] tracking-[0.06em] text-white uppercase max-w-[140px] text-right truncate">
-          {product.name}
-        </span>
-        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-          <ArrowRight className="w-3 h-3 text-black" />
-        </div>
-      </div>
-    </Link>
   );
 }
