@@ -273,16 +273,26 @@ export default function Home() {
 
         {/* EDITORIAL CAPSULES - FLIPO CAMPAIGN SPREAD */}
         <section ref={sectionRef} className="relative py-32 overflow-hidden border-t border-white/5 bg-[#050505] z-10 flex flex-col justify-center min-h-[900px]">
-          {/* Background Typography */}
-          <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-0 overflow-hidden py-10 opacity-[0.02]">
-            <span className="font-hero text-[20vw] leading-[0.8] tracking-tighter text-white uppercase select-none">ARCHIVE</span>
-            <span className="font-hero text-[20vw] leading-[0.8] tracking-tighter text-white uppercase select-none">CAPSULE</span>
+          
+          {/* Background Campaign Image */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <Image
+              src="/oversized_tee_hero.png"
+              alt="Campaign Backdrop"
+              fill
+              className="object-cover object-center opacity-[0.15] blur-[2px]"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-[#050505]/40 z-[1]" />
+            {/* Subtle Textures */}
+            <div className="absolute inset-0 opacity-[0.05] z-[1]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 opacity-[0.03] z-[1]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
           </div>
 
-          {/* Blueprint & Grain */}
-          <div className="absolute inset-0 pointer-events-none z-0">
-            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'url(/blueprint-texture.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url(/film-grain.png)' }} />
+          {/* Background Typography */}
+          <div className="absolute inset-0 flex flex-col justify-between items-center pointer-events-none z-[2] overflow-hidden py-10 opacity-[0.02]">
+            <span className="font-hero text-[20vw] leading-[0.8] tracking-tighter text-white uppercase select-none">ARCHIVE</span>
+            <span className="font-hero text-[20vw] leading-[0.8] tracking-tighter text-white uppercase select-none">CAPSULE</span>
           </div>
 
           <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-10 w-full h-full flex flex-col">
@@ -327,7 +337,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="lg:col-span-7 h-[600px] lg:h-[700px] relative rounded-[32px] overflow-hidden group shadow-[0_20px_60px_rgba(0,0,0,0.45)] border border-white/[0.05]"
+                className="lg:col-span-8 h-[600px] lg:h-[750px] relative rounded-[32px] overflow-hidden group shadow-[0_20px_60px_rgba(0,0,0,0.45)] border border-white/[0.05] z-10"
               >
                 <Image
                   src={capsuleDetails[activeCapsule].image}
@@ -336,7 +346,7 @@ export default function Home() {
                   className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.04]"
                 />
                 {/* Floating Tag */}
-                <div className="absolute top-6 left-6 bg-[rgba(0,0,0,0.55)] backdrop-blur-[12px] border border-white/[0.08] rounded-xl py-2.5 px-4 z-10 shadow-lg">
+                <div className="absolute top-6 left-6 bg-[rgba(0,0,0,0.55)] backdrop-blur-[12px] border border-white/[0.08] rounded-xl py-2.5 px-4 z-[20] shadow-lg">
                   <p className="font-caption text-[9px] tracking-widest text-white/50 uppercase">
                     CODE
                   </p>
@@ -347,7 +357,7 @@ export default function Home() {
               </motion.div>
 
               {/* Right: Floating Information Pinned Cards */}
-              <div className="lg:col-span-5 relative flex flex-col space-y-4 lg:-ml-16 pt-8 lg:pt-16 z-20">
+              <div className="lg:col-span-4 relative flex flex-col space-y-4 lg:-ml-20 pt-8 lg:pt-24 z-20">
                 
                 {/* Title Card */}
                 <motion.div
@@ -371,7 +381,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] ml-0 lg:ml-8 transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[0.5deg]"
+                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] ml-0 lg:ml-8 -mt-6 lg:-mt-10 transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[1.5deg] z-10 relative"
                 >
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
@@ -388,7 +398,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.36, ease: [0.16, 1, 0.3, 1] }}
-                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02]"
+                  className="bg-[#0A0A0A] border border-white/[0.05] rounded-[32px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] lg:-ml-6 -mt-6 lg:-mt-8 transition-all duration-500 hover:-translate-y-[6px] hover:scale-[1.02] rotate-[-1deg] z-20 relative"
                 >
                   <div className="grid grid-cols-2 gap-y-6">
                     {capsuleDetails[activeCapsule].specs.map((spec) => (
@@ -406,7 +416,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.48, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex justify-end pt-2 lg:pt-4 lg:-mr-8"
+                  className="flex justify-end pt-2 lg:pt-4 lg:-mr-12 -mt-4 lg:-mt-8 z-30 relative"
                 >
                   <Link
                     href={capsuleDetails[activeCapsule].path}
