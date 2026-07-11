@@ -48,7 +48,7 @@ export const AuthModal: React.FC = () => {
             {/* Left Image Section */}
             <div className="relative w-full md:w-1/2 h-64 md:h-full bg-[#111]">
               <Image 
-                src="/walking_pose_1783773218777.png" 
+                src="/yellow_tracksuit_model.png" 
                 alt="Streetwear Model" 
                 fill 
                 className="object-cover" 
