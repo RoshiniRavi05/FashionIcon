@@ -294,23 +294,6 @@ export default function StoryPage() {
                 </p>
               </div>
 
-              {/* Magnetic CTA */}
-              <motion.div whileTap={{ scale: 0.98 }} className="inline-block pt-2">
-                <Link
-                  ref={btnRef}
-                  href="/shop"
-                  onMouseMove={handleBtnMouseMove}
-                  onMouseLeave={handleBtnMouseLeave}
-                  className="story-cta-btn font-heading text-[10px] tracking-[0.2em] uppercase bg-white/5 border border-white/10 text-white hover:border-brand-red px-10 py-5 transition-all duration-500 font-bold inline-flex items-center space-x-3 rounded-sm"
-                  style={{
-                    transform: `translate(${btnOffset.x}px, ${btnOffset.y}px)`,
-                    transition: btnOffset.x === 0 ? 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)' : 'none'
-                  }}
-                >
-                  <span>EXPLORE COLLECTION</span>
-                  <ArrowRight className="story-cta-arrow w-3.5 h-3.5" />
-                </Link>
-              </motion.div>
             </div>
           </div>
         </motion.div>
@@ -396,9 +379,25 @@ export default function StoryPage() {
 
             <div className="w-12 h-[1px] bg-brand-red mx-auto" />
 
-            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
+            <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block pb-8">
               ARC OPUS MANIFESTO
             </span>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              viewport={{ once: true }}
+              className="pt-6"
+            >
+              <Link
+                href="/shop"
+                className="group font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] px-10 py-5 hover:bg-brand-red hover:text-white transition-all duration-500 font-bold inline-flex items-center space-x-3 rounded-sm"
+              >
+                <span>EXPLORE COLLECTION</span>
+                <ArrowRight className="w-4 h-4 group-hover:text-white group-hover:fill-white transition-colors duration-500" />
+              </Link>
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>
