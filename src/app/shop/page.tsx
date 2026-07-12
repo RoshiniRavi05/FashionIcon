@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Heart, Sparkles } from 'lucide-react';
+import { Search, Heart, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Product } from '@/data/products';
 
@@ -27,6 +27,8 @@ export default function ShopPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 8;
 
   const categories = ['all', 't-shirts', 'jackets', 'bottoms', 'shoes'];
 
@@ -59,7 +61,18 @@ export default function ShopPage() {
     }
     
     return result;
+  }, [searchQuery, activeCategory, sortBy, products]);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
   }, [searchQuery, activeCategory, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedProducts = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="bg-[#050505] min-h-screen py-20 flex flex-col overflow-y-scroll">
@@ -139,7 +152,7 @@ export default function ShopPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start w-full">
               <AnimatePresence mode="popLayout">
-                {filtered.map((prod) => {
+                {paginatedProducts.map((prod) => {
                   const inWishlist = wishlist.some(w => w.id === prod.id);
                   return (
                     <motion.div 
@@ -149,10 +162,13 @@ export default function ShopPage() {
                       transition={{ duration: 0.3 }}
                       layout
                       key={prod.id}
-                      className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505] rounded-sm hover:border-brand-red/20 transition-colors duration-500 w-full"
+                      className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505]/50 backdrop-blur-md rounded-xl hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(193,14,29,0.15)] transition-all duration-500 w-full relative overflow-hidden"
                     >
+                      {/* Inner Glow */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-red/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      
                       {/* Product Image */}
-                      <div className="relative h-[340px] w-full bg-[#121212] overflow-hidden">
+                      <div className="relative h-[340px] w-full bg-[#121212] overflow-hidden rounded-lg">
                         <Link href={`/product/${prod.id}`}>
                           <Image
                             src={prod.image}
@@ -204,6 +220,43 @@ export default function ShopPage() {
                   );
                 })}
               </AnimatePresence>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center space-x-2 mt-16 mb-8">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-3 rounded-full bg-white/5 border border-white/10 text-white hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:border-white/10 disabled:hover:text-white transition-all backdrop-blur-md"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              
+              <div className="flex space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-8 h-8 rounded-full font-mono text-[10px] tracking-widest transition-all ${
+                      currentPage === i + 1 
+                        ? 'bg-brand-red text-white shadow-[0_0_15px_rgba(193,14,29,0.4)]' 
+                        : 'text-white/50 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-3 rounded-full bg-white/5 border border-white/10 text-white hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red disabled:opacity-30 disabled:hover:bg-white/5 disabled:hover:border-white/10 disabled:hover:text-white transition-all backdrop-blur-md"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>

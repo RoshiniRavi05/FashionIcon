@@ -5,7 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Edit3, TrendingUp, Package, DollarSign, X } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { AdminGuard } from '@/components/AdminGuard';
+import { NetworkMap } from '@/components/NetworkMap';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function AdminDashboard() {
   const { products, addProduct, deleteProduct, updateProductPrice, orders } = useApp();
@@ -14,6 +16,16 @@ export default function AdminDashboard() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingPriceId, setEditingPriceId] = useState<number | null>(null);
   const [newPriceValue, setNewPriceValue] = useState("");
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   // New Product Form State
   const [newProduct, setNewProduct] = useState({
@@ -119,8 +131,11 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Network Map */}
+        <NetworkMap />
+
         {/* Inventory Table */}
-        <div className="bg-[#050505] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <div className="p-6 border-b border-white/10">
             <h3 className="font-syne text-xl text-white tracking-widest uppercase">Inventory Management</h3>
           </div>
@@ -135,8 +150,16 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {products.map(product => (
-                  <tr key={product.id} className="hover:bg-white/[0.02] transition-colors">
+                <AnimatePresence mode="popLayout">
+                  {paginatedProducts.map(product => (
+                    <motion.tr 
+                      key={product.id} 
+                      layout
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="hover:bg-brand-red/5 hover:shadow-[inset_0_0_20px_rgba(193,14,29,0.1)] transition-all duration-300 group/row"
+                    >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
@@ -183,11 +206,52 @@ export default function AdminDashboard() {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
+          
+          {/* Table Pagination */}
+          {totalPages > 1 && (
+            <div className="p-4 border-t border-white/10 flex items-center justify-between bg-black/40">
+              <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase">
+                Showing page {currentPage} of {totalPages}
+              </span>
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red disabled:opacity-30 disabled:pointer-events-none transition-all"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <div className="flex space-x-1">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`w-8 h-8 rounded-lg font-mono text-[10px] tracking-widest transition-all ${
+                        currentPage === i + 1 
+                          ? 'bg-brand-red text-white shadow-[0_0_15px_rgba(193,14,29,0.4)]' 
+                          : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-brand-red/20 hover:border-brand-red/50 hover:text-brand-red disabled:opacity-30 disabled:pointer-events-none transition-all"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
