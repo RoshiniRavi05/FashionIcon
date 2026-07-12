@@ -6,6 +6,7 @@ import { X, Zap, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export const AuthModal: React.FC = () => {
   const { authModalOpen, setAuthModalOpen } = useApp();
@@ -100,6 +101,17 @@ export const AuthModal: React.FC = () => {
                     {loading ? "Authenticating..." : "Continue with Google"}
                   </span>
                 </button>
+
+                {/* Temporary Admin Access Button */}
+                <Link
+                  href="/admin"
+                  onClick={() => setAuthModalOpen(false)}
+                  className="w-full max-w-sm flex items-center justify-center p-3 mt-4 border border-brand-red/30 bg-brand-red/5 hover:bg-brand-red/20 rounded-full transition-all duration-300"
+                >
+                  <span className="font-mono text-[10px] tracking-widest text-brand-red uppercase">
+                    Enter as Admin (Temporary)
+                  </span>
+                </Link>
 
                 {/* Perks List */}
                 <div className="space-y-3 pt-4">
