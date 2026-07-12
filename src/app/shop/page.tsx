@@ -151,19 +151,16 @@ export default function ShopPage() {
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start w-full">
-              <AnimatePresence mode="popLayout">
-                {paginatedProducts.map((prod) => {
-                  const inWishlist = wishlist.some(w => w.id === prod.id);
-                  return (
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      layout
-                      key={prod.id}
-                      className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505]/50 backdrop-blur-md rounded-xl hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(193,14,29,0.15)] transition-all duration-500 w-full relative overflow-hidden"
-                    >
+              {paginatedProducts.map((prod) => {
+                const inWishlist = wishlist.some(w => w.id === prod.id);
+                return (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    key={prod.id}
+                    className="group flex flex-col space-y-4 border border-white/5 p-4 bg-[#050505]/50 backdrop-blur-md rounded-xl hover:border-brand-red/50 hover:shadow-[0_0_30px_rgba(193,14,29,0.15)] transition-all duration-500 w-full relative overflow-hidden"
+                  >
                       {/* Inner Glow */}
                       <div className="absolute inset-0 bg-gradient-to-br from-brand-red/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                       
@@ -217,9 +214,8 @@ export default function ShopPage() {
                       </button>
                     </div>
                     </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+                );
+              })}
             </div>
           )}
 
