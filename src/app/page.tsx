@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { ArrowRight, ShoppingBag, Heart, Star, Sparkles } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence, useSpring } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
-import { DEFAULT_PRODUCTS } from '@/data/products';
+import { Product } from '@/data/products';
 import { LuxuryLoader } from '@/components/LuxuryLoader';
 import Carousel from '@/components/Carousel';
 import EditorialProductGrid from '@/components/EditorialProductGrid';
@@ -19,7 +19,8 @@ export default function Home() {
     addToCart, 
     toggleWishlist, 
     wishlist,
-    setCursorType 
+    setCursorType,
+    products
   } = useApp();
 
   const [loading, setLoading] = useState(true);
@@ -106,6 +107,12 @@ export default function Home() {
   const handleBtnMouseLeave = () => {
     setBtnOffset({ x: 0, y: 0 });
   };
+
+  const featuredProducts = useMemo(() => {
+    return [...products]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4);
+  }, [products]);
 
   // Variants for Design Philosophy reveals
   const philosophyHeaderVariants = {

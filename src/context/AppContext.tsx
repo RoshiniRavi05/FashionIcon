@@ -34,6 +34,10 @@ interface AppContextType {
   setProfileOpen: (open: boolean) => void;
   orders: any[];
   addOrder: (order: any) => void;
+  products: Product[];
+  addProduct: (product: Omit<Product, 'id'>) => void;
+  deleteProduct: (id: number) => void;
+  updateProductPrice: (id: number, newPrice: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -54,6 +58,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -61,10 +66,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const savedWishlist = localStorage.getItem('arc_opus_wishlist');
     const savedOrders = localStorage.getItem('arc_opus_orders');
     const savedOutfit = localStorage.getItem('arc_opus_outfit');
+    const savedProducts = localStorage.getItem('arc_opus_products');
 
     if (savedCart) setCart(JSON.parse(savedCart));
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
     if (savedOrders) setOrders(JSON.parse(savedOrders));
+    if (savedProducts) setProducts(JSON.parse(savedProducts));
     
     if (savedOutfit) {
       setWornOutfit(JSON.parse(savedOutfit));
@@ -101,8 +108,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('arc_opus_outfit', JSON.stringify(wornOutfit));
   }, [wornOutfit]);
 
+  useEffect(() => {
+    localStorage.setItem('arc_opus_products', JSON.stringify(products));
+  }, [products]);
+
   const setCursorType = (type: 'default' | 'hovered' | 'click') => {
     setCursorTypeState(type);
+  };
+
+  const addProduct = (productData: Omit<Product, 'id'>) => {
+    setProducts(prev => {
+      const newId = prev.length > 0 ? Math.max(...prev.map(p => p.id)) + 1 : 1;
+      return [...prev, { ...productData, id: newId }];
+    });
+  };
+
+  const deleteProduct = (id: number) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
+  };
+
+  const updateProductPrice = (id: number, newPrice: string) => {
+    setProducts(prev => prev.map(p => p.id === id ? { ...p, price: newPrice } : p));
   };
 
   const addToCart = (product: Product, size: string, qty = 1) => {
@@ -221,6 +247,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setProfileOpen,
         orders,
         addOrder,
+        products,
+        addProduct,
+        deleteProduct,
+        updateProductPrice,
       }}
     >
       {children}

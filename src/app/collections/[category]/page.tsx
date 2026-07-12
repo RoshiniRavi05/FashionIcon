@@ -5,21 +5,23 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { DEFAULT_PRODUCTS, Product } from '@/data/products';
+import { Product } from '@/data/products';
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = use(params);
-  const { addToCart } = useApp();
+  const unwrappedParams = use(params);
+  const category = unwrappedParams.category;
+  
+  const { addToCart, products } = useApp();
   const [subFilter, setSubFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('default');
 
   // Find products matching this category
   const decodedCategory = decodeURIComponent(category);
-  const allCategoryProducts = DEFAULT_PRODUCTS.filter(
+  const allCategoryProducts = products.filter(
     (p) => p.category.toLowerCase() === decodedCategory.toLowerCase()
   );
 

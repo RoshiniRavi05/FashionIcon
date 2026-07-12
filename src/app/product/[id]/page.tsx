@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Heart, ShoppingBag, Sparkles, Ruler } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { DEFAULT_PRODUCTS } from '@/data/products';
+// import { DEFAULT_PRODUCTS } from '@/data/products';
 import ProductGallery from '@/components/ProductGallery';
 
 interface ProductPageProps {
@@ -13,13 +13,14 @@ interface ProductPageProps {
 }
 
 export default function ProductDetailPage({ params }: ProductPageProps) {
-  const { id } = use(params);
-  const { addToCart, toggleWishlist, wishlist } = useApp();
+  const unwrappedParams = use(params);
+  const productId = parseInt(unwrappedParams.id, 10);
+  
+  const { addToCart, toggleWishlist, wishlist, products } = useApp();
   const [selectedSize, setSelectedSize] = useState('M');
   const [showSizeGuide, setShowSizeGuide] = useState(false);
 
-  const productId = parseInt(id);
-  const product = DEFAULT_PRODUCTS.find((p) => p.id === productId);
+  const product = products.find((p) => p.id === productId);
 
   if (!product) {
     return (
@@ -33,7 +34,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   const isLiked = wishlist.some(w => w.id === product.id);
 
   // Recommendations (similar category items)
-  const recommendations = DEFAULT_PRODUCTS.filter(
+  const recommendations = products.filter(
     (p) => p.category === product.category && p.id !== product.id
   ).slice(0, 4);
 

@@ -15,7 +15,7 @@ import {
 } from 'framer-motion';
 import { Heart, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { DEFAULT_PRODUCTS, Product } from '@/data/products';
+import { Product } from '@/data/products';
 import './FeaturedGarmentsHorizontal.css';
 
 // ─── Price Roll-Up Counter ────────────────────────────────────────────────────
@@ -200,7 +200,8 @@ const EditorialProductCard = ({
 // ─── Main Section ─────────────────────────────────────────────────────────────
 export default function FeaturedGarmentsHorizontal() {
   const { addToCart, toggleWishlist, wishlist } = useApp();
-  const products = DEFAULT_PRODUCTS.slice(0, 4);
+  const { products } = useApp();
+  const featuredProducts = products.slice(0, 4);
   const totalCards = products.length;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -389,12 +390,12 @@ export default function FeaturedGarmentsHorizontal() {
 
         <div className="horizontal-scroll-viewport">
           <motion.div ref={trackRef} className="horizontal-track" style={{ x }}>
-            {products.map((prod, idx) => {
-              const isInWish = wishlist.some((w) => w.id === prod.id);
+            {featuredProducts.map((product, idx) => {
+              const isInWish = wishlist.some((w) => w.id === product.id);
               return (
                 <EditorialProductCard
-                  key={prod.id}
-                  product={prod}
+                  key={product.id}
+                  product={product}
                   isActive={idx === activeIndex}
                   dofLayerRefCallback={(el) => { dofLayerRefs.current[idx] = el; }}
                   wrapperRefCallback={(el) => {

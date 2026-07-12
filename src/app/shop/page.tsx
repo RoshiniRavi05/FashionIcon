@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Heart, Sparkles } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
-import { DEFAULT_PRODUCTS, Product } from '@/data/products';
+import { Product } from '@/data/products';
 
 const ShopHero = React.memo(() => (
   <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 space-y-4 pt-10 min-h-[160px]">
@@ -23,7 +23,7 @@ const ShopHero = React.memo(() => (
 ));
 
 export default function ShopPage() {
-  const { addToCart, toggleWishlist, wishlist } = useApp();
+  const { addToCart, toggleWishlist, wishlist, products } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('default');
@@ -32,7 +32,7 @@ export default function ShopPage() {
 
   // Filter
   const filtered = useMemo(() => {
-    let result = DEFAULT_PRODUCTS.filter((prod) => {
+    let result = products.filter((prod) => {
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = 
         (prod.name && prod.name.toLowerCase().includes(searchLower)) || 
