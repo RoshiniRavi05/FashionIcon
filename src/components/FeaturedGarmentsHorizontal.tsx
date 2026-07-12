@@ -13,7 +13,7 @@ import {
   useSpring,
   useMotionValue,
 } from 'framer-motion';
-import { Heart, ArrowRight, Plus } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Product } from '@/data/products';
 import './FeaturedGarmentsHorizontal.css';
@@ -179,18 +179,15 @@ const EditorialProductCard = ({
                 <PriceCounter priceStr={product.price} active={isActive} />
               </div>
             </div>
-            <div className="pt-2 flex justify-between items-center mt-2 w-full px-4 pb-4">
-              <span className="font-mono text-[9px] tracking-widest text-brand-red uppercase font-bold bg-brand-red/10 px-2 py-1 rounded">
-                {product.stock} In Stock
-              </span>
+            <div className="card-action-btn-container">
+              <div className="card-action-btn-line" />
               <button
                 onClick={() => addToCart(product, selectedSize)}
                 onMouseEnter={() => onHoverAction(true)}
                 onMouseLeave={() => onHoverAction(false)}
-                className="bg-white/5 hover:bg-brand-red text-white p-2 rounded-full border border-white/10 hover:border-brand-red transition-all duration-300 group/add"
-                title={`Add to Cart (${selectedSize})`}
+                className="card-add-to-bag-btn"
               >
-                <Plus className="w-4 h-4 group-hover/add:scale-110 transition-transform" />
+                Add to Bag ({selectedSize})
               </button>
             </div>
           </div>

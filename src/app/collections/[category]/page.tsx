@@ -3,7 +3,7 @@
 import React, { use, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ArrowLeft, Plus } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Heart } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Product } from '@/data/products';
 
@@ -151,17 +151,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 <span className="font-caption text-xs tracking-wider text-white">{prod.price}</span>
               </div>
 
-              {/* Actions & Stock */}
-              <div className="pt-2 flex justify-between items-center border-t border-white/5 mt-4">
-                <span className="font-mono text-[9px] tracking-widest text-brand-red uppercase font-bold bg-brand-red/10 px-2 py-1 rounded">
-                  {prod.stock} In Stock
-                </span>
+              {/* Actions */}
+              <div className="pt-2">
                 <button
                   onClick={() => addToCart(prod, 'M')}
-                  className="bg-white/5 hover:bg-brand-red text-white p-2 rounded-full border border-white/10 hover:border-brand-red transition-all duration-300 group/add"
-                  title="Add to Cart"
+                  className="w-full bg-[#F5F5F5] hover:bg-brand-red text-[#050505] hover:text-[#F5F5F5] font-heading text-[9px] tracking-widest py-3 uppercase transition-all duration-300 font-bold"
                 >
-                  <Plus className="w-4 h-4 group-hover/add:scale-110 transition-transform" />
+                  ADD TO BAG
                 </button>
               </div>
             </div>
