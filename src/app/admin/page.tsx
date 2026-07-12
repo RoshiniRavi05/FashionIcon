@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Edit3, TrendingUp, Package, DollarSign, X } from 'lucide-react';
+import { Plus, Trash2, Edit3, TrendingUp, Package, DollarSign, X, Search } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { AdminGuard } from '@/components/AdminGuard';
 import { NetworkMap } from '@/components/NetworkMap';
@@ -16,13 +16,20 @@ export default function AdminDashboard() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingPriceId, setEditingPriceId] = useState<number | null>(null);
   const [newPriceValue, setNewPriceValue] = useState("");
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("");
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const paginatedProducts = products.slice(
+  const filteredProducts = products.filter(p => 
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    p.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -95,6 +102,20 @@ export default function AdminDashboard() {
             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
               <DollarSign className="w-24 h-24 text-brand-red" />
             </div>
+            {/* Dummy Sparkline Graph */}
+            <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
+              <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
+                <path d="M0,30 L10,25 L20,28 L30,15 L40,18 L50,8 L60,12 L70,5 L80,10 L90,2 L100,0 L100,30 Z" fill="url(#gradRed)" />
+                <polyline points="0,30 10,25 20,28 30,15 40,18 50,8 60,12 70,5 80,10 90,2 100,0" fill="none" stroke="#C10E1D" strokeWidth="1" />
+                <defs>
+                  <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#C10E1D" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#C10E1D" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            
             <div className="relative z-10 space-y-4">
               <span className="font-mono text-[10px] tracking-widest text-white/50 uppercase block">Total Revenue</span>
               <h2 className="font-syne text-4xl text-white font-bold">${totalRevenue.toLocaleString()}</h2>
@@ -108,6 +129,20 @@ export default function AdminDashboard() {
             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
               <Package className="w-24 h-24 text-white" />
             </div>
+            {/* Dummy Sparkline Graph */}
+            <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
+              <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
+                <path d="M0,30 L15,22 L30,26 L45,15 L60,19 L75,10 L90,12 L100,5 L100,30 Z" fill="url(#gradWhite)" />
+                <polyline points="0,30 15,22 30,26 45,15 60,19 75,10 90,12 100,5" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+                <defs>
+                  <linearGradient id="gradWhite" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+
             <div className="relative z-10 space-y-4">
               <span className="font-mono text-[10px] tracking-widest text-white/50 uppercase block">Total Sales</span>
               <h2 className="font-syne text-4xl text-white font-bold">{totalSalesCount}</h2>
@@ -136,8 +171,23 @@ export default function AdminDashboard() {
 
         {/* Inventory Table */}
         <div className="bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-          <div className="p-6 border-b border-white/10">
+          <div className="p-6 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h3 className="font-syne text-xl text-white tracking-widest uppercase">Inventory Management</h3>
+            
+            {/* Search Input */}
+            <div className="relative w-full md:w-64">
+              <input 
+                type="text" 
+                placeholder="Search inventory..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1); // Reset to page 1 on search
+                }}
+                className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-xs font-mono text-white focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-white/30"
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
