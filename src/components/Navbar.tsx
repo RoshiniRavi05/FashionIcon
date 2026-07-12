@@ -11,7 +11,7 @@ import TextDock from './TextDock';
 import { useSession, signOut } from 'next-auth/react';
 
 export const Navbar: React.FC = () => {
-  const { cart, wishlist, setCartOpen, setWishlistOpen } = useApp();
+  const { cart, wishlist, setCartOpen, setWishlistOpen, setProfileOpen } = useApp();
   const { data: session } = useSession();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -101,7 +101,7 @@ export const Navbar: React.FC = () => {
 
             {/* User Profile */}
             {session?.user && (
-              <Link href="/profile" className="relative group/profile flex items-center justify-center w-9 h-9 rounded-full hover:ring-2 hover:ring-brand-red/50 transition-all bg-white/5 backdrop-blur-md">
+              <button onClick={() => setProfileOpen(true)} className="relative group/profile flex items-center justify-center w-9 h-9 rounded-full hover:ring-2 hover:ring-brand-red/50 transition-all bg-white/5 backdrop-blur-md">
                 <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20">
                   <Image 
                     src={session.user.image || "/arc_opus_logo.jpeg"} 
@@ -110,7 +110,7 @@ export const Navbar: React.FC = () => {
                     className="object-cover" 
                   />
                 </div>
-              </Link>
+              </button>
             )}
 
             {/* Mobile Menu Toggle */}

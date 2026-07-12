@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { WishlistDrawer } from "@/components/WishlistDrawer";
 import { CheckoutDrawer } from "@/components/CheckoutDrawer";
+import { ProfileDrawer } from "@/components/ProfileDrawer";
 import AuthProvider from "@/components/AuthProvider";
 import { AuthModal } from "@/components/AuthModal";
 
@@ -63,6 +64,7 @@ export default function RootLayout({
             <CartDrawer />
             <WishlistDrawer />
             <CheckoutDrawer />
+            <ProfileDrawer />
             <AuthModal />
             <Footer />
           </AppProvider>
