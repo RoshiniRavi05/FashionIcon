@@ -11,7 +11,7 @@ import TextDock from './TextDock';
 import { useSession, signOut } from 'next-auth/react';
 
 export const Navbar: React.FC = () => {
-  const { cart, wishlist, setCartOpen, setWishlistOpen, setProfileOpen } = useApp();
+  const { cart, wishlist, setCartOpen, setWishlistOpen, setProfileOpen, setAuthModalOpen } = useApp();
   const { data: session } = useSession();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -55,9 +55,6 @@ export const Navbar: React.FC = () => {
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="group flex items-center select-none space-x-3">
-            <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0">
-              <Image src="/arc_opus_logo.jpeg" alt="ARC OPUS Logo" fill className="object-cover" priority />
-            </div>
             <div className="relative overflow-visible pb-1">
               <span className="font-logo text-xl md:text-2xl tracking-[0.35em] text-brand-red font-black transition-colors duration-500 block">
                 ARC OPUS
@@ -98,6 +95,16 @@ export const Navbar: React.FC = () => {
                 </span>
               )}
             </button>
+
+            {/* Join the Fam CTA */}
+            {!session && (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="font-heading text-[10px] tracking-[0.2em] uppercase bg-brand-red text-white px-5 py-2.5 hover:bg-white hover:text-brand-red transition-all duration-300 font-bold hidden md:block"
+              >
+                Join the Fam
+              </button>
+            )}
 
             {/* User Profile */}
             {session?.user && (

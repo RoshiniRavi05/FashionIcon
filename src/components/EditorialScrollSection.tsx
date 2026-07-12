@@ -159,7 +159,7 @@ export default function EditorialScrollSection() {
                   className="group font-heading text-[12px] tracking-[0.3em] uppercase text-white inline-block relative"
                 >
                   <span className="relative z-10 flex items-center gap-3">
-                    EXPLORE SERIES <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-500" />
+                    EXPLORE SERIES <ArrowRight className="w-4 h-4 group-hover:translate-x-2 group-hover:text-white transition-all duration-500" />
                   </span>
                   <div className="absolute bottom-[-6px] left-0 h-[2px] bg-white w-0 group-hover:w-full transition-all duration-700 ease-[0.19,1,0.22,1]" />
                 </Link>

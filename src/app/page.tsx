@@ -39,13 +39,7 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [heroScale, setHeroScale] = useState(1);
 
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
 
-  const xText = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
 
   // Design Philosophy Section states & springs
   const [philosophyHovered, setPhilosophyHovered] = useState(false);
@@ -227,10 +221,10 @@ export default function Home() {
             >
               <Link
                 href="/shop"
-                className="font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] px-10 py-4.5 hover:bg-brand-red hover:text-white transition-all duration-500 font-bold inline-flex items-center space-x-3"
+                className="font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] px-10 py-4 hover:bg-brand-red hover:text-white transition-all duration-500 font-bold inline-flex items-center space-x-3 group"
               >
                 <span>EXPLORE REGISTRY</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:text-white transition-colors duration-500" />
               </Link>
             </motion.div>
           </div>
