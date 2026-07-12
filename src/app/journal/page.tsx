@@ -64,7 +64,7 @@ const FAQItem = ({ faq, isOpen, onClick }: { faq: { q: string, a: string }, isOp
 };
 
 // ─── MAGAZINE SPREAD OVERLAY COMPONENT ───
-const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose: () => void }) => {
+const ArticleOverlay = ({ article, nextArticle, onClose, onNext }: { article: JournalArticle, nextArticle?: JournalArticle | null, onClose: () => void, onNext?: () => void }) => {
   useEffect(() => {
     // Lock body scroll while overlay is open
     document.body.style.overflow = 'hidden';
@@ -141,7 +141,7 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-            className="font-sans text-[16px] lg:text-[18px] leading-[1.8] font-normal tracking-[-0.01em] text-[rgba(255,255,255,0.88)] max-w-[520px] bg-[#0c0c0c]/60 p-6 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm"
+            className="font-sans text-[16px] lg:text-[18px] leading-[1.8] font-normal tracking-[-0.01em] text-[rgba(255,255,255,0.88)] max-w-[520px] lg:max-w-[380px] xl:max-w-[480px] bg-[#0c0c0c]/60 p-6 lg:bg-transparent lg:p-0 backdrop-blur-md lg:backdrop-blur-none border border-white/5 lg:border-none rounded-sm"
           >
             {article.content.intro}
           </motion.p>
@@ -191,17 +191,29 @@ const ArticleOverlay = ({ article, onClose }: { article: JournalArticle, onClose
           </p>
         </motion.div>
 
-        {/* Small Gallery Photo (Mid Layer - Z: 30) */}
+        {/* Small Gallery Photo (Next Article Preview - Z: 30) */}
         <motion.div
+          onClick={onNext}
           initial={{ opacity: 0, y: 20, rotate: 6 }}
           animate={{ opacity: 1, y: 0, rotate: 4 }}
           transition={{ delay: 0.8, duration: 0.8 }}
           whileHover={{ scale: 1.05, rotate: 2, zIndex: 55 }}
-          className="relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[15vh] lg:right-[10vw] w-40 xl:w-48 aspect-[3/4] mt-10 lg:mt-0 p-2 bg-[#f0f0f0] shadow-xl cursor-pointer"
+          className="relative z-30 mx-6 lg:mx-0 lg:absolute lg:bottom-[15vh] lg:right-[10vw] w-40 xl:w-48 aspect-[3/4] mt-10 lg:mt-0 p-2 bg-[#f0f0f0] shadow-xl cursor-pointer group"
         >
           <div className="tape-bottom-left" />
-          <div className="relative w-full h-full">
-            <Image src={article.images.gallery[1] || article.images.campaignBleed} alt="Gallery Note" fill className="object-cover grayscale hover:grayscale-0 transition-all duration-500" sizes="20vw" />
+          <div className="relative w-full h-full overflow-hidden">
+            <Image 
+              src={nextArticle ? nextArticle.image : (article.images.gallery[1] || article.images.campaignBleed)} 
+              alt="Next Article" 
+              fill 
+              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+              sizes="20vw" 
+            />
+            {nextArticle && (
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-center p-2">
+                <span className="font-heading text-[10px] tracking-widest text-white uppercase font-bold">Read Next</span>
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -279,6 +291,8 @@ export default function JournalPage() {
   };
 
   const selectedArticle = journals.find(j => j.id === selectedId);
+  const currentIndex = journals.findIndex(j => j.id === selectedId);
+  const nextArticle = currentIndex !== -1 ? journals[(currentIndex + 1) % journals.length] : null;
 
   return (
     <div className="bg-[#050505] min-h-screen py-20 flex flex-col overflow-y-scroll selection:bg-brand-red selection:text-white">
@@ -408,7 +422,13 @@ export default function JournalPage() {
       {/* ARTICLE OVERLAY RENDERING */}
       <AnimatePresence>
         {selectedArticle && (
-          <ArticleOverlay key="overlay" article={selectedArticle} onClose={closeArticle} />
+          <ArticleOverlay 
+            key="overlay"
+            article={selectedArticle} 
+            nextArticle={nextArticle}
+            onClose={closeArticle} 
+            onNext={nextArticle ? () => openArticle(nextArticle.id) : undefined}
+          />
         )}
       </AnimatePresence>
     </div>
