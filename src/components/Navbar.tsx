@@ -101,8 +101,8 @@ export const Navbar: React.FC = () => {
 
             {/* User Profile */}
             {session?.user && (
-              <div className="relative group/profile flex items-center gap-2 border border-white/10 pl-1.5 pr-3 py-1.5 rounded-full hover:border-brand-red/50 transition-colors bg-white/5 backdrop-blur-md">
-                <div className="relative w-6 h-6 rounded-full overflow-hidden border border-white/20">
+              <Link href="/profile" className="relative group/profile flex items-center justify-center w-9 h-9 rounded-full hover:ring-2 hover:ring-brand-red/50 transition-all bg-white/5 backdrop-blur-md">
+                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/20">
                   <Image 
                     src={session.user.image || "/arc_opus_logo.jpeg"} 
                     alt="Profile" 
@@ -110,20 +110,7 @@ export const Navbar: React.FC = () => {
                     className="object-cover" 
                   />
                 </div>
-                <span className="text-[10px] font-mono tracking-widest truncate max-w-[100px] text-white/90">
-                  {session.user.email?.split('@')[0].toUpperCase()}
-                </span>
-                
-                {/* Sign Out Dropdown */}
-                <div className="absolute top-full right-0 mt-2 w-32 bg-[#050505]/95 backdrop-blur-xl border border-white/10 rounded-lg opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-300 py-1 overflow-hidden z-50">
-                  <button 
-                    onClick={() => signOut()}
-                    className="w-full text-left px-4 py-2 text-[10px] text-white/60 hover:text-brand-red hover:bg-white/5 font-mono tracking-widest transition-colors"
-                  >
-                    SIGN OUT
-                  </button>
-                </div>
-              </div>
+              </Link>
             )}
 
             {/* Mobile Menu Toggle */}
