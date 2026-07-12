@@ -421,10 +421,10 @@ export default function FeaturedGarmentsHorizontal() {
                       href="/shop"
                       onMouseEnter={() => setLocalCursorType('action')}
                       onMouseLeave={() => setLocalCursorType('default')}
-                      className="discover-cta-link"
+                      className="discover-cta-link group"
                     >
                       <span>Explore Full Collection</span>
-                      <ArrowRight className="w-4 h-4 text-[#C10E1D]" />
+                      <ArrowRight className="w-4 h-4 text-[#C10E1D] group-hover:text-white transition-colors duration-300" />
                     </Link>
                   </div>
                 </div>

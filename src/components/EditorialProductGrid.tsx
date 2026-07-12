@@ -67,7 +67,7 @@ export default function EditorialProductGrid() {
                 className="group font-heading text-[10px] md:text-[11px] tracking-[0.25em] uppercase text-[#F4F1EC] inline-flex flex-col relative pb-3 w-fit"
               >
                 <span className="relative z-10 flex items-center gap-4 transition-all duration-700 ease-[0.16,1,0.3,1] group-hover:tracking-[0.3em]">
-                  EXPLORE JOURNAL <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-3 transition-transform duration-700 ease-[0.16,1,0.3,1]" />
+                  EXPLORE JOURNAL <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-3 group-hover:text-white transition-all duration-700 ease-[0.16,1,0.3,1]" />
                 </span>
                 <div className="absolute bottom-0 left-0 h-[1px] bg-white/20 w-full" />
                 <div className="absolute bottom-0 left-0 h-[1px] bg-white w-0 group-hover:w-full transition-all duration-700 ease-[0.16,1,0.3,1]" />
