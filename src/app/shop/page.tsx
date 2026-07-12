@@ -9,7 +9,7 @@ import { useApp } from '@/context/AppContext';
 import { Product } from '@/data/products';
 
 const ShopHero = React.memo(() => (
-  <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 space-y-4 pt-10 min-h-[160px]">
+  <div className="w-full px-6 md:px-12 space-y-4 pt-10 min-h-[160px]">
     <span className="font-caption text-[10px] tracking-[0.3em] text-brand-red uppercase font-black block">
       ARC OPUS CATALOGUE
     </span>
@@ -82,7 +82,7 @@ export default function ShopPage() {
         <ShopHero />
         
         {/* Filters Toolbar */}
-        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 mt-12 mb-8 min-h-[60px]">
+        <div className="w-full px-6 md:px-12 mt-12 mb-8 min-h-[60px]">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-b border-white/5 pb-8">
             
             {/* Search */}
@@ -133,7 +133,7 @@ export default function ShopPage() {
 
       {/* 2. Product Grid Section */}
       <section className="w-full flex-grow">
-        <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 min-h-[600px]">
+        <div className="w-full px-6 md:px-12 min-h-[600px]">
           {filtered.length === 0 ? (
             <motion.div 
               initial={{ opacity: 0 }} 

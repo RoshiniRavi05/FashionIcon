@@ -69,7 +69,7 @@ export default function AdminDashboard() {
 
   return (
     <AdminGuard>
-      <div className="min-h-screen pt-32 pb-20 px-6 max-w-7xl mx-auto space-y-12">
+      <div className="min-h-screen pt-32 pb-20 px-6 md:px-12 w-full mx-auto space-y-12">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
