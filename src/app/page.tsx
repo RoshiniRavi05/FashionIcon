@@ -224,7 +224,7 @@ export default function Home() {
                 className="font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] px-10 py-4 hover:bg-brand-red hover:text-white transition-all duration-500 font-bold inline-flex items-center space-x-3 group"
               >
                 <span>EXPLORE REGISTRY</span>
-                <ArrowRight className="w-4 h-4 group-hover:text-white transition-colors duration-500" />
+                <ArrowRight className="w-4 h-4 group-hover:text-white group-hover:fill-white transition-colors duration-500" />
               </Link>
             </motion.div>
           </div>

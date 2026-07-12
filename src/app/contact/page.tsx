@@ -157,7 +157,7 @@ export default function ContactPage() {
                 <div className="pt-6">
                   <button type="submit" className="group relative w-full bg-[#F5F5F5] hover:bg-brand-red text-[#050505] hover:text-white py-5 flex items-center justify-center space-x-3 transition-all duration-300 overflow-hidden">
                     <span className="font-heading text-xs tracking-[0.2em] uppercase font-bold relative z-10">Send Message</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 group-hover:text-white transition-all duration-300 relative z-10" />
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 group-hover:text-white group-hover:fill-white transition-all duration-300 relative z-10" />
                   </button>
                 </div>
               </form>

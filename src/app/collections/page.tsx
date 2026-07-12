@@ -109,7 +109,7 @@ export default function CollectionsPage() {
                     className="group font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] hover:bg-brand-red hover:text-white px-8 py-3.5 transition-all duration-300 font-bold inline-flex items-center space-x-2"
                   >
                     <span>DISCOVER ITEMS</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:text-white transition-colors duration-300" />
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:text-white group-hover:fill-white transition-colors duration-300" />
                   </Link>
                 </div>
               </motion.div>
