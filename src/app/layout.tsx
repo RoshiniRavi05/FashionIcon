@@ -41,9 +41,6 @@ export const metadata: Metadata = {
   title: "ARC OPUS | Crafted Beyond Ordinary",
   description: "ARC OPUS is a premium luxury high-end designer fashion house. Explore our curated collections and interactive 3D outfit configurator.",
   metadataBase: new URL("https://arcopus.fashion"),
-  icons: {
-    icon: '/arc_opus_logo.jpeg',
-  },
 };
 
 export default function RootLayout({
