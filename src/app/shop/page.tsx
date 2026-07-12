@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Heart, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Heart, Sparkles, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { Product } from '@/data/products';
 
@@ -207,15 +207,19 @@ export default function ShopPage() {
                       <span className="font-caption text-xs tracking-wider text-white">{prod.price}</span>
                     </div>
 
-                    {/* Action buttons */}
-                    <div className="pt-2">
+                    {/* Action buttons & Stock */}
+                    <div className="pt-2 flex justify-between items-center border-t border-white/5 mt-4">
+                      <span className="font-mono text-[9px] tracking-widest text-brand-red uppercase font-bold bg-brand-red/10 px-2 py-1 rounded">
+                        {prod.stock} In Stock
+                      </span>
                       <button
                         onClick={() => addToCart(prod, 'M')}
-                        className="w-full bg-[#F5F5F5] hover:bg-brand-red text-[#050505] hover:text-[#F5F5F5] font-heading text-[9px] tracking-widest py-3 uppercase transition-all duration-300 font-bold"
+                        className="bg-white/5 hover:bg-brand-red text-white p-2 rounded-full border border-white/10 hover:border-brand-red transition-all duration-300 group/add"
+                        title="Add to Cart"
                       >
-                        ADD TO BAG
+                        <Plus className="w-4 h-4 group-hover/add:scale-110 transition-transform" />
                       </button>
-                      </div>
+                    </div>
                     </motion.div>
                   );
                 })}
