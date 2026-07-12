@@ -50,7 +50,7 @@ export const LuxuryLoader: React.FC<LuxuryLoaderProps> = ({ onComplete }) => {
           {/* Logo Center */}
           <div className="flex-1 flex items-center justify-center">
             <motion.div
-              className="font-logo text-3xl md:text-5xl lg:text-6xl tracking-[0.45em] text-[#F5F5F5] font-black"
+              className="font-logo text-3xl md:text-5xl lg:text-6xl tracking-[0.45em] text-brand-red font-black drop-shadow-[0_0_15px_rgba(193,14,29,0.5)]"
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
