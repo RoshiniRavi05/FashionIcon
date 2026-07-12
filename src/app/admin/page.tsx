@@ -44,6 +44,8 @@ export default function AdminDashboard() {
     tag: "",
     stock: 10,
     description: "",
+    sizes: "",
+    sizeChart: "",
   });
 
   // Analytics Mock Data (combining real orders with mock historical data)
@@ -62,9 +64,10 @@ export default function AdminDashboard() {
     addProduct({
       ...newProduct,
       price: newProduct.price.startsWith('$') ? newProduct.price : `$${newProduct.price}`,
+      sizes: newProduct.sizes ? newProduct.sizes.split(',').map(s => s.trim()) : undefined,
     });
     setIsAddingProduct(false);
-    setNewProduct({ ...newProduct, name: "", price: "", description: "" });
+    setNewProduct({ ...newProduct, name: "", price: "", description: "", sizes: "", sizeChart: "" });
   };
 
   const handleSavePrice = (id: number) => {
@@ -88,12 +91,6 @@ export default function AdminDashboard() {
               ADMIN DASHBOARD
             </h1>
           </div>
-          <button 
-            onClick={() => setIsAddingProduct(true)}
-            className="flex items-center justify-center gap-2 bg-brand-red text-white px-6 py-3 rounded-full font-mono text-[10px] tracking-widest uppercase hover:bg-white hover:text-black transition-colors"
-          >
-            <Plus className="w-4 h-4" /> Add Product
-          </button>
         </div>
 
         {/* Analytics Cards */}
@@ -172,22 +169,32 @@ export default function AdminDashboard() {
         {/* Inventory Table */}
         <div className="bg-[#050505]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <div className="p-6 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h3 className="font-syne text-xl text-white tracking-widest uppercase">Inventory Management</h3>
-            
-            {/* Search Input */}
-            <div className="relative w-full md:w-64">
-              <input 
-                type="text" 
-                placeholder="Search inventory..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1); // Reset to page 1 on search
-                }}
-                className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-xs font-mono text-white focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-white/30"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-8 w-full md:w-auto">
+              <h3 className="font-syne text-xl text-white tracking-widest uppercase whitespace-nowrap">Inventory Management</h3>
+              
+              {/* Search Input */}
+              <div className="relative w-full sm:w-64">
+                <input 
+                  type="text" 
+                  placeholder="Search inventory..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1); // Reset to page 1 on search
+                  }}
+                  className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-10 pr-4 text-xs font-mono text-white focus:outline-none focus:border-brand-red/50 transition-colors placeholder:text-white/30"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              </div>
             </div>
+            
+            {/* Add Product Button */}
+            <button 
+              onClick={() => setIsAddingProduct(true)}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-red text-white px-6 py-2.5 rounded-full font-mono text-[10px] tracking-widest uppercase hover:bg-white hover:text-black transition-colors flex-shrink-0"
+            >
+              <Plus className="w-4 h-4" /> Add Product
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -335,29 +342,43 @@ export default function AdminDashboard() {
                 <h3 className="font-syne text-xl text-white tracking-widest uppercase">Add New Garment</h3>
                 <button onClick={() => setIsAddingProduct(false)} className="text-white/50 hover:text-brand-red"><X className="w-5 h-5" /></button>
               </div>
-              <form onSubmit={handleAddSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleAddSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Garment Name</label>
-                  <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors" placeholder="e.g. Tactical Cargo Pants" />
+                  <input required type="text" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none" placeholder="e.g. Tactical Cargo Pants" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Description</label>
+                  <textarea value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none h-20 resize-none" placeholder="Detailed product description..." />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Price</label>
-                    <input required type="text" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors" placeholder="$120" />
+                    <input required type="text" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none" placeholder="$120" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Category</label>
                     <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none appearance-none">
-                      <option value="t-shirts">T-Shirts</option>
-                      <option value="hoodies">Hoodies</option>
-                      <option value="bottoms">Bottoms</option>
-                      <option value="outerwear">Outerwear</option>
+                      <option value="t-shirts" className="bg-[#0A0A0A]">T-Shirts</option>
+                      <option value="hoodies" className="bg-[#0A0A0A]">Hoodies</option>
+                      <option value="bottoms" className="bg-[#0A0A0A]">Bottoms</option>
+                      <option value="outerwear" className="bg-[#0A0A0A]">Outerwear</option>
                     </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Sizes (comma separated)</label>
+                    <input type="text" value={newProduct.sizes} onChange={e => setNewProduct({...newProduct, sizes: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none" placeholder="S, M, L, XL" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Size Chart URL</label>
+                    <input type="text" value={newProduct.sizeChart} onChange={e => setNewProduct({...newProduct, sizeChart: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none" placeholder="/size-charts/tshirt.png" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-mono tracking-widest text-white/50 uppercase">Image URL (Optional)</label>
-                  <input type="text" value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors" placeholder="/arc_opus_logo.jpeg" />
+                  <input type="text" value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-brand-red/50 transition-colors outline-none" placeholder="/arc_opus_logo.jpeg" />
                 </div>
                 <div className="pt-4">
                   <button type="submit" className="w-full bg-brand-red text-white py-4 rounded-xl font-mono text-[10px] tracking-widest uppercase hover:bg-white hover:text-black transition-colors">
