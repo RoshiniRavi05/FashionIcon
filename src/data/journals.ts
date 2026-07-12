@@ -36,7 +36,7 @@ export const journals: JournalArticle[] = [
     excerpt: 'An exploration of oversized silhouettes and timeless garment construction.',
     content: {
       introTitle: "BLUEPRINT DESIGN NOTES",
-      intro: "Blueprint Design Notes explores our belief that garments should be engineered like architecture—where structure takes precedence over ornament and every silhouette is designed as a measured space for the human form.",
+      intro: "Blueprint Design Notes explores our belief that garments should be engineered like architecture, where structure takes precedence over ornament and every silhouette is designed as a measured space for the human form.",
       story: "OBSERVATION\n\nConstruction before decoration.\n\nTwelve mock-neck iterations.\nZero compromises.",
       materialNotes: "360gsm Combed Cotton\n\nDouble-Yarn Construction\n\nRigid Structure\n\nBuilt to age beautifully.",
       behindTheCollection: "Not fashion sketches.\nArchitectural blueprints."
