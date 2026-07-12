@@ -38,6 +38,7 @@ interface AppContextType {
   addProduct: (product: Omit<Product, 'id'>) => void;
   deleteProduct: (id: number) => void;
   updateProductPrice: (id: number, newPrice: string) => void;
+  updateProductStock: (id: number, newStock: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -129,6 +130,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateProductPrice = (id: number, newPrice: string) => {
     setProducts(prev => prev.map(p => p.id === id ? { ...p, price: newPrice } : p));
+  };
+
+  const updateProductStock = (id: number, newStock: number) => {
+    setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: newStock } : p));
   };
 
   const addToCart = (product: Product, size: string, qty = 1) => {
@@ -251,6 +256,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addProduct,
         deleteProduct,
         updateProductPrice,
+        updateProductStock,
       }}
     >
       {children}

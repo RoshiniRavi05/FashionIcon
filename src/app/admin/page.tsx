@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const { products, addProduct, deleteProduct, updateProductPrice, orders } = useApp();
+  const { products, addProduct, deleteProduct, updateProductPrice, updateProductStock, orders } = useApp();
   
   // Modals and state
   const [isAddingProduct, setIsAddingProduct] = useState(false);
@@ -195,6 +195,7 @@ export default function AdminDashboard() {
                 <tr className="border-b border-white/5 bg-white/[0.02]">
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Product</th>
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Category</th>
+                  <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Stock</th>
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Price</th>
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase text-right">Actions</th>
                 </tr>
@@ -227,6 +228,18 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="font-mono text-[10px] tracking-widest text-white/60 uppercase">{product.category}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs text-white/90 w-6">{product.stock}</span>
+                        <button
+                          onClick={() => updateProductStock(product.id, (product.stock || 0) + 1)}
+                          className="bg-brand-red/20 hover:bg-brand-red border border-brand-red/30 hover:border-brand-red text-brand-red hover:text-white rounded px-1.5 py-0.5 transition-colors"
+                          title="Add Stock"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       {editingPriceId === product.id ? (
