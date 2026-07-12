@@ -23,6 +23,21 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
 
+  const generateProductId = (category: string, id: number) => {
+    const prefixMap: Record<string, string> = {
+      't-shirts': 'TS',
+      'jackets': 'JK',
+      'bottoms': 'BT',
+      'shoes': 'SH',
+      'hoodies': 'HD',
+      'outerwear': 'OW',
+      'collections': 'CL',
+      'new drop': 'ND'
+    };
+    const prefix = prefixMap[category.toLowerCase()] || category.substring(0, 2).toUpperCase();
+    return `${prefix}${String(id).padStart(3, '0')}`;
+  };
+
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -200,6 +215,7 @@ export default function AdminDashboard() {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-white/5 bg-white/[0.02]">
+                  <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Product ID</th>
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Product</th>
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Category</th>
                   <th className="px-6 py-4 font-mono text-[10px] tracking-widest text-white/40 uppercase">Stock</th>
@@ -218,6 +234,9 @@ export default function AdminDashboard() {
                       exit={{ opacity: 0, scale: 0.95 }}
                       className="hover:bg-brand-red/5 hover:shadow-[inset_0_0_20px_rgba(193,14,29,0.1)] transition-all duration-300 group/row"
                     >
+                    <td className="px-6 py-4">
+                      <span className="font-mono text-xs text-brand-red/80 bg-brand-red/10 px-2 py-1 rounded border border-brand-red/20">{generateProductId(product.category, product.id)}</span>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
