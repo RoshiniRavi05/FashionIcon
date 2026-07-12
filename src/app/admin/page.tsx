@@ -111,9 +111,6 @@ export default function AdminDashboard() {
         {/* Analytics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-              <DollarSign className="w-24 h-24 text-brand-red" />
-            </div>
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
               <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
@@ -127,7 +124,6 @@ export default function AdminDashboard() {
                 </defs>
               </svg>
             </div>
-            
             <div className="relative z-10 space-y-4">
               <span className="font-mono text-[10px] tracking-widest text-white/50 uppercase block">Total Revenue</span>
               <h2 className="font-syne text-4xl text-white font-bold">${totalRevenue.toLocaleString()}</h2>
@@ -138,9 +134,6 @@ export default function AdminDashboard() {
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Package className="w-24 h-24 text-white" />
-            </div>
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
               <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
@@ -154,7 +147,6 @@ export default function AdminDashboard() {
                 </defs>
               </svg>
             </div>
-
             <div className="relative z-10 space-y-4">
               <span className="font-mono text-[10px] tracking-widest text-white/50 uppercase block">Total Sales</span>
               <h2 className="font-syne text-4xl text-white font-bold">{totalSalesCount}</h2>
@@ -165,9 +157,6 @@ export default function AdminDashboard() {
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Package className="w-24 h-24 text-brand-red" />
-            </div>
             <div className="relative z-10 space-y-4">
               <span className="font-mono text-[10px] tracking-widest text-white/50 uppercase block">Active Inventory</span>
               <h2 className="font-syne text-4xl text-white font-bold">{products.length} Items</h2>
