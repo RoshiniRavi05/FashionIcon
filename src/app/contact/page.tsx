@@ -221,8 +221,9 @@ export default function ContactPage() {
               animate={{ opacity: 1, rotate: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 1 }}
               whileHover={{ rotate: 0, y: -2, scale: 1.01 }}
-              className="relative bg-[#ECE8E2] text-[#111111] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] cursor-pointer mt-auto border border-black/10 mx-4 rotate-1 paper-texture"
+              className="relative bg-[#ECE8E2] text-[#111111] p-10 min-h-[260px] shadow-[0_20px_60px_rgba(0,0,0,0.45)] cursor-pointer mt-auto border border-black/10 mx-4 rotate-1"
             >
+              <div className="paper-texture" />
               {/* Tape detail */}
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-white/40 backdrop-blur-sm shadow-sm rotate-1" />
               
