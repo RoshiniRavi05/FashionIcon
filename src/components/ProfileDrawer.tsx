@@ -119,13 +119,18 @@ export const ProfileDrawer: React.FC = () => {
                     <label className="flex items-center text-[10px] font-mono tracking-widest text-white/50 uppercase">
                       <Phone className="w-3.5 h-3.5 mr-2" /> Phone Number
                     </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-red/50 transition-colors placeholder-white/20"
-                      placeholder="+1 (555) 000-0000"
-                    />
+                    <div className="flex bg-white/5 border border-white/10 rounded-lg focus-within:border-brand-red/50 transition-colors overflow-hidden">
+                      <div className="flex items-center justify-center px-4 bg-white/5 border-r border-white/10">
+                        <span className="text-sm text-white/70 font-mono tracking-wider">+91</span>
+                      </div>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-white/20"
+                        placeholder="98765 43210"
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
