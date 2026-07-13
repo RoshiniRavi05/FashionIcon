@@ -12,7 +12,9 @@ export const CheckoutDrawer: React.FC = () => {
     checkoutOpen, 
     setCheckoutOpen, 
     clearCart, 
-    addOrder 
+    addOrder,
+    products,
+    updateProductStock
   } = useApp();
 
   const [form, setForm] = useState({
@@ -53,9 +55,18 @@ export const CheckoutDrawer: React.FC = () => {
           quantity: item.quantity,
           price: item.product.price
         })),
-        total: `$${grandTotal}.00`,
+        total: grandTotal,
       };
       addOrder(newOrder);
+
+      // Reduce stock for each item in the cart
+      cart.forEach(item => {
+        const product = products.find(p => p.id === item.product.id);
+        if (product) {
+          const currentStock = product.stock || 0;
+          updateProductStock(product.id, Math.max(0, currentStock - item.quantity));
+        }
+      });
 
       // Trigger Confetti
       confetti({

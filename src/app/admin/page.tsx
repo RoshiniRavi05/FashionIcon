@@ -110,7 +110,13 @@ export default function AdminDashboard() {
 
         {/* Analytics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group">
+          <motion.div 
+            key={`rev-${orders.length}`}
+            initial={{ scale: 0.95, filter: "brightness(1.5)" }}
+            animate={{ scale: 1, filter: "brightness(1)" }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group"
+          >
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
               <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
@@ -131,9 +137,15 @@ export default function AdminDashboard() {
                 <TrendingUp className="w-3 h-3 mr-1" /> +12.5% from last month
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group">
+          <motion.div 
+            key={`sales-${orders.length}`}
+            initial={{ scale: 0.95, filter: "brightness(1.5)" }}
+            animate={{ scale: 1, filter: "brightness(1)" }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group"
+          >
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
               <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
@@ -154,9 +166,15 @@ export default function AdminDashboard() {
                 <TrendingUp className="w-3 h-3 mr-1" /> +8.2% from last month
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group">
+          <motion.div 
+            key={`inv-${orders.length}`}
+            initial={{ scale: 0.95, filter: "brightness(1.5)" }}
+            animate={{ scale: 1, filter: "brightness(1)" }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group"
+          >
             <div className="relative z-10 space-y-4">
               <span className="font-mono text-[10px] tracking-widest text-white/50 uppercase block">Active Inventory</span>
               <h2 className="font-syne text-4xl text-white font-bold">{products.length} Items</h2>
@@ -164,7 +182,7 @@ export default function AdminDashboard() {
                 Across {new Set(products.map(p => p.category)).size} Categories
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Network Map */}

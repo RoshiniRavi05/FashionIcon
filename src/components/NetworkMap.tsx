@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Activity } from 'lucide-react';
 
+import { useApp } from '../context/AppContext';
+
 // Randomly generate some "active" nodes on a 2D plane to simulate global orders
 const generateNodes = (count: number) => {
-  return Array.from({ length: count }).map((_, i) => ({
-    id: i,
+  return Array.from({ length: count }).map(() => ({
+    id: Math.random(),
     x: Math.random() * 100, // percentage x
     y: Math.random() * 100, // percentage y
     delay: Math.random() * 5,
@@ -16,11 +18,20 @@ const generateNodes = (count: number) => {
 };
 
 export const NetworkMap = () => {
+  const { orders } = useApp();
   const [nodes, setNodes] = useState<{id: number, x: number, y: number, delay: number, duration: number}[]>([]);
 
+  // Initial load
   useEffect(() => {
     setNodes(generateNodes(15));
   }, []);
+
+  // Listen to new orders
+  useEffect(() => {
+    if (orders.length > 0) {
+      setNodes(prev => [...prev, ...generateNodes(1)]);
+    }
+  }, [orders.length]);
 
   return (
     <div className="bg-[#050505] border border-white/10 rounded-2xl overflow-hidden relative group">
