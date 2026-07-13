@@ -7,13 +7,14 @@ import { Globe, Activity } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 // Randomly generate some "active" nodes on a 2D plane to simulate global orders
-const generateNodes = (count: number) => {
+const generateNodes = (count: number, isNew = false) => {
   return Array.from({ length: count }).map(() => ({
     id: Math.random(),
     x: Math.random() * 100, // percentage x
     y: Math.random() * 100, // percentage y
-    delay: Math.random() * 5,
-    duration: 2 + Math.random() * 3,
+    delay: isNew ? 0 : Math.random() * 5,
+    duration: isNew ? 1.5 : 2 + Math.random() * 3,
+    isNew
   }));
 };
 
@@ -29,7 +30,7 @@ export const NetworkMap = () => {
   // Listen to new orders
   useEffect(() => {
     if (orders.length > 0) {
-      setNodes(prev => [...prev, ...generateNodes(1)]);
+      setNodes(prev => [...prev, ...generateNodes(1, true)]);
     }
   }, [orders.length]);
 
@@ -63,13 +64,18 @@ export const NetworkMap = () => {
         {nodes.map(node => (
           <motion.div
             key={node.id}
-            className="absolute w-2 h-2 bg-brand-red rounded-full"
+            className={`absolute rounded-full ${node.isNew ? 'bg-white w-3 h-3 z-50' : 'bg-brand-red w-2 h-2 z-10'}`}
             style={{ left: `${node.x}%`, top: `${node.y}%` }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{
-              scale: [0, 1.5, 1, 1],
-              opacity: [0, 1, 0.8, 0],
-              boxShadow: [
+              scale: node.isNew ? [0, 2, 1, 1] : [0, 1.5, 1, 1],
+              opacity: node.isNew ? [0, 1, 1, 0.8] : [0, 1, 0.8, 0],
+              boxShadow: node.isNew ? [
+                "0 0 0px 0px rgba(255,255,255,0)",
+                "0 0 30px 10px rgba(255,255,255,0.8)",
+                "0 0 15px 5px rgba(255,255,255,0.5)",
+                "0 0 0px 0px rgba(255,255,255,0)"
+              ] : [
                 "0 0 0px 0px rgba(193,14,29,0)",
                 "0 0 20px 5px rgba(193,14,29,0.5)",
                 "0 0 10px 2px rgba(193,14,29,0.3)",
@@ -85,9 +91,9 @@ export const NetworkMap = () => {
           >
             {/* Ping ring */}
             <motion.div
-              className="absolute inset-0 border border-brand-red rounded-full"
+              className={`absolute inset-0 border rounded-full ${node.isNew ? 'border-white' : 'border-brand-red'}`}
               animate={{
-                scale: [1, 4],
+                scale: node.isNew ? [1, 6] : [1, 4],
                 opacity: [1, 0]
               }}
               transition={{

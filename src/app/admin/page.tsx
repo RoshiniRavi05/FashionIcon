@@ -72,6 +72,31 @@ export default function AdminDashboard() {
 
   const totalSalesCount = 142 + orders.length;
 
+  // Dynamic Graph Spikes
+  const getDynamicPoints = (basePoints: number[][]) => {
+    if (orders.length === 0) return basePoints;
+    const orderBoost = Math.min(orders.length * 8, 25);
+    return basePoints.map((pt, i) => {
+      // Spike the last 3 points aggressively
+      if (i >= basePoints.length - 3 && i < basePoints.length) {
+        return [pt[0], Math.max(0, pt[1] - orderBoost)];
+      }
+      return pt;
+    });
+  };
+
+  const revenuePoints = getDynamicPoints([
+    [0,30], [10,25], [20,28], [30,15], [40,18], [50,8], [60,12], [70,5], [80,10], [90,2], [100,0]
+  ]);
+  const revenuePointsString = revenuePoints.map(p => p.join(',')).join(' ');
+  const revenuePath = `M0,30 ${revenuePoints.map(p => `L${p[0]},${p[1]}`).join(' ')} L100,30 Z`;
+
+  const salesPoints = getDynamicPoints([
+    [0,30], [15,22], [30,26], [45,15], [60,19], [75,10], [90,12], [100,5]
+  ]);
+  const salesPointsString = salesPoints.map(p => p.join(',')).join(' ');
+  const salesPath = `M0,30 ${salesPoints.map(p => `L${p[0]},${p[1]}`).join(' ')} L100,30 Z`;
+
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProduct.name || !newProduct.price) return;
@@ -120,8 +145,8 @@ export default function AdminDashboard() {
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
               <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
-                <path d="M0,30 L10,25 L20,28 L30,15 L40,18 L50,8 L60,12 L70,5 L80,10 L90,2 L100,0 L100,30 Z" fill="url(#gradRed)" />
-                <polyline points="0,30 10,25 20,28 30,15 40,18 50,8 60,12 70,5 80,10 90,2 100,0" fill="none" stroke="#C10E1D" strokeWidth="1" />
+                <path d={revenuePath} fill="url(#gradRed)" />
+                <polyline points={revenuePointsString} fill="none" stroke="#C10E1D" strokeWidth="1" />
                 <defs>
                   <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#C10E1D" stopOpacity="0.5" />
@@ -149,8 +174,8 @@ export default function AdminDashboard() {
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
               <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
-                <path d="M0,30 L15,22 L30,26 L45,15 L60,19 L75,10 L90,12 L100,5 L100,30 Z" fill="url(#gradWhite)" />
-                <polyline points="0,30 15,22 30,26 45,15 60,19 75,10 90,12 100,5" fill="none" stroke="#FFFFFF" strokeWidth="1" />
+                <path d={salesPath} fill="url(#gradWhite)" />
+                <polyline points={salesPointsString} fill="none" stroke="#FFFFFF" strokeWidth="1" />
                 <defs>
                   <linearGradient id="gradWhite" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.3" />
