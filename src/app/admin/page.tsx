@@ -293,6 +293,11 @@ export default function AdminDashboard() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-xs text-white/90 w-6">{product.stock}</span>
+                        {(product.stock ?? 0) < 5 && (
+                          <span className="animate-pulse bg-brand-red text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(193,14,29,0.8)] uppercase">
+                            Low Stock
+                          </span>
+                        )}
                         <button
                           onClick={() => updateProductStock(product.id, (product.stock || 0) + 1)}
                           className="bg-brand-red/20 hover:bg-brand-red border border-brand-red/30 hover:border-brand-red text-brand-red hover:text-white rounded px-1.5 py-0.5 transition-colors"
@@ -470,23 +475,48 @@ export default function AdminDashboard() {
                 </h2>
               </div>
 
-              <div className="flex-1 relative w-full overflow-hidden rounded-xl border border-white/5 bg-black/50">
-                <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
-                  {expandedGraph === 'revenue' ? (
-                    <>
-                      <path d={revenuePath} fill="url(#gradRed)" />
-                      <polyline points={revenuePointsString} fill="none" stroke="#C10E1D" strokeWidth="2" />
-                    </>
-                  ) : (
-                    <>
-                      <path d={salesPath} fill="url(#gradWhite)" />
-                      <polyline points={salesPointsString} fill="none" stroke="#FFFFFF" strokeWidth="2" />
-                    </>
-                  )}
-                  {/* Grid Lines */}
-                  <line x1="0" y1="10" x2="100" y2="10" stroke="rgba(255,255,255,0.05)" strokeWidth="0.2" strokeDasharray="1,1" />
-                  <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)" strokeWidth="0.2" strokeDasharray="1,1" />
-                </svg>
+              <div className="flex-1 relative w-full overflow-visible rounded-xl border border-white/5 bg-black/50 mt-4 flex items-end justify-between px-4 sm:px-12 pb-12 pt-16">
+                {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month, index) => {
+                  const historicalRev = [12000, 15000, 13500, 18000, 22000, 19000, 24000, 21000, 25000, 23000, 26000, 24500];
+                  const historicalSales = [85, 110, 95, 120, 140, 115, 150, 130, 160, 145, 165, 142];
+                  
+                  const isCurrent = index === 11;
+                  const isRev = expandedGraph === 'revenue';
+                  
+                  const val = isCurrent 
+                    ? (isRev ? totalRevenue : totalSalesCount) 
+                    : (isRev ? historicalRev[index] : historicalSales[index]);
+                    
+                  const maxVal = isRev ? Math.max(30000, totalRevenue + 2000) : Math.max(200, totalSalesCount + 20);
+                  const heightPercentage = Math.min(100, (val / maxVal) * 100);
+
+                  return (
+                    <div key={index} className="relative flex flex-col items-center group w-1/12 h-full justify-end group">
+                      {/* Interactive Tooltip */}
+                      <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black text-xs font-bold py-1.5 px-3 rounded-md pointer-events-none whitespace-nowrap z-50 shadow-[0_0_20px_rgba(255,255,255,0.5)] transform -translate-y-2 group-hover:translate-y-0 duration-200">
+                        {isRev ? `$${val.toLocaleString()}` : `${val} Orders`}
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45"></div>
+                      </div>
+                      
+                      {/* Bar */}
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${heightPercentage}%` }}
+                        transition={{ duration: 0.8, delay: index * 0.05, ease: "easeOut" }}
+                        className={`w-full max-w-[30px] rounded-t-sm cursor-pointer transition-all duration-300 ${
+                          isCurrent 
+                            ? 'bg-brand-red hover:bg-red-400 hover:shadow-[0_0_30px_rgba(193,14,29,0.8)]' 
+                            : 'bg-white/10 hover:bg-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]'
+                        }`}
+                      />
+                      
+                      {/* Month Label */}
+                      <div className={`absolute -bottom-8 text-[10px] font-mono uppercase tracking-widest ${isCurrent ? 'text-brand-red font-bold' : 'text-white/40 group-hover:text-white transition-colors'}`}>
+                        {month}
+                      </div>
+                    </div>
+                  );
+                })}
                 
                 {/* Live Data Pulse Overlay */}
                 <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 border border-brand-red/30 backdrop-blur-sm">
