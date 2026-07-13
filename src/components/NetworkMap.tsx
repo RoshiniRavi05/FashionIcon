@@ -27,7 +27,15 @@ export const NetworkMap = () => {
   useEffect(() => {
     const initialNodes = generateNodes(15, false);
     if (orders.length > 0) {
-      initialNodes.push(...generateNodes(orders.length, true));
+      const whiteCount = Math.min(5, orders.length);
+      const redCount = Math.max(0, orders.length - 5);
+      
+      if (redCount > 0) {
+        initialNodes.push(...generateNodes(redCount, false));
+      }
+      if (whiteCount > 0) {
+        initialNodes.push(...generateNodes(whiteCount, true));
+      }
     }
     setNodes(initialNodes);
   }, []); // Run once on mount
@@ -36,7 +44,22 @@ export const NetworkMap = () => {
   useEffect(() => {
     if (orders.length > prevOrdersLength.current) {
       const diff = orders.length - prevOrdersLength.current;
-      setNodes(prev => [...prev, ...generateNodes(diff, true)]);
+      
+      setNodes(prev => {
+        const newNodes = [...prev, ...generateNodes(diff, true)];
+        
+        let whiteNodesCount = newNodes.filter(n => n.isNew).length;
+        if (whiteNodesCount > 5) {
+          let toTurnRed = whiteNodesCount - 5;
+          for (let i = 0; i < newNodes.length && toTurnRed > 0; i++) {
+            if (newNodes[i].isNew) {
+              newNodes[i] = { ...newNodes[i], isNew: false, duration: 2 + Math.random() * 3 }; 
+              toTurnRed--;
+            }
+          }
+        }
+        return newNodes;
+      });
     }
     prevOrdersLength.current = orders.length;
   }, [orders.length]);
