@@ -20,18 +20,25 @@ const generateNodes = (count: number, isNew = false) => {
 
 export const NetworkMap = () => {
   const { orders } = useApp();
-  const [nodes, setNodes] = useState<{id: number, x: number, y: number, delay: number, duration: number}[]>([]);
+  const [nodes, setNodes] = useState<{id: number, x: number, y: number, delay: number, duration: number, isNew: boolean}[]>([]);
+  const prevOrdersLength = React.useRef(orders.length);
 
   // Initial load
   useEffect(() => {
-    setNodes(generateNodes(15));
-  }, []);
-
-  // Listen to new orders
-  useEffect(() => {
+    const initialNodes = generateNodes(15, false);
     if (orders.length > 0) {
-      setNodes(prev => [...prev, ...generateNodes(1, true)]);
+      initialNodes.push(...generateNodes(orders.length, true));
     }
+    setNodes(initialNodes);
+  }, []); // Run once on mount
+
+  // Listen to new orders while page is open
+  useEffect(() => {
+    if (orders.length > prevOrdersLength.current) {
+      const diff = orders.length - prevOrdersLength.current;
+      setNodes(prev => [...prev, ...generateNodes(diff, true)]);
+    }
+    prevOrdersLength.current = orders.length;
   }, [orders.length]);
 
   return (
