@@ -102,16 +102,6 @@ export const AuthModal: React.FC = () => {
                   </span>
                 </button>
 
-                {/* Temporary Admin Access Button */}
-                <Link
-                  href="/admin"
-                  onClick={() => setAuthModalOpen(false)}
-                  className="w-full max-w-sm flex items-center justify-center p-3 mt-4 border border-brand-red/30 bg-brand-red/5 hover:bg-brand-red/20 rounded-full transition-all duration-300"
-                >
-                  <span className="font-mono text-[10px] tracking-widest text-brand-red uppercase">
-                    Enter as Admin (Temporary)
-                  </span>
-                </Link>
 
                 {/* Perks List */}
                 <div className="space-y-3 pt-4">
