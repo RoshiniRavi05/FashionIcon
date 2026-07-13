@@ -18,10 +18,10 @@ export const CheckoutDrawer: React.FC = () => {
   } = useApp();
 
   const [form, setForm] = useState({
-    name: '',
-    cardNum: '',
-    expiry: '',
-    cvc: '',
+    name: 'DEMO BUYER',
+    cardNum: '4242 4242 4242 4242',
+    expiry: '12/30',
+    cvc: '123',
   });
 
   const [processing, setProcessing] = useState(false);
