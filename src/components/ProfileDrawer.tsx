@@ -171,15 +171,13 @@ export const ProfileDrawer: React.FC = () => {
 
             {/* Footer with Sign Out */}
             <div className="p-6 border-t border-white/10 bg-[#0A0A0A] mt-auto space-y-3">
-              {session?.user?.email === 'arcopus.admin@gmail.com' && (
-                <Link
-                  href="/admin"
-                  onClick={() => setProfileOpen(false)}
-                  className="group flex items-center justify-center gap-3 w-full border border-white/20 text-white/70 hover:bg-white hover:text-black transition-all duration-300 rounded-full py-3.5 font-mono tracking-widest text-[10px] uppercase"
-                >
-                  SYSTEM CONTROL
-                </Link>
-              )}
+              <Link
+                href="/admin"
+                onClick={() => setProfileOpen(false)}
+                className="group flex items-center justify-center gap-3 w-full border border-white/20 text-white/70 hover:bg-white hover:text-black transition-all duration-300 rounded-full py-3.5 font-mono tracking-widest text-[10px] uppercase"
+              >
+                SYSTEM CONTROL
+              </Link>
               <button
                 onClick={() => {
                   setProfileOpen(false);
