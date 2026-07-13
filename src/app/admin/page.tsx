@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingPriceId, setEditingPriceId] = useState<number | null>(null);
   const [newPriceValue, setNewPriceValue] = useState("");
+  const [expandedGraph, setExpandedGraph] = useState<'revenue' | 'sales' | null>(null);
   // Search State
   const [searchQuery, setSearchQuery] = useState("");
   
@@ -137,10 +138,11 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <motion.div 
             key={`rev-${orders.length}`}
+            onClick={() => setExpandedGraph('revenue')}
             initial={{ scale: 0.95, filter: "brightness(1.5)" }}
             animate={{ scale: 1, filter: "brightness(1)" }}
             transition={{ duration: 0.5 }}
-            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group"
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group cursor-pointer hover:bg-white/10 transition-colors"
           >
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
@@ -166,10 +168,11 @@ export default function AdminDashboard() {
 
           <motion.div 
             key={`sales-${orders.length}`}
+            onClick={() => setExpandedGraph('sales')}
             initial={{ scale: 0.95, filter: "brightness(1.5)" }}
             animate={{ scale: 1, filter: "brightness(1)" }}
             transition={{ duration: 0.5 }}
-            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group"
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group cursor-pointer hover:bg-white/10 transition-colors"
           >
             {/* Dummy Sparkline Graph */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-20 pointer-events-none">
@@ -437,6 +440,60 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Expanded Graph Modal */}
+        {expandedGraph && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-5xl h-[70vh] bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 flex flex-col"
+            >
+              <button 
+                onClick={() => setExpandedGraph(null)}
+                className="absolute top-6 right-6 p-2 bg-white/5 hover:bg-white/10 rounded-full text-white/50 hover:text-white transition-colors z-50"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="mb-8">
+                <span className="font-mono text-xs tracking-widest text-brand-red uppercase flex items-center gap-2 mb-2">
+                  <TrendingUp className="w-4 h-4" /> 
+                  Live Analytics
+                </span>
+                <h2 className="font-syne text-4xl text-white font-bold">
+                  {expandedGraph === 'revenue' ? `Total Revenue: $${totalRevenue.toLocaleString()}` : `Total Sales: ${totalSalesCount}`}
+                </h2>
+              </div>
+
+              <div className="flex-1 relative w-full overflow-hidden rounded-xl border border-white/5 bg-black/50">
+                <svg viewBox="0 0 100 30" className="w-full h-full preserve-3d" preserveAspectRatio="none">
+                  {expandedGraph === 'revenue' ? (
+                    <>
+                      <path d={revenuePath} fill="url(#gradRed)" />
+                      <polyline points={revenuePointsString} fill="none" stroke="#C10E1D" strokeWidth="2" />
+                    </>
+                  ) : (
+                    <>
+                      <path d={salesPath} fill="url(#gradWhite)" />
+                      <polyline points={salesPointsString} fill="none" stroke="#FFFFFF" strokeWidth="2" />
+                    </>
+                  )}
+                  {/* Grid Lines */}
+                  <line x1="0" y1="10" x2="100" y2="10" stroke="rgba(255,255,255,0.05)" strokeWidth="0.2" strokeDasharray="1,1" />
+                  <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)" strokeWidth="0.2" strokeDasharray="1,1" />
+                </svg>
+                
+                {/* Live Data Pulse Overlay */}
+                <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 border border-brand-red/30 backdrop-blur-sm">
+                  <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse"></span>
+                  <span className="font-mono text-[10px] text-brand-red uppercase tracking-widest">Real-time Sync Active</span>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}
