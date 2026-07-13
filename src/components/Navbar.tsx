@@ -71,7 +71,7 @@ export const Navbar: React.FC = () => {
           {/* Right Action Icons */}
           <div className="flex items-center space-x-6">
             {/* Join the Fam CTA */}
-            {!session && (
+            {!session && !pathname.startsWith('/admin') && (
               <button
                 onClick={() => setAuthModalOpen(true)}
                 className="font-heading text-[10px] tracking-[0.2em] uppercase bg-[#F5F5F5] text-[#050505] px-6 py-2.5 hover:bg-brand-red hover:text-white transition-all duration-300 font-bold hidden md:block"

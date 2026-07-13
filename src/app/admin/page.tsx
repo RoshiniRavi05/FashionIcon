@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Edit3, TrendingUp, Package, DollarSign, X, Search } from 'lucide-react';
+import { Plus, Trash2, Edit3, TrendingUp, Package, DollarSign, X, Search, AlertTriangle } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { AdminGuard } from '@/components/AdminGuard';
 import { NetworkMap } from '@/components/NetworkMap';
@@ -118,6 +118,8 @@ export default function AdminDashboard() {
     setEditingPriceId(null);
   };
 
+  const lowStockProducts = products.filter(p => (p.stock ?? 0) < 5);
+
   return (
     <AdminGuard>
       <div className="min-h-screen pt-32 pb-20 px-6 md:px-12 w-full mx-auto space-y-12">
@@ -133,6 +135,44 @@ export default function AdminDashboard() {
             </h1>
           </div>
         </div>
+
+        {/* Global Low Stock Banner */}
+        <AnimatePresence>
+          {lowStockProducts.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full bg-brand-red/10 border border-brand-red/30 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative overflow-hidden group"
+            >
+              <div className="absolute inset-0 bg-brand-red/5 animate-pulse pointer-events-none" />
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-brand-red/20 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5 text-brand-red animate-bounce" />
+                </div>
+                <div>
+                  <h3 className="font-syne font-bold text-brand-red text-sm uppercase tracking-widest">
+                    Critical Inventory Alert
+                  </h3>
+                  <p className="font-sans text-xs text-brand-red/80 mt-1">
+                    {lowStockProducts.length === 1 
+                      ? `${lowStockProducts[0].name} is critically low on stock.`
+                      : `${lowStockProducts.slice(0, 2).map(p => p.name).join(', ')} and ${lowStockProducts.length - 2 > 0 ? `${lowStockProducts.length - 2} others` : ''} are low on stock.`
+                    }
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }}
+                className="relative z-10 bg-brand-red text-white px-4 py-2 text-[10px] font-mono uppercase tracking-widest hover:bg-white hover:text-brand-red transition-colors whitespace-nowrap rounded-md"
+              >
+                Resolve Stock
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Analytics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
